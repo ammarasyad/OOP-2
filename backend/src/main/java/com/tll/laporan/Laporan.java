@@ -19,15 +19,12 @@ public class Laporan {
     // Spawns a new thread to save the document, with a 10-second delay at the end
     public void save() {
         new Thread(() -> {
-            try (PDDocument document = new PDDocument()) {
-                LaporanPage page = new LaporanPage();
+            LaporanPage page = new LaporanPage();
+            try (PDDocument document = new PDDocument();
+                 PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
 
-
-                PDPageContentStream contentStream = new PDPageContentStream(document, page);
                 buildTable(page, contentStream);
-                contentStream.close();
 
-                // Add the page to the document and save
                 document.addPage(page);
                 document.save(path);
 
