@@ -1,6 +1,6 @@
 package com.tll.laporan;
 
-import com.tll.gui.model.bill.FixedBill;
+import com.tll.backend.model.bill.FixedBill;
 import lombok.AllArgsConstructor;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;

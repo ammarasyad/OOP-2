@@ -1,7 +1,7 @@
 package com.tll.laporan;
 
-import com.tll.gui.model.barang.Barang;
-import com.tll.gui.model.bill.FixedBill;
+import com.tll.backend.model.barang.Barang;
+import com.tll.backend.model.bill.FixedBill;
 import org.javatuples.Pair;
 import org.junit.jupiter.api.Test;
 
