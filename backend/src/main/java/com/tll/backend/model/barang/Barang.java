@@ -1,4 +1,4 @@
-package com.tll.gui.model.barang;
+package com.tll.backend.model.barang;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

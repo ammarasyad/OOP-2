@@ -1,14 +1,11 @@
-package com.tll.gui.model.bill;
+package com.tll.backend.model.bill;
 
-import com.tll.gui.model.barang.Barang;
-import lombok.Builder;
+import com.tll.backend.model.barang.Barang;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.javatuples.Pair;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @EqualsAndHashCode(callSuper = true)
 @Getter

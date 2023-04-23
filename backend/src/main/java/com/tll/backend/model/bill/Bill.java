@@ -1,6 +1,6 @@
-package com.tll.gui.model.bill;
+package com.tll.backend.model.bill;
 
-import com.tll.gui.model.barang.Barang;
+import com.tll.backend.model.barang.Barang;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
