@@ -10,7 +10,7 @@ public interface CrudRepository<ID, V> {
 
     Iterable<V> findAll();
 
-    Optional<V> finById(ID id);
+    Optional<V> findById(ID id);
 
     <S extends V> S save(S entity);
 
