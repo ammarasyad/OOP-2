@@ -26,7 +26,7 @@ public class Barang implements Serializable, Cloneable {
     @Override
     public Barang clone() {
         try {
-            Barang clone = ((Barang) super.clone())
+            return ((Barang) super.clone())
                                 .setId(this.id)
                                 .setStok(this.stok)
                                 .setNama(this.nama) // String is immutable
@@ -35,7 +35,6 @@ public class Barang implements Serializable, Cloneable {
                                 .setKategori(this.kategori.clone())
                                 .setUrlGambar(this.urlGambar)
                                 .setDijual(dijual);
-            return clone;
         } catch (CloneNotSupportedException e) {
             throw new AssertionError();
         }
