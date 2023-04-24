@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 public class BarangRepository implements CrudRepository<Integer, Barang>, InMemoryFileRepository<Barang> {
@@ -24,24 +25,38 @@ public class BarangRepository implements CrudRepository<Integer, Barang>, InMemo
 
     @Override
     public void delete(Barang entity) {
+        // remove from index
         int idBarang = entity.getId(), indexBarang = idMap.getOrDefault(idBarang, -1);
 
         if (indexBarang == -1)
             return;
 
-        storage.remove(indexBarang);
         idMap.remove(idBarang);
+        removeFromListMap(namaMap, entity.getNama(), idBarang);
+        removeFromListMap(hargaMap, entity.getHarga(), idBarang);
+
+        storage.remove(indexBarang);
     }
 
     @Override
     public void deleteById(Integer idBarang) {
+        // remove from index
         int indexBarang = idMap.getOrDefault(idBarang, -1);
 
         if (indexBarang == -1)
             return;
 
-        storage.remove(indexBarang);
+        Barang barang = storage.get(idMap.get(idBarang));
         idMap.remove(idBarang);
+        removeFromListMap(namaMap, barang.getNama(), idBarang);
+        removeFromListMap(hargaMap, barang.getHarga(), idBarang);
+
+        storage.remove(indexBarang);
+    }
+
+    private <T> void removeFromListMap(Map<T, List<Integer>> map, T mapKey, Integer storageIndex) {
+        List<Integer> listMap = map.get(mapKey);
+        listMap.remove(storageIndex);
     }
 
     @Override
@@ -84,6 +99,20 @@ public class BarangRepository implements CrudRepository<Integer, Barang>, InMemo
     @Override
     public void loadData(String url) {
         // next iteration
+    }
+
+    public Iterable<Barang> findByNama(String nama) {
+        return Optional.of(namaMap.get(nama))
+                .orElseGet(ArrayList::new)
+                .stream().map(el -> storage.get(el).clone())
+                .collect(Collectors.toList());
+    }
+
+    public Iterable<Barang> findByHarga(BigDecimal harga) {
+        return Optional.of(hargaMap.get(harga))
+                .orElseGet(ArrayList::new)
+                .stream().map(el -> storage.get(el).clone())
+                .collect(Collectors.toList());
     }
 
     private <T> void addToListMap(Map<T, List<Integer>> map, T mapIndex, Integer storageIndex) {
