@@ -13,6 +13,9 @@ import java.util.Date;
 
 public class SidebarFactory {
 
+    private static final int MAIN_SIDEBAR_WIDTH = 200;
+    private static final int MAIN_SIDEBAR_HEIGHT = 200;
+
     public static VBox getMainSidebar() {
         // Membuat label untuk menampilkan waktu
         Label clockLabel = new Label();
@@ -23,8 +26,8 @@ public class SidebarFactory {
         VBox vbox = new VBox();
         vbox.getChildren().addAll(clockLabel);
         vbox.setStyle("-fx-background-color: #0077B5;");
-        vbox.setPrefWidth(200);
-        vbox.setMaxWidth(200);
+        vbox.setPrefWidth(MAIN_SIDEBAR_WIDTH);
+        vbox.setMaxWidth(MAIN_SIDEBAR_HEIGHT);
         vbox.setAlignment(Pos.TOP_CENTER);
         VBox.setMargin(clockLabel,new Insets(25,0,0,0));
 
