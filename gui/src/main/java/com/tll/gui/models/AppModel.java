@@ -1,5 +1,6 @@
 package com.tll.gui.models;
 
+import com.tll.gui.Sidebar;
 import com.tll.gui.controllers.AppController;
 import javafx.scene.control.MenuBar;
 import javafx.scene.layout.HBox;
@@ -16,9 +17,12 @@ public class AppModel extends VBox {
 
         menuBar.getMenus().addAll(appController.getPages());
 
+        Sidebar sidebar = new Sidebar();
+        VBox sidebarVBox = sidebar.getSidebar();
+
         // Create an HBox to hold the tab pane and make it stretch to fill the window
         HBox hbox = new HBox();
-        hbox.getChildren().add(appController.getTabPane());
+        hbox.getChildren().addAll(sidebarVBox,appController.getTabPane());
         hbox.setHgrow(appController.getTabPane(), javafx.scene.layout.Priority.ALWAYS);
 
         // to hold the menu bar and the HBox
