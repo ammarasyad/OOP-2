@@ -1,11 +1,14 @@
 package com.tll.gui.controllers;
 
 import com.tll.gui.ClosableTab;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
 import lombok.Getter;
 import com.tll.gui.models.MainPageModel;
 import com.tll.gui.models.RegisterPageModel;
 import com.tll.gui.models.UpdatePageModel;
+import javafx.geometry.Insets;
 
 @Getter
 public class AppController {
@@ -16,6 +19,8 @@ public class AppController {
     private MenuItem registerPage;
     private MenuItem updatePage;
     private TabPane tabPane;
+
+    private VBox sidebar;
 
     public AppController() {
         pages = new Menu("Open Page");
@@ -29,6 +34,8 @@ public class AppController {
         mainPage.setOnAction((event -> addMainPage()));
         registerPage.setOnAction(event -> addRegisterPage());
         updatePage.setOnAction(event -> addUpdatePage());
+
+
     }
     private void addMainPage() {
         MainPageController mc = new MainPageController();
