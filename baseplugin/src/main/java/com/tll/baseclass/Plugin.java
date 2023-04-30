@@ -2,7 +2,7 @@ package com.tll.baseclass;
 
 import com.tll.annotation.AutoWired;
 import javafx.scene.control.Menu;
-import javafx.scene.control.MenuItem;
+import javafx.scene.layout.VBox;
 
 
 public abstract class Plugin {
@@ -11,7 +11,7 @@ public abstract class Plugin {
     private Menu pageMenu;
 
     @AutoWired
-    private MenuItem pluginPage;
+    private VBox pluginList;
 
     public abstract void loadPage();
 
