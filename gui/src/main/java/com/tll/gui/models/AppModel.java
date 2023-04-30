@@ -22,7 +22,7 @@ public class AppModel extends VBox {
         // Create an HBox to hold the tab pane and make it stretch to fill the window
         HBox hbox = new HBox();
         hbox.getChildren().addAll(sidebarVBox,appController.getTabPane());
-        HBox.setHgrow(appController.getTabPane(), javafx.scene.layout.Priority.ALWAYS);
+        HBox.setHgrow(appController.getTabPane(), Priority.ALWAYS);
 
         // to hold the menu bar and the HBox
         this.getChildren().addAll(menuBar, hbox);
