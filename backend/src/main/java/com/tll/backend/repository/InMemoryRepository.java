@@ -1,6 +1,6 @@
 package com.tll.backend.repository;
 
-public interface InMemoryFileRepository<V> {
+public interface InMemoryRepository<V> {
 
     void loadData(String url);
 

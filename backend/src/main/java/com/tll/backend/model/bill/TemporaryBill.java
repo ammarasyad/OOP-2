@@ -9,10 +9,10 @@ import java.util.ArrayList;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class TemporaryBill extends Bill{
+public class TemporaryBill extends Bill {
 
-    public TemporaryBill() {
-        super(new ArrayList<>());
+    public TemporaryBill(Integer userId) {
+        super(userId, new ArrayList<>());
     }
 
     public void addToBill(Barang barang, int jumlah) {
@@ -20,7 +20,7 @@ public class TemporaryBill extends Bill{
     }
 
     public FixedBill convertToFixedBill() {
-        return new FixedBill(cart);
+        return new FixedBill(this.userId, cart);
     }
 
 }

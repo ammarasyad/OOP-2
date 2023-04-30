@@ -1,8 +1,8 @@
-package com.tll.backend.repository.impl;
+package com.tll.backend.repository.impl.barang;
 
 import com.tll.backend.model.barang.Barang;
 import com.tll.backend.repository.CrudRepository;
-import com.tll.backend.repository.InMemoryFileRepository;
+import com.tll.backend.repository.InMemoryRepository;
 import lombok.AllArgsConstructor;
 
 import java.math.BigDecimal;
@@ -13,7 +13,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
-public class BarangRepository implements CrudRepository<Integer, Barang>, InMemoryFileRepository<Barang> {
+public class BarangRepository implements CrudRepository<Integer, Barang>, InMemoryRepository<Barang> {
 
     // main storage for local repository
     private List<Barang> storage;
@@ -61,7 +61,7 @@ public class BarangRepository implements CrudRepository<Integer, Barang>, InMemo
 
     @Override
     public Iterable<Barang> findAll() {
-        return List.copyOf(storage);
+        return new ArrayList<>(storage);
     }
 
     @Override

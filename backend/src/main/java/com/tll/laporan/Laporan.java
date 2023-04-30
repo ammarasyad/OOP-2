@@ -1,11 +1,13 @@
 package com.tll.laporan;
 
+import com.tll.backend.model.barang.Barang;
 import com.tll.backend.model.bill.FixedBill;
 import lombok.AllArgsConstructor;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
+import org.javatuples.Pair;
 
 import java.awt.*;
 import java.math.BigDecimal;
@@ -47,7 +49,7 @@ public class Laporan {
         int height = 25;
         int width = 80;
 
-        for (var o : bill.getCart()) {
+        for (Pair<Barang, Integer> o : bill.getCart()) {
             contentStream.addRect(x, y, width + 30, -height);
 
             contentStream.beginText();

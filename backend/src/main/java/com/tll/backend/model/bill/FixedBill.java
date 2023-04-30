@@ -11,8 +11,8 @@ import java.util.List;
 @Getter
 public class FixedBill extends Bill {
 
-    public FixedBill(List<Pair<Barang, Integer>> listBarang) {
-        super(listBarang.stream()
+    public FixedBill(Integer userId, List<Pair<Barang, Integer>> listBarang) {
+        super(userId, listBarang.stream()
                 .map(el -> Pair.with(el.getValue0().clone(), el.getValue1()))
                 .toList());
     }

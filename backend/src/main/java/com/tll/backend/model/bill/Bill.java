@@ -14,6 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 public class Bill implements Serializable {
 
+    protected Integer userId;
     protected List<Pair<Barang, Integer>> cart;
 
 }
