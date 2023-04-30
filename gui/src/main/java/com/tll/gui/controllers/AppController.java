@@ -1,14 +1,11 @@
 package com.tll.gui.controllers;
 
 import com.tll.gui.ClosableTab;
-import javafx.geometry.Pos;
+import com.tll.gui.factory.PageFactory;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import lombok.Getter;
-import com.tll.gui.models.MainPageModel;
-import com.tll.gui.models.RegisterPageModel;
-import com.tll.gui.models.UpdatePageModel;
-import javafx.geometry.Insets;
+import com.tll.gui.models.UpdatePageControl;
 
 @Getter
 public class AppController {
@@ -18,46 +15,64 @@ public class AppController {
     private MenuItem mainPage;
     private MenuItem registerPage;
     private MenuItem updatePage;
+    private MenuItem historyPage;
+    private MenuItem kasirPage;
     private TabPane tabPane;
+    private MainPageModel mainPageModel;
+    private RegisterPageModel registerPageModel;
+    private UpdatePageModel updatePageModel;
 
     private VBox sidebar;
 
     public AppController() {
+        mainPageModel = new MainPageModel();
+        registerPageModel = new RegisterPageModel();
+        updatePageModel = new UpdatePageModel();
+
         pages = new Menu("Open Page");
         mainPage = new MenuItem("Main Page");
         registerPage = new MenuItem("Register Page");
         updatePage = new MenuItem("Update Page");
-        pages.getItems().addAll(mainPage, registerPage, updatePage);
+        historyPage = new MenuItem("History Page");
+        kasirPage = new MenuItem("Kasir Page");
+        pages.getItems().addAll(mainPage, registerPage, updatePage, historyPage, kasirPage);
         tabPane = new TabPane();
         tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
 
         mainPage.setOnAction((event -> addMainPage()));
         registerPage.setOnAction(event -> addRegisterPage());
         updatePage.setOnAction(event -> addUpdatePage());
+        historyPage.setOnAction(event -> addHistoryPage());
+        kasirPage.setOnAction(event -> addKasirPage());
 
 
     }
     private void addMainPage() {
-        MainPageController mc = new MainPageController();
-        MainPageModel mainPage = new MainPageModel(mc);
-        mc.startClock();
         ClosableTab tab = new ClosableTab("Main Page");
-        tab.setContent(mainPage);
+        tab.setContent(PageFactory.getMainPage(mainPageModel));
         tabPane.getTabs().add(tab);
     }
     private void addRegisterPage() {
-        RegisterPageController rpc = new RegisterPageController();
-        RegisterPageModel registerPage = new RegisterPageModel(rpc);
         ClosableTab tab = new ClosableTab("Register Page");
-        tab.setContent(registerPage);
+        tab.setContent(PageFactory.getRegisterPage(registerPageModel));
         tabPane.getTabs().add(tab);
     }
 
     private void addUpdatePage() {
-        UpdatePageController upc = new UpdatePageController();
-        UpdatePageModel registerPage = new UpdatePageModel(upc);
         ClosableTab tab = new ClosableTab("Update Page");
-        tab.setContent(registerPage);
+        tab.setContent(PageFactory.getUpdatePage(updatePageModel));
+        tabPane.getTabs().add(tab);
+    }
+
+    private void addHistoryPage() {
+        ClosableTab tab = new ClosableTab("History Page");
+        tab.setContent(PageFactory.getHistoryPage());
+        tabPane.getTabs().add(tab);
+    }
+
+    private void addKasirPage() {
+        ClosableTab tab = new ClosableTab("History Page");
+        tab.setContent(PageFactory.getKasirPage());
         tabPane.getTabs().add(tab);
     }
 }
