@@ -7,21 +7,21 @@ import java.util.HashMap;
 import java.util.Map;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class DependencyContext {
+public class PluginContext {
 
-    private static DependencyContext dependencyContext;
+    private static PluginContext pluginContext;
 
     private final HashMap<Class<?>, Object> objectContext;
 
-    private DependencyContext() {
+    private PluginContext() {
         throw new UnsupportedOperationException();
     }
 
-    public static synchronized DependencyContext getInstance() {
-        if (dependencyContext == null) {
-            dependencyContext = new DependencyContext(new HashMap<>());
+    public static synchronized PluginContext getInstance() {
+        if (pluginContext == null) {
+            pluginContext = new PluginContext(new HashMap<>());
         }
-        return dependencyContext;
+        return pluginContext;
     }
 
     public void addToContext(Class<?> classType, Object object) {

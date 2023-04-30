@@ -6,15 +6,15 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 
 
-public class DependencyInjector {
+public class PluginResolver {
 
-    public void injectDependency(Object object) {
-        DependencyContext dependencyContext = DependencyContext.getInstance();
-        for(Field field: object.getClass().getDeclaredFields()){
+    public void injectDependency(Class<?> classType, Object object) {
+        PluginContext pluginContext = PluginContext.getInstance();
+        for(Field field: classType.cast(object).getClass().getDeclaredFields() ){
             if (field.isAnnotationPresent(AutoWired.class)){
                 field.setAccessible(true);
                 Class<?> fieldType = field.getClass();
-                Object value = dependencyContext.getFromContext(fieldType);
+                Object value = pluginContext.getFromContext(fieldType);
                 try {
                     if (value == null) {
                         value = fieldType.getDeclaredConstructor().newInstance();
