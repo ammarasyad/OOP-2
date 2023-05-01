@@ -25,17 +25,17 @@ public class ProductWidget extends HBox {
         nameLabel = new Label("Name: " + name);
         idLabel = new Label("ID: " + id);
         priceLabel = new Label("Price: " + price);
-        quantityLabel = new Label("0");
+        quantityLabel = new Label("1");
         plusButton = new Button("+");
         minusButton = new Button("-");
 
         // button + - box
         buttonBox = new HBox(10, minusButton, quantityLabel, plusButton);
-        buttonBox.setAlignment(Pos.CENTER_RIGHT);
+       buttonBox.setAlignment(Pos.CENTER_RIGHT);
 
         // Customize labels if needed
         setPadding(new Insets(5));
-        getChildren().addAll(nameLabel, idLabel, priceLabel, buttonBox);
+        getChildren().addAll(nameLabel, idLabel, priceLabel);
 
         HBox.setHgrow(buttonBox, Priority.ALWAYS);
 
@@ -52,18 +52,28 @@ public class ProductWidget extends HBox {
 
         // nambah item
         plusButton.setOnAction(e -> {
-            int quantity = Integer.parseInt(quantityLabel.getText());
+           int quantity = Integer.parseInt(quantityLabel.getText());
             quantity++;
             quantityLabel.setText(Integer.toString(quantity));
+
+
         });
 
-        // kurang item
+        // kurang item, hapus jika quantity = 0
         minusButton.setOnAction(e -> {
             int quantity = Integer.parseInt(quantityLabel.getText());
             if (quantity > 0) {
                 quantity--;
                 quantityLabel.setText(Integer.toString(quantity));
             }
+            if (quantity == 0) {
+                ((Pane) getParent()).getChildren().remove(this);
+            }
         });
+    }
+
+    // buttonbox supaya cuma ke bagian kanan
+    public HBox getButtonBox() {
+        return buttonBox;
     }
 }

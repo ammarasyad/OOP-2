@@ -122,7 +122,7 @@ public class PageFactory {
         activity.itemsProperty().bindBidirectional(updatePageModel.getActivity().itemsProperty());
 
         leftVbox.getChildren().addAll(nameLabel, nameTextField, phoneLabel, phoneTextField,
-                                        statusLabel, accountStatus, activity);
+                statusLabel, accountStatus, activity);
         HBox.setMargin(leftVbox, new Insets(10, 10, 10, 20)); // set margin of left VBox in HBox
 
         VBox rightVbox = new VBox();
@@ -286,14 +286,28 @@ public class PageFactory {
         VBox.setVgrow(detailVBox, Priority.ALWAYS);
         VBox.setMargin(detailVBox, new Insets(10, 10, 10, 10));
 
+        // ngebuat buttonbox
+        Label quantityLabel = new Label("1");
+        Button plusButton = new Button("+");
+        Button minusButton = new Button("-");
+        HBox buttonBox = new HBox(10, minusButton, quantityLabel, plusButton);
+        buttonBox.setAlignment(Pos.CENTER_RIGHT);
+        HBox.setHgrow(buttonBox, Priority.ALWAYS);
+
+
         VBox selectedVBox = new VBox();
         selectedVBox.setSpacing(10);
         selectedVBox.setPadding(new Insets(10));
+
         for(int i = 0; i < 1; i++){
             ProductWidget widget1 = new ProductWidget("Susumu", "12345", "rp 999999");
             ProductWidget widget2 = new ProductWidget("Anumu", "67890", "rp 80.000");
             ProductWidget widget3 = new ProductWidget("GoofyAhhCrack", "54321", "rp 619");
 
+            // nambahin buttonbox untuk setiap widget
+            widget1.getChildren().add(widget1.getButtonBox());
+            widget2.getChildren().add(widget2.getButtonBox());
+            widget3.getChildren().add(widget3.getButtonBox());
             selectedVBox.getChildren().addAll(widget1, widget2, widget3);
         }
 
