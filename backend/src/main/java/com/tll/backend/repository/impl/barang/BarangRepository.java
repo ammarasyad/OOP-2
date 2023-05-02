@@ -1,132 +1,104 @@
 package com.tll.backend.repository.impl.barang;
 
 import com.tll.backend.model.barang.Barang;
-import com.tll.backend.repository.CrudRepository;
-import com.tll.backend.repository.InMemoryRepository;
+import com.tll.backend.repository.impl.InMemoryCrudRepository;
 import lombok.AllArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
-public class BarangRepository implements CrudRepository<Integer, Barang>, InMemoryRepository<Barang> {
-
-    // main storage for local repository
-    private List<Barang> storage;
+public class BarangRepository extends InMemoryCrudRepository<Integer, Barang> {
 
     // for indexing, points to index of the actual object in storage
-    private Map<Integer, Integer> idMap;
-    private Map<String, List<Integer>> namaMap;
-    private Map<BigDecimal, List<Integer>> hargaMap;
+    private Map<String, List<Barang>> namaMap;
+    private Map<BigDecimal, List<Barang>> hargaMap;
+
+    public BarangRepository() {
+        super(new HashMap<>());
+    }
 
     @Override
     public void delete(Barang entity) {
         // remove from index
-        int idBarang = entity.getId(), indexBarang = idMap.getOrDefault(idBarang, -1);
+        int idBarang = entity.getId();
 
-        if (indexBarang == -1)
+        if (!storage.containsKey(idBarang))
             return;
 
-        idMap.remove(idBarang);
-        removeFromListMap(namaMap, entity.getNama(), idBarang);
-        removeFromListMap(hargaMap, entity.getHarga(), idBarang);
+        Barang barang = storage.get(idBarang);
+        removeFromListMap(namaMap, entity.getNama(), barang);
+        removeFromListMap(hargaMap, entity.getHarga(), barang);
 
-        storage.remove(indexBarang);
+        super.delete(entity);
     }
 
     @Override
     public void deleteById(Integer idBarang) {
         // remove from index
-        int indexBarang = idMap.getOrDefault(idBarang, -1);
-
-        if (indexBarang == -1)
+        if (!storage.containsKey(idBarang))
             return;
 
-        Barang barang = storage.get(idMap.get(idBarang));
-        idMap.remove(idBarang);
-        removeFromListMap(namaMap, barang.getNama(), idBarang);
-        removeFromListMap(hargaMap, barang.getHarga(), idBarang);
+        Barang barang = storage.get(idBarang);
+        removeFromListMap(namaMap, barang.getNama(), barang);
+        removeFromListMap(hargaMap, barang.getHarga(), barang);
 
-        storage.remove(indexBarang);
+        super.deleteById(idBarang);
     }
 
-    private <T> void removeFromListMap(Map<T, List<Integer>> map, T mapKey, Integer storageIndex) {
-        List<Integer> listMap = map.get(mapKey);
+    private <T, V> void removeFromListMap(Map<T, List<V>> map, T mapKey, V storageIndex) {
+        List<V> listMap = map.get(mapKey);
         listMap.remove(storageIndex);
     }
 
     @Override
-    public Iterable<Barang> findAll() {
-        return new ArrayList<>(storage);
-    }
-
-    @Override
-    public Optional<Barang> findById(Integer idBarang) {
-        // clone so storage barang in storage doesnt change until save is called
-        return Optional.of(storage.get(idMap.get(idBarang)).clone());
-    }
-
-    @Override
     public <S extends Barang> S save(S entity) {
-        int idBarang = entity.getId(), indexBarang = idMap.getOrDefault(idBarang, -1);
+        int idBarang = entity.getId();
         // new object
-        if (indexBarang == -1) {
+        if (!storage.containsKey(idBarang)) {
             entity.setId(storage.size());
-            storage.add(entity.clone());
-
         } else {
-            Barang barang = storage.get(indexBarang);
+            Barang barang = storage.get(idBarang);
             if (!barang.getHarga().equals(entity.getHarga())) {
-                List<Integer> listMap = hargaMap.get(barang.getHarga());
-                listMap.remove(indexBarang);
-                addToListMap(hargaMap, barang.getHarga(), idBarang);
+                List<Barang> listMap = hargaMap.get(barang.getHarga());
+                listMap.remove(barang);
+                addToListMap(hargaMap, barang.getHarga(), barang);
             }
             if (!barang.getNama().equals(entity.getNama())) {
-                List<Integer> listMap = namaMap.get(barang.getNama());
-                listMap.remove(indexBarang);
-                addToListMap(namaMap, barang.getNama(), idBarang);
+                List<Barang> listMap = namaMap.get(barang.getNama());
+                listMap.remove(barang);
+                addToListMap(namaMap, barang.getNama(), barang);
             }
-
-            storage.set(indexBarang, entity.clone());
         }
-        return entity;
-    }
-
-    @Override
-    public void loadData(String url) {
-        // next iteration
+        return super.save(entity);
     }
 
     public Iterable<Barang> findByNama(String nama) {
         return Optional.of(namaMap.get(nama))
-                .orElseGet(ArrayList::new)
-                .stream().map(el -> storage.get(el).clone())
-                .collect(Collectors.toList());
+                .orElseGet(ArrayList::new);
     }
 
     public Iterable<Barang> findByHarga(BigDecimal harga) {
         return Optional.of(hargaMap.get(harga))
-                .orElseGet(ArrayList::new)
-                .stream().map(el -> storage.get(el).clone())
-                .collect(Collectors.toList());
+                .orElseGet(ArrayList::new);
     }
 
-    private <T> void addToListMap(Map<T, List<Integer>> map, T mapIndex, Integer storageIndex) {
-        List<Integer> listMap = map.getOrDefault(mapIndex, null);
+    private <T, V> void addToListMap(Map<T, List<V>> map, T mapIndex, V entity) {
+        List<V> listMap = map.getOrDefault(mapIndex, null);
 
         if (listMap == null) {
-            List<Integer> newList = new ArrayList<>();
-            newList.add(storageIndex);
+            List<V> newList = new ArrayList<>();
+            newList.add(entity);
             map.put(mapIndex, newList);
             return;
         }
 
-        listMap.add(storageIndex);
-
+        listMap.add(entity);
     }
 
 }
