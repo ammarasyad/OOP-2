@@ -1,6 +1,8 @@
 package com.tll.backend.model.barang;
 
-public class KategoriBarang implements Cloneable {
+import java.io.Serializable;
+
+public class KategoriBarang implements Serializable, Cloneable {
     @Override
     public KategoriBarang clone() {
         try {
