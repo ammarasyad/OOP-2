@@ -10,6 +10,7 @@ import lombok.experimental.Accessors;
 import org.javatuples.Pair;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
@@ -18,7 +19,7 @@ public class FixedBill extends Bill implements StorableObject<Integer>, Cloneabl
     public FixedBill(Integer id, Integer userId, List<Pair<Barang, Integer>> listBarang) {
         super(id, userId, listBarang.stream()
                 .map(el -> Pair.with(el.getValue0().clone(), el.getValue1()))
-                .toList());
+                .collect(Collectors.toList()));
     }
 
     @Override
