@@ -1,6 +1,18 @@
 package com.tll.backend.model.barang;
 
-public class KategoriBarang implements Cloneable {
+import java.io.Serializable;
+
+import com.tll.backend.repository.CloneableObject;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@AllArgsConstructor
+@Getter
+public class KategoriBarang implements CloneableObject<KategoriBarang>, Serializable {
+
+    private Integer id;
+    private String namaKategori;
+
     @Override
     public KategoriBarang clone() {
         try {
