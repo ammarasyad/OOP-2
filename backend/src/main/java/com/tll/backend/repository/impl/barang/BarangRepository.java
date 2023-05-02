@@ -21,6 +21,8 @@ public class BarangRepository extends InMemoryCrudRepository<Integer, Barang> {
 
     public BarangRepository() {
         super(new HashMap<>());
+        namaMap = new HashMap<>();
+        hargaMap = new HashMap<>();
     }
 
     @Override
