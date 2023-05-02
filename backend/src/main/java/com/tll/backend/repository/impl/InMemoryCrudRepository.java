@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @AllArgsConstructor
 @NoArgsConstructor
-public class InMemoryCrudRepository<ID, V extends StorableObject<ID>> implements CrudRepository<ID, V> {
+public class InMemoryCrudRepository<ID extends Comparable<ID>, V extends StorableObject<ID>> implements CrudRepository<ID, V> {
 
     protected Map<ID, V> storage;
 
