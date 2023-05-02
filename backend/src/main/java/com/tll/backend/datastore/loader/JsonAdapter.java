@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.tll.backend.datastore.DataAdapter;
 import lombok.AllArgsConstructor;
 import lombok.Setter;
 
@@ -12,7 +13,7 @@ import java.io.IOException;
 import java.util.List;
 
 @AllArgsConstructor
-public class JsonAdapter implements DataStore {
+public class JsonAdapter implements DataAdapter {
     @Setter
     private String fileName;
 

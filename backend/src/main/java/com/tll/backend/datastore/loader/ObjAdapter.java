@@ -1,6 +1,7 @@
 package com.tll.backend.datastore.loader;
 
 import com.fasterxml.jackson.databind.JavaType;
+import com.tll.backend.datastore.DataAdapter;
 import lombok.AllArgsConstructor;
 import lombok.Setter;
 
@@ -13,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
-public class ObjAdapter implements DataStore {
+public class ObjAdapter implements DataAdapter {
     @Setter
     private String fileName;
 

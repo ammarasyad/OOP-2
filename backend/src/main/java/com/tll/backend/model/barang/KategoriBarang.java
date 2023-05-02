@@ -5,7 +5,9 @@ import java.io.Serializable;
 import com.tll.backend.repository.CloneableObject;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
 @AllArgsConstructor
 @Getter
 public class KategoriBarang implements CloneableObject<KategoriBarang>, Serializable {
