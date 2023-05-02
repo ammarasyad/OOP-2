@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.List;
 
 @AllArgsConstructor
-public class DataLoader {
+public abstract class DataLoader {
     private final DataStore dataStore;
 
     public void save(List<?> objects) throws IOException {
