@@ -1,6 +1,16 @@
 package com.tll.backend.model.barang;
 
-public class KategoriBarang implements Cloneable {
+import com.tll.backend.repository.CloneableObject;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@AllArgsConstructor
+@Getter
+public class KategoriBarang implements CloneableObject<KategoriBarang> {
+
+    private Integer id;
+    private String namaKategori;
+
     @Override
     public KategoriBarang clone() {
         try {

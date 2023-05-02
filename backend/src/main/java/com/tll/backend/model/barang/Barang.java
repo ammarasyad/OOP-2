@@ -1,5 +1,7 @@
 package com.tll.backend.model.barang;
 
+import com.tll.backend.repository.CloneableObject;
+import com.tll.backend.repository.StorableObject;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,7 +14,7 @@ import java.math.BigDecimal;
 @Builder
 @AllArgsConstructor
 @Accessors(chain = true)
-public class Barang implements Serializable, Cloneable {
+public class Barang implements Serializable, CloneableObject<Barang>, StorableObject<Integer> {
 
     private Integer id;
     private int stok;
