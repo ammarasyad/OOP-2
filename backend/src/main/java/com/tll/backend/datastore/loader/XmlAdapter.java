@@ -3,6 +3,7 @@ package com.tll.backend.datastore.loader;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.tll.backend.datastore.DataAdapter;
 import lombok.AllArgsConstructor;
 import lombok.Setter;
 
@@ -11,7 +12,7 @@ import java.io.IOException;
 import java.util.List;
 
 @AllArgsConstructor
-public class XmlAdapter implements DataStore {
+public class XmlAdapter implements DataAdapter {
     @Setter
     private String fileName;
 
