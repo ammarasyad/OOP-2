@@ -21,6 +21,7 @@ public class AppController {
     private MenuItem historyPage;
     private MenuItem kasirPage;
     private MenuItem settingPage;
+    private MenuItem InsertPage;
     private TabPane tabPane;
     private MainPageModel mainPageModel;
     private RegisterPageModel registerPageModel;
@@ -28,7 +29,15 @@ public class AppController {
     private BarangRepository barangRepository;
     private TemporaryBillRepository temporaryBillRepository;
 
-    private VBox sidebar;
+    private static final String OPEN_PAGE = "Open Page";
+    private static final String MAIN_PAGE = "Main";
+    private static final String REGISTER_PAGE = "Register";
+    private static final String UPDATE_PAGE = "Update";
+    private static final String HISTORY_PAGE = "History";
+    private static final String KASIR_PAGE = "Kasir";
+    private static final String INSERT_PAGE = "Insert";
+    private static final String SETTING_PAGE = "Setting";
+
 
     public AppController(BarangRepository barangRepository, TemporaryBillRepository temporaryBillRepository) {
         this.barangRepository = barangRepository;
@@ -37,14 +46,15 @@ public class AppController {
         registerPageModel = new RegisterPageModel();
         updatePageModel = new UpdatePageModel();
 
-        pages = new Menu("Open Page");
-        mainPage = new MenuItem("Main Page");
-        registerPage = new MenuItem("Register Page");
-        updatePage = new MenuItem("Update Page");
-        historyPage = new MenuItem("History Page");
-        kasirPage = new MenuItem("Kasir Page");
-        settingPage = new MenuItem("Setting");
-        pages.getItems().addAll(mainPage, registerPage, updatePage, historyPage, kasirPage, settingPage);
+        pages = new Menu(OPEN_PAGE);
+        mainPage = new MenuItem(MAIN_PAGE);
+        registerPage = new MenuItem(REGISTER_PAGE);
+        updatePage = new MenuItem(UPDATE_PAGE);
+        historyPage = new MenuItem(HISTORY_PAGE);
+        kasirPage = new MenuItem(KASIR_PAGE);
+        InsertPage = new MenuItem(INSERT_PAGE);
+        settingPage = new MenuItem(SETTING_PAGE);
+        pages.getItems().addAll(mainPage, registerPage, updatePage, historyPage, kasirPage, settingPage, InsertPage);
         tabPane = new TabPane();
         tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
 
@@ -54,28 +64,28 @@ public class AppController {
         historyPage.setOnAction(event -> addHistoryPage());
         kasirPage.setOnAction(event -> addKasirPage());
         settingPage.setOnAction(event -> addSetting());
-
+        InsertPage.setOnAction(event ->addInsertPage());
 
     }
     private void addMainPage() {
-        ClosableTab tab = new ClosableTab("Main Page");
+        ClosableTab tab = new ClosableTab(MAIN_PAGE);
         tab.setContent(PageFactory.getMainPage(mainPageModel));
         tabPane.getTabs().add(tab);
     }
     private void addRegisterPage() {
-        ClosableTab tab = new ClosableTab("Register Page");
+        ClosableTab tab = new ClosableTab(REGISTER_PAGE);
         tab.setContent(PageFactory.getRegisterPage(registerPageModel));
         tabPane.getTabs().add(tab);
     }
 
     private void addUpdatePage() {
-        ClosableTab tab = new ClosableTab("Update Page");
+        ClosableTab tab = new ClosableTab(REGISTER_PAGE);
         tab.setContent(PageFactory.getUpdatePage(updatePageModel));
         tabPane.getTabs().add(tab);
     }
 
     private void addHistoryPage() {
-        ClosableTab tab = new ClosableTab("History Page");
+        ClosableTab tab = new ClosableTab(HISTORY_PAGE);
         tab.setContent(PageFactory.getHistoryPage());
         tabPane.getTabs().add(tab);
     }
@@ -83,14 +93,21 @@ public class AppController {
     private void addKasirPage() {
         var tempBill = temporaryBillRepository.findById(0).orElseThrow(() -> new RuntimeException());
         KasirPageModel kasirPageModel = new KasirPageModel(tempBill);
-        ClosableTab tab = new ClosableTab("History Page");
+        ClosableTab tab = new ClosableTab(KASIR_PAGE);
         tab.setContent(PageFactory.getKasirPage(temporaryBillRepository, barangRepository, kasirPageModel));
         tabPane.getTabs().add(tab);
     }
 
     private void addSetting() {
-        ClosableTab tab = new ClosableTab("Setting");
+        ClosableTab tab = new ClosableTab(SETTING_PAGE);
         tab.setContent(PageFactory.getSetting());
         tabPane.getTabs().add(tab);
     }
+
+    private void addInsertPage(){
+        ClosableTab tab = new ClosableTab(INSERT_PAGE);
+        tab.setContent(PageFactory.getInsertBarangPage());
+        tabPane.getTabs().add(tab);
+    }
+
 }

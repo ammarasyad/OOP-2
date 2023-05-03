@@ -440,7 +440,70 @@ public class PageFactory {
 
         return settingPage;
     }
+    public static VBox getInsertBarangPage(){
+        VBox InsertPage = new VBox();
+        InsertPage.setPadding(new Insets(10));
+        InsertPage.setSpacing(10);
 
+        InsertPage.setPrefSize(600, 400);
+        InsertPage.setAlignment(Pos.TOP_LEFT);
+
+        Label label = new Label("Tambah barang");
+        label.setFont(new Font(38.0));
+        VBox.setMargin(label, new Insets(0, 0, 0, 10)); // set left margin of label
+
+        HBox hbox = new HBox();
+        hbox.setStyle("-fx-background-color: #ddd;");
+
+        VBox leftVbox = new VBox();
+        leftVbox.setPrefSize(100, 200);
+        leftVbox.setSpacing(10);
+        leftVbox.setPadding(new Insets(10));
+
+        Label nameLabel = new Label("Nama Barang :");
+        TextField nameTextField = new TextField();
+        nameTextField.setPromptText("e.g. Dhontol ");
+
+        Label PriceLabel = new Label("Harga :");
+        TextField PriceTextField = new TextField();
+        PriceTextField.setPromptText("e.g. Rp. 696969");
+
+        Label BuyPriceLabel = new Label("Harga Beli :");
+        TextField BuyPriceTextField = new TextField();
+        BuyPriceTextField.setPromptText("e.g. Rp. 696969");
+
+        Label KategoriLabel = new Label("Kategori :");
+        TextField KategoriTextField = new TextField();
+        KategoriTextField.setPromptText("e.g. Barang Pemuas Nafsu");
+
+        Label OnSaleLabel = new Label("Dijual :");
+        TextField OnSaleTextField = new TextField();
+        OnSaleTextField.setPromptText("e.g. iyahhhhh");
+
+
+        leftVbox.getChildren().addAll(nameLabel, nameTextField, PriceLabel, PriceTextField,BuyPriceLabel,BuyPriceTextField, KategoriLabel, KategoriTextField, OnSaleLabel, OnSaleTextField);    ;
+        HBox.setMargin(leftVbox, new Insets(10, 10, 10, 20)); // set margin of left VBox in HBox
+
+        VBox rightVbox = new VBox();
+        rightVbox.setAlignment(Pos.BOTTOM_RIGHT);
+        rightVbox.setPrefSize(100, 200);
+
+        Button TambahButton = new Button("Tambah");
+        rightVbox.getChildren().add(TambahButton);
+
+        VBox.setMargin(TambahButton, new Insets(0, 30, 30, 0)); // set margin of button in right VBox
+        rightVbox.setPadding(new Insets(0, 30, 30, 0)); // set padding of right VBox
+
+        hbox.getChildren().addAll(leftVbox, rightVbox);
+        InsertPage.getChildren().addAll(label, hbox);
+
+        HBox.setHgrow(leftVbox, Priority.ALWAYS); // set HGrow to fill half of HBox
+        HBox.setHgrow(rightVbox, Priority.ALWAYS);
+        VBox.setVgrow(hbox, Priority.ALWAYS);
+
+
+        return InsertPage;
+    }
     public static VBox getKasirPage(TemporaryBill temporaryBill){
         return getKasirPage(temporaryBill);
     }
