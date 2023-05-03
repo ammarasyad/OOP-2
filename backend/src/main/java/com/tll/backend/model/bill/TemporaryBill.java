@@ -1,7 +1,6 @@
 package com.tll.backend.model.bill;
 
 import com.tll.backend.model.barang.Barang;
-import com.tll.backend.repository.StorableObject;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.javatuples.Pair;
@@ -10,7 +9,7 @@ import java.util.ArrayList;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class TemporaryBill extends Bill implements StorableObject<Integer> {
+public class TemporaryBill extends Bill {
 
     public TemporaryBill(Integer id, Integer userId) {
         super(id, userId, new ArrayList<>());
@@ -21,7 +20,11 @@ public class TemporaryBill extends Bill implements StorableObject<Integer> {
     }
 
     public FixedBill convertToFixedBill() {
-        return new FixedBill(this.id, this.userId, cart);
+        var tempCart = cart.stream()
+                .map(el -> Pair.with(el.getValue0().clone(), el.getValue1()))
+                .toList();
+
+        return new FixedBill(this.id, this.userId, tempCart);
     }
 
 }
