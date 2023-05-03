@@ -3,19 +3,18 @@ package com.tll.backend.repository.impl;
 import com.tll.backend.repository.CrudRepository;
 import com.tll.backend.repository.StorableObject;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 import java.util.Map;
 import java.util.Optional;
 
 @AllArgsConstructor
-@NoArgsConstructor
 public class InMemoryCrudRepository<ID extends Comparable<ID>, V extends StorableObject<ID>> implements CrudRepository<ID, V> {
 
-    protected Map<ID, V> storage;
+    protected final Map<ID, V> storage;
 
     @Override
-    public void delete(V entity) {
+    public void delete(@NonNull V entity) {
         ID id = entity.getId();
         storage.remove(id);
     }
@@ -33,7 +32,7 @@ public class InMemoryCrudRepository<ID extends Comparable<ID>, V extends Storabl
     @Override
     public Iterable<V> findAll() {
         return storage.keySet().stream()
-                .map(el -> storage.get(el))
+                .map(storage::get)
                 .toList();
     }
 
@@ -43,7 +42,7 @@ public class InMemoryCrudRepository<ID extends Comparable<ID>, V extends Storabl
     }
 
     @Override
-    public <S extends V> S save(S entity) {
+    public <S extends V> S save(@NonNull S entity) {
         ID id = entity.getId();
         if (storage.containsKey(id)) {
             storage.replace(id, entity);
