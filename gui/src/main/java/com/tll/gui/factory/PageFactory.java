@@ -276,6 +276,8 @@ public class PageFactory {
         FlowPane productVBox = kasirPageModel.getProductsList();
 //        productVBox.setSpacing(10);
         productVBox.setPadding(new Insets(10));
+        productVBox.setHgap(10);
+        productVBox.setVgap(10);
 
         VBox selectedVBox = kasirPageModel.getSelectedItem();
         selectedVBox.setSpacing(10);
@@ -343,6 +345,7 @@ public class PageFactory {
         bottomRightVbox.getChildren().addAll(billButton);
         bottomRightVbox.setMinHeight(100);
         VBox.setVgrow(bottomRightVbox, Priority.ALWAYS);
+        billButton.setOnAction(event -> kasirPageControl.saveTemporaryBill());
 
         detailVBox.getChildren().addAll(detailLabel, selectedProduct, bottomRightVbox);
 
@@ -462,33 +465,61 @@ public class PageFactory {
 
         Label nameLabel = new Label("Nama Barang :");
         TextField nameTextField = new TextField();
-        nameTextField.setPromptText("e.g. Dhontol ");
+        nameTextField.setPromptText("e.g. Barang ");
 
         Label PriceLabel = new Label("Harga :");
         TextField PriceTextField = new TextField();
-        PriceTextField.setPromptText("e.g. Rp. 696969");
+        PriceTextField.setPromptText("e.g. 20000");
 
         Label BuyPriceLabel = new Label("Harga Beli :");
         TextField BuyPriceTextField = new TextField();
-        BuyPriceTextField.setPromptText("e.g. Rp. 696969");
+        BuyPriceTextField.setPromptText("e.g. 10000");
 
         Label KategoriLabel = new Label("Kategori :");
         TextField KategoriTextField = new TextField();
-        KategoriTextField.setPromptText("e.g. Barang Pemuas Nafsu");
+        KategoriTextField.setPromptText("e.g. Makan");
 
         Label OnSaleLabel = new Label("Dijual :");
-        TextField OnSaleTextField = new TextField();
-        OnSaleTextField.setPromptText("e.g. iyahhhhh");
+        HBox saleHbox = new HBox();
+        RadioButton fs = new RadioButton("iya");
+        fs.setPadding(new Insets(0, 20, 0, 0));
+        RadioButton nfs = new RadioButton("tidak");
+        saleHbox.getChildren().addAll(fs, nfs);
 
+        HBox fileHbox = new HBox();
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("JPG Files", "*.jpg"),
+                new FileChooser.ExtensionFilter("JPEG Files", "*.jpeg"),
+                new FileChooser.ExtensionFilter("PNG Files", "*.png")
 
-        leftVbox.getChildren().addAll(nameLabel, nameTextField, PriceLabel, PriceTextField,BuyPriceLabel,BuyPriceTextField, KategoriLabel, KategoriTextField, OnSaleLabel, OnSaleTextField);    ;
+        );
+
+        Stage fileStage = new Stage();
+        fileStage.setTitle("Select File");
+
+        Button selectButton = new Button("Select File");
+        Label fileLabel = new Label("File :");
+        fileLabel.setFont(new Font(14));
+
+        selectButton.setOnAction(e -> {
+            File selectedFile = fileChooser.showOpenDialog(fileStage);
+            fileLabel.setText("File :" + selectedFile.getName());
+        });
+
+        fileHbox.setSpacing(40);
+        fileHbox.getChildren().addAll(selectButton, fileLabel);
+        fileHbox.setAlignment(Pos.CENTER_LEFT);
+
+        leftVbox.getChildren().addAll(nameLabel, nameTextField, PriceLabel, PriceTextField,BuyPriceLabel,
+                BuyPriceTextField, KategoriLabel, KategoriTextField, OnSaleLabel, saleHbox, fileHbox);
         HBox.setMargin(leftVbox, new Insets(10, 10, 10, 20)); // set margin of left VBox in HBox
 
         VBox rightVbox = new VBox();
         rightVbox.setAlignment(Pos.BOTTOM_RIGHT);
         rightVbox.setPrefSize(100, 200);
 
-        Button TambahButton = new Button("Tambah");
+        Button TambahButton = new Button("Tambah Barang");
         rightVbox.getChildren().add(TambahButton);
 
         VBox.setMargin(TambahButton, new Insets(0, 30, 30, 0)); // set margin of button in right VBox
@@ -500,7 +531,6 @@ public class PageFactory {
         HBox.setHgrow(leftVbox, Priority.ALWAYS); // set HGrow to fill half of HBox
         HBox.setHgrow(rightVbox, Priority.ALWAYS);
         VBox.setVgrow(hbox, Priority.ALWAYS);
-
 
         return InsertPage;
     }

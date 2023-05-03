@@ -91,6 +91,7 @@ public class AppController {
     }
 
     private void addKasirPage() {
+        temporaryBillRepository.save(new TemporaryBill(0, 0));
         var tempBill = temporaryBillRepository.findById(0).orElseThrow(() -> new RuntimeException());
         KasirPageModel kasirPageModel = new KasirPageModel(tempBill);
         ClosableTab tab = new ClosableTab(KASIR_PAGE);
