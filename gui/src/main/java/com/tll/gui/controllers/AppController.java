@@ -1,5 +1,6 @@
 package com.tll.gui.controllers;
 
+import com.tll.backend.repository.impl.barang.BarangRepository;
 import com.tll.gui.ClosableTab;
 import com.tll.gui.factory.PageFactory;
 import javafx.scene.control.*;
@@ -22,10 +23,12 @@ public class AppController {
     private MainPageModel mainPageModel;
     private RegisterPageModel registerPageModel;
     private UpdatePageModel updatePageModel;
+    private BarangRepository barangRepository;
 
     private VBox sidebar;
 
-    public AppController() {
+    public AppController(BarangRepository barangRepository) {
+        this.barangRepository = barangRepository;
         mainPageModel = new MainPageModel();
         registerPageModel = new RegisterPageModel();
         updatePageModel = new UpdatePageModel();
@@ -75,7 +78,7 @@ public class AppController {
 
     private void addKasirPage() {
         ClosableTab tab = new ClosableTab("History Page");
-        tab.setContent(PageFactory.getKasirPage());
+        tab.setContent(PageFactory.getKasirPage(barangRepository.findAll()));
         tabPane.getTabs().add(tab);
     }
 
