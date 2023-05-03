@@ -1,7 +1,7 @@
 package com.tll.backend.datastore.loader.sql;
 
 import com.fasterxml.jackson.databind.JavaType;
-import com.tll.backend.datastore.DataAdapter;
+import com.tll.backend.datastore.DataStore;
 import com.tll.backend.model.barang.Barang;
 import com.tll.backend.model.barang.KategoriBarang;
 import lombok.AllArgsConstructor;
@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
-public class SqlAdapter implements DataAdapter {
+public class SqlAdapter implements DataStore {
     @Setter
     private String fileName; // Needed?
     private SqlConnection connection;
