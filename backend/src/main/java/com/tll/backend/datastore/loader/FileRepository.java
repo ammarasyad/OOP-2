@@ -1,7 +1,5 @@
 package com.tll.backend.datastore.loader;
 
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.tll.backend.datastore.DataStore;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,14 +27,7 @@ public class FileRepository {
      * @throws IOException If the file type is not supported.
      */
     public static <T> List<T> load(@NotNull Class<T> clazz, DataStore dataStore) throws IOException {
-        return dataStore.load(CollectionsTypeFactory.listOf(clazz));
-    }
-
-    // Nested private class for creating collection types, for Single Responsibility Principle
-    private static class CollectionsTypeFactory {
-        static JavaType listOf(Class<?> clazz) {
-            return TypeFactory.defaultInstance().constructCollectionType(List.class, clazz);
-        }
+        return dataStore.load(clazz);
     }
 
     public enum FileTypes {

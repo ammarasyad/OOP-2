@@ -1,6 +1,5 @@
 package com.tll.backend.datastore.loader;
 
-import com.fasterxml.jackson.databind.JavaType;
 import com.tll.backend.datastore.DataStore;
 import lombok.AllArgsConstructor;
 import lombok.Setter;
@@ -27,7 +26,7 @@ public class ObjAdapter implements DataStore {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> List<T> load(final JavaType clazz) throws IOException {
+    public <T> List<T> load(final Class<T> clazz) throws IOException {
         try (ObjectInputStream ois = new ObjectInputStream(Files.newInputStream(Paths.get(fileName)))) {
             return new ArrayList<>((List<T>) ois.readObject());
         } catch (ClassNotFoundException e) {

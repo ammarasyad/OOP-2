@@ -2,6 +2,7 @@ package com.tll.backend.datastore.loader;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.tll.backend.datastore.DataStore;
 import lombok.AllArgsConstructor;
@@ -25,7 +26,8 @@ public class XmlAdapter implements DataStore {
     }
 
     @Override
-    public <T> List<T> load(JavaType clazz) throws IOException {
-        return new XmlMapper().readValue(new File(fileName), clazz);
+    public <T> List<T> load(final Class<T> clazz) throws IOException {
+        JavaType javaType = TypeFactory.defaultInstance().constructCollectionType(List.class, clazz);
+        return new XmlMapper().readValue(new File(fileName), javaType);
     }
 }

@@ -1,6 +1,5 @@
 package com.tll.backend.datastore.loader.sql;
 
-import com.fasterxml.jackson.databind.JavaType;
 import com.tll.backend.datastore.DataStore;
 import com.tll.backend.model.barang.Barang;
 import com.tll.backend.model.barang.KategoriBarang;
@@ -100,12 +99,10 @@ public class SqlAdapter implements DataStore {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> List<T> load(JavaType clazz) {
+    public <T> List<T> load(Class<T> clazz) {
         try {
             // Since clazz is a list, get the element type
-            Class<?> elementClass = clazz.getContentType().getRawClass();
-
-            if (elementClass.equals(Barang.class)) {
+            if (clazz.equals(Barang.class)) {
                 return (List<T>) loadBarang(connection);
             }
         } catch (SQLException e) {
