@@ -1,6 +1,8 @@
 package com.tll.gui.factory;
 
+import com.tll.backend.model.barang.Barang;
 import com.tll.gui.AutoCompleteComboBox;
+import com.tll.gui.DisplayWidget;
 import com.tll.gui.ProductWidget;
 import com.tll.gui.TransactionWidget;
 import com.tll.gui.controllers.MainPageModel;
@@ -12,7 +14,9 @@ import com.tll.gui.models.UpdatePageControl;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -235,7 +239,7 @@ public class PageFactory {
         return historyPage;
     }
 
-    public static VBox getKasirPage(){
+    public static VBox getKasirPage(Iterable<Barang> barangs){
         VBox kasirPage = new VBox();
         kasirPage.setPadding(new Insets(10));
         kasirPage.setSpacing(10);
@@ -259,16 +263,13 @@ public class PageFactory {
         searchBar.setSpacing(10);
         searchBar.setPadding(new Insets(10));
 
-        VBox productVBox = new VBox();
-        productVBox.setSpacing(10);
+        FlowPane productVBox = new FlowPane();
+//        productVBox.setSpacing(10);
         productVBox.setPadding(new Insets(10));
-        for(int i = 0; i < 6; i++){
-            ProductWidget widget1 = new ProductWidget("Susumu", "12345", "rp 999999");
-            ProductWidget widget2 = new ProductWidget("Anumu", "67890", "rp 80.000");
-            ProductWidget widget3 = new ProductWidget("GoofyAhhCrack", "54321", "rp 619");
 
-            productVBox.getChildren().addAll(widget1, widget2, widget3);
-        }
+        VBox selectedVBox = new VBox();
+        selectedVBox.setSpacing(10);
+        selectedVBox.setPadding(new Insets(10));
 
         VBox productListVBox = new VBox();
         Label transactionLabel = new Label("Products");
@@ -277,6 +278,47 @@ public class PageFactory {
         transactionScrollPane.setMinWidth(230);
         transactionScrollPane.setFitToWidth(true);
         VBox.setVgrow(transactionScrollPane, Priority.ALWAYS);
+
+//        for(int i = 0; i < 9; i++){
+//            DisplayWidget displayWidget = new DisplayWidget("xxx", ""+i,"99", "a.jpg");
+//            displayWidget.setOnMouseClicked(event -> {
+//                ProductWidget productWidget = new ProductWidget(displayWidget);
+//                selectedVBox.getChildren().addAll(productWidget);
+//            });
+//
+//            productVBox.getChildren().addAll(displayWidget);
+//        }
+
+        for(Barang barang: barangs){
+            DisplayWidget displayWidget = new DisplayWidget(barang.getNama(), barang.getId().toString(),"99", "a.jpg");
+            displayWidget.setOnMouseClicked(event -> {
+                ProductWidget productWidget = new ProductWidget(displayWidget);
+                selectedVBox.getChildren().addAll(productWidget);
+            });
+
+            productVBox.getChildren().addAll(displayWidget);
+        }
+
+        DisplayWidget displayWidgets = new DisplayWidget("xxx", ""+9,"99", "a.jpg");
+        displayWidgets.setOnMouseClicked(event -> {
+            ProductWidget productWidget = new ProductWidget(displayWidgets);
+            selectedVBox.getChildren().addAll(productWidget);
+        });
+
+        productVBox.getChildren().addAll(displayWidgets);
+
+        for(int i =10; i < 20; i++){
+            DisplayWidget displayWidget = new DisplayWidget("xxx", ""+i,"99", "a.jpg");
+            displayWidget.setOnMouseClicked(event -> {
+                ProductWidget productWidget = new ProductWidget(displayWidget);
+                selectedVBox.getChildren().addAll(productWidget);
+            });
+
+            productVBox.getChildren().addAll(displayWidget);
+        }
+
+        displayWidgets.setVisible(false);
+        displayWidgets.setManaged(false);
 
 
         productListVBox.getChildren().addAll(searchBar,transactionLabel, transactionScrollPane);
@@ -295,21 +337,6 @@ public class PageFactory {
         HBox.setHgrow(buttonBox, Priority.ALWAYS);
 
 
-        VBox selectedVBox = new VBox();
-        selectedVBox.setSpacing(10);
-        selectedVBox.setPadding(new Insets(10));
-
-        for(int i = 0; i < 1; i++){
-            ProductWidget widget1 = new ProductWidget("Susumu", "12345", "rp 999999");
-            ProductWidget widget2 = new ProductWidget("Anumu", "67890", "rp 80.000");
-            ProductWidget widget3 = new ProductWidget("GoofyAhhCrack", "54321", "rp 619");
-
-            // nambahin buttonbox untuk setiap widget
-            widget1.getChildren().add(widget1.getButtonBox());
-            widget2.getChildren().add(widget2.getButtonBox());
-            widget3.getChildren().add(widget3.getButtonBox());
-            selectedVBox.getChildren().addAll(widget1, widget2, widget3);
-        }
 
         Label detailLabel = new Label("Detail");
         ScrollPane selectedProduct = new ScrollPane(selectedVBox);
