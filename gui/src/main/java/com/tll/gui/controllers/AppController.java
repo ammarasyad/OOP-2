@@ -17,6 +17,7 @@ public class AppController {
     private MenuItem updatePage;
     private MenuItem historyPage;
     private MenuItem kasirPage;
+    private MenuItem settingPage;
     private TabPane tabPane;
     private MainPageModel mainPageModel;
     private RegisterPageModel registerPageModel;
@@ -35,7 +36,8 @@ public class AppController {
         updatePage = new MenuItem("Update Page");
         historyPage = new MenuItem("History Page");
         kasirPage = new MenuItem("Kasir Page");
-        pages.getItems().addAll(mainPage, registerPage, updatePage, historyPage, kasirPage);
+        settingPage = new MenuItem("Setting");
+        pages.getItems().addAll(mainPage, registerPage, updatePage, historyPage, kasirPage, settingPage);
         tabPane = new TabPane();
         tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
 
@@ -44,6 +46,7 @@ public class AppController {
         updatePage.setOnAction(event -> addUpdatePage());
         historyPage.setOnAction(event -> addHistoryPage());
         kasirPage.setOnAction(event -> addKasirPage());
+        settingPage.setOnAction(event -> addSetting());
 
 
     }
@@ -73,6 +76,12 @@ public class AppController {
     private void addKasirPage() {
         ClosableTab tab = new ClosableTab("History Page");
         tab.setContent(PageFactory.getKasirPage());
+        tabPane.getTabs().add(tab);
+    }
+
+    private void addSetting() {
+        ClosableTab tab = new ClosableTab("Setting");
+        tab.setContent(PageFactory.getSetting());
         tabPane.getTabs().add(tab);
     }
 }

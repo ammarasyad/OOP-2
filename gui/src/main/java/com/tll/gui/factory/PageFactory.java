@@ -17,7 +17,10 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
+import java.io.File;
 import java.util.BitSet;
 
 public class PageFactory {
@@ -341,6 +344,85 @@ public class PageFactory {
         VBox.setVgrow(kasirPage, Priority.ALWAYS);
 
         return kasirPage;
+    }
+
+    public static VBox getSetting() {
+        VBox settingPage = new VBox();
+        settingPage.setSpacing(10);
+
+        Label titleLabel = new Label("Setting");
+        titleLabel.setFont(new Font(38));
+        VBox.setMargin(titleLabel, new Insets(0, 0, 0, 10));
+
+        VBox mainVbox = new VBox();
+        mainVbox.setStyle("-fx-background-color: #ddd;");
+
+        VBox dataVbox = new VBox();
+        dataVbox.setPrefSize(100, 200);
+        dataVbox.setSpacing(10);
+        dataVbox.setPadding(new Insets(10));
+
+        Label databoxTitle = new Label("Data Store");
+        databoxTitle.setFont(new Font(24));
+        VBox.setMargin(databoxTitle, new Insets(0, 0, 0, 0));
+
+        HBox formatHbox = new HBox();
+        Label formatLabel = new Label("Format File :");
+        formatLabel.setFont(new Font(14));
+
+        ComboBox formatFile = new ComboBox<>();
+        formatFile.getItems().addAll("JSON", "XML");
+        formatHbox.getChildren().addAll(formatLabel, formatFile);
+        formatHbox.setSpacing(40);
+        formatHbox.setAlignment(Pos.CENTER_LEFT);
+
+        HBox fileHbox = new HBox();
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Text Files", "*.txt")
+                ,new FileChooser.ExtensionFilter("HTML Files", "*.htm")
+        );
+
+        Stage stage = new Stage();
+        stage.setTitle("Select File");
+
+        Button selectButton = new Button("Select File");
+        Label fileLabel = new Label("File :");
+        fileLabel.setFont(new Font(14));
+
+        selectButton.setOnAction(e -> {
+            File selectedFile = fileChooser.showOpenDialog(stage);
+            fileLabel.setText("File :" + selectedFile.getName());
+        });
+
+        fileHbox.setSpacing(40);
+        fileHbox.getChildren().addAll(selectButton, fileLabel);
+        fileHbox.setAlignment(Pos.CENTER_LEFT);
+
+        dataVbox.setSpacing(30);
+        dataVbox.setStyle("-fx-border-color: black;" + "-fx-border-style: hidden hidden solid hidden");
+        dataVbox.getChildren().addAll(databoxTitle, formatHbox, fileHbox);
+
+        VBox pluginVbox = new VBox();
+        pluginVbox.setPrefSize(100, 200);
+        pluginVbox.setSpacing(10);
+        pluginVbox.setPadding(new Insets(10));
+
+        Label pluginboxTitle = new Label("Plugin");
+        pluginboxTitle.setFont(new Font(24));
+        VBox.setMargin(pluginboxTitle, new Insets(0, 0, 0, 0));
+
+        HBox mainPluginBox = new HBox();
+
+        pluginVbox.getChildren().setAll(pluginboxTitle, mainPluginBox);
+
+        mainVbox.getChildren().addAll(dataVbox, pluginVbox);
+
+        settingPage.getChildren().addAll(titleLabel, mainVbox);
+
+        VBox.setVgrow(mainVbox, Priority.ALWAYS);
+
+        return settingPage;
     }
 
 
