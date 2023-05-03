@@ -1,41 +1,45 @@
 package com.tll.gui;
 
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import lombok.AccessLevel;
+import lombok.Getter;
 
+@Getter
 public class ProductWidget extends HBox {
-    private Label nameLabel;
-    private Label idLabel;
-    private Label priceLabel;
+    private String name;
+    private String productId;
+    private String price;
+    private int quantity;
+    @Getter(value = AccessLevel.NONE)
+    private EventHandler<MouseEvent> previousEventHandler;
 
-    private Label quantityLabel;
-
-    private Button plusButton;
-    private Button minusButton;
-
-    private HBox buttonBox;
-
-
-    public ProductWidget(String name, String id, String price) {
+    public ProductWidget(DisplayWidget displayWidget) {
         super();
-        nameLabel = new Label("Name: " + name);
-        idLabel = new Label("ID: " + id);
-        priceLabel = new Label("Price: " + price);
-        quantityLabel = new Label("1");
-        plusButton = new Button("+");
-        minusButton = new Button("-");
-
+        previousEventHandler = (EventHandler<MouseEvent>) displayWidget.getOnMouseClicked();
+        this.name = displayWidget.getName();
+        this.productId = displayWidget.getProductId();
+        this.price = displayWidget.getPrice();
+        this.quantity = 1;
+        Label nameLabel = new Label("Name: " + name);
+        Label idLabel = new Label("ID: " + productId);
+        Label priceLabel = new Label("Price: " + price);
+        Label quantityLabel = new Label("1");
+        Button plusButton = new Button("+");
+        Button minusButton = new Button("-");
         // button + - box
-        buttonBox = new HBox(10, minusButton, quantityLabel, plusButton);
-       buttonBox.setAlignment(Pos.CENTER_RIGHT);
+        HBox buttonBox = new HBox(10, minusButton, quantityLabel, plusButton);
+        buttonBox.setAlignment(Pos.CENTER_RIGHT);
 
         // Customize labels if needed
         setPadding(new Insets(5));
-        getChildren().addAll(nameLabel, idLabel, priceLabel);
+        getChildren().addAll(nameLabel, idLabel, priceLabel, buttonBox);
 
         HBox.setHgrow(buttonBox, Priority.ALWAYS);
 
@@ -52,7 +56,6 @@ public class ProductWidget extends HBox {
 
         // nambah item
         plusButton.setOnAction(e -> {
-           int quantity = Integer.parseInt(quantityLabel.getText());
             quantity++;
             quantityLabel.setText(Integer.toString(quantity));
 
@@ -61,19 +64,18 @@ public class ProductWidget extends HBox {
 
         // kurang item, hapus jika quantity = 0
         minusButton.setOnAction(e -> {
-            int quantity = Integer.parseInt(quantityLabel.getText());
             if (quantity > 0) {
                 quantity--;
                 quantityLabel.setText(Integer.toString(quantity));
             }
             if (quantity == 0) {
                 ((Pane) getParent()).getChildren().remove(this);
+                displayWidget.setOnMouseClicked(previousEventHandler);
             }
         });
-    }
 
-    // buttonbox supaya cuma ke bagian kanan
-    public HBox getButtonBox() {
-        return buttonBox;
+        displayWidget.setOnMouseClicked(event -> {
+            plusButton.fire();
+        });
     }
 }

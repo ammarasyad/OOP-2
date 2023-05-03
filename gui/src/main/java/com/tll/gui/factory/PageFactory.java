@@ -1,6 +1,8 @@
 package com.tll.gui.factory;
 
+import com.tll.backend.model.barang.Barang;
 import com.tll.gui.AutoCompleteComboBox;
+import com.tll.gui.DisplayWidget;
 import com.tll.gui.ProductWidget;
 import com.tll.gui.TransactionWidget;
 import com.tll.gui.controllers.MainPageModel;
@@ -12,12 +14,17 @@ import com.tll.gui.models.UpdatePageControl;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
+import java.io.File;
 import java.util.BitSet;
 
 public class PageFactory {
@@ -235,7 +242,7 @@ public class PageFactory {
         return historyPage;
     }
 
-    public static VBox getKasirPage(){
+    public static VBox getKasirPage(Iterable<Barang> barangs){
         VBox kasirPage = new VBox();
         kasirPage.setPadding(new Insets(10));
         kasirPage.setSpacing(10);
@@ -259,16 +266,13 @@ public class PageFactory {
         searchBar.setSpacing(10);
         searchBar.setPadding(new Insets(10));
 
-        VBox productVBox = new VBox();
-        productVBox.setSpacing(10);
+        FlowPane productVBox = new FlowPane();
+//        productVBox.setSpacing(10);
         productVBox.setPadding(new Insets(10));
-        for(int i = 0; i < 6; i++){
-            ProductWidget widget1 = new ProductWidget("Susumu", "12345", "rp 999999");
-            ProductWidget widget2 = new ProductWidget("Anumu", "67890", "rp 80.000");
-            ProductWidget widget3 = new ProductWidget("GoofyAhhCrack", "54321", "rp 619");
 
-            productVBox.getChildren().addAll(widget1, widget2, widget3);
-        }
+        VBox selectedVBox = new VBox();
+        selectedVBox.setSpacing(10);
+        selectedVBox.setPadding(new Insets(10));
 
         VBox productListVBox = new VBox();
         Label transactionLabel = new Label("Products");
@@ -277,6 +281,47 @@ public class PageFactory {
         transactionScrollPane.setMinWidth(230);
         transactionScrollPane.setFitToWidth(true);
         VBox.setVgrow(transactionScrollPane, Priority.ALWAYS);
+
+//        for(int i = 0; i < 9; i++){
+//            DisplayWidget displayWidget = new DisplayWidget("xxx", ""+i,"99", "a.jpg");
+//            displayWidget.setOnMouseClicked(event -> {
+//                ProductWidget productWidget = new ProductWidget(displayWidget);
+//                selectedVBox.getChildren().addAll(productWidget);
+//            });
+//
+//            productVBox.getChildren().addAll(displayWidget);
+//        }
+
+        for(Barang barang: barangs){
+            DisplayWidget displayWidget = new DisplayWidget(barang.getNama(), barang.getId().toString(),"99", "a.jpg");
+            displayWidget.setOnMouseClicked(event -> {
+                ProductWidget productWidget = new ProductWidget(displayWidget);
+                selectedVBox.getChildren().addAll(productWidget);
+            });
+
+            productVBox.getChildren().addAll(displayWidget);
+        }
+
+        DisplayWidget displayWidgets = new DisplayWidget("xxx", ""+9,"99", "a.jpg");
+        displayWidgets.setOnMouseClicked(event -> {
+            ProductWidget productWidget = new ProductWidget(displayWidgets);
+            selectedVBox.getChildren().addAll(productWidget);
+        });
+
+        productVBox.getChildren().addAll(displayWidgets);
+
+        for(int i =10; i < 20; i++){
+            DisplayWidget displayWidget = new DisplayWidget("xxx", ""+i,"99", "a.jpg");
+            displayWidget.setOnMouseClicked(event -> {
+                ProductWidget productWidget = new ProductWidget(displayWidget);
+                selectedVBox.getChildren().addAll(productWidget);
+            });
+
+            productVBox.getChildren().addAll(displayWidget);
+        }
+
+        displayWidgets.setVisible(false);
+        displayWidgets.setManaged(false);
 
 
         productListVBox.getChildren().addAll(searchBar,transactionLabel, transactionScrollPane);
@@ -295,21 +340,6 @@ public class PageFactory {
         HBox.setHgrow(buttonBox, Priority.ALWAYS);
 
 
-        VBox selectedVBox = new VBox();
-        selectedVBox.setSpacing(10);
-        selectedVBox.setPadding(new Insets(10));
-
-        for(int i = 0; i < 1; i++){
-            ProductWidget widget1 = new ProductWidget("Susumu", "12345", "rp 999999");
-            ProductWidget widget2 = new ProductWidget("Anumu", "67890", "rp 80.000");
-            ProductWidget widget3 = new ProductWidget("GoofyAhhCrack", "54321", "rp 619");
-
-            // nambahin buttonbox untuk setiap widget
-            widget1.getChildren().add(widget1.getButtonBox());
-            widget2.getChildren().add(widget2.getButtonBox());
-            widget3.getChildren().add(widget3.getButtonBox());
-            selectedVBox.getChildren().addAll(widget1, widget2, widget3);
-        }
 
         Label detailLabel = new Label("Detail");
         ScrollPane selectedProduct = new ScrollPane(selectedVBox);
@@ -341,6 +371,85 @@ public class PageFactory {
         VBox.setVgrow(kasirPage, Priority.ALWAYS);
 
         return kasirPage;
+    }
+
+    public static VBox getSetting() {
+        VBox settingPage = new VBox();
+        settingPage.setSpacing(10);
+
+        Label titleLabel = new Label("Setting");
+        titleLabel.setFont(new Font(38));
+        VBox.setMargin(titleLabel, new Insets(0, 0, 0, 10));
+
+        VBox mainVbox = new VBox();
+        mainVbox.setStyle("-fx-background-color: #ddd;");
+
+        VBox dataVbox = new VBox();
+        dataVbox.setPrefSize(100, 200);
+        dataVbox.setSpacing(10);
+        dataVbox.setPadding(new Insets(10));
+
+        Label databoxTitle = new Label("Data Store");
+        databoxTitle.setFont(new Font(24));
+        VBox.setMargin(databoxTitle, new Insets(0, 0, 0, 0));
+
+        HBox formatHbox = new HBox();
+        Label formatLabel = new Label("Format File :");
+        formatLabel.setFont(new Font(14));
+
+        ComboBox formatFile = new ComboBox<>();
+        formatFile.getItems().addAll("JSON", "XML");
+        formatHbox.getChildren().addAll(formatLabel, formatFile);
+        formatHbox.setSpacing(40);
+        formatHbox.setAlignment(Pos.CENTER_LEFT);
+
+        HBox fileHbox = new HBox();
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Text Files", "*.txt")
+                ,new FileChooser.ExtensionFilter("HTML Files", "*.htm")
+        );
+
+        Stage stage = new Stage();
+        stage.setTitle("Select File");
+
+        Button selectButton = new Button("Select File");
+        Label fileLabel = new Label("File :");
+        fileLabel.setFont(new Font(14));
+
+        selectButton.setOnAction(e -> {
+            File selectedFile = fileChooser.showOpenDialog(stage);
+            fileLabel.setText("File :" + selectedFile.getName());
+        });
+
+        fileHbox.setSpacing(40);
+        fileHbox.getChildren().addAll(selectButton, fileLabel);
+        fileHbox.setAlignment(Pos.CENTER_LEFT);
+
+        dataVbox.setSpacing(30);
+        dataVbox.setStyle("-fx-border-color: black;" + "-fx-border-style: hidden hidden solid hidden");
+        dataVbox.getChildren().addAll(databoxTitle, formatHbox, fileHbox);
+
+        VBox pluginVbox = new VBox();
+        pluginVbox.setPrefSize(100, 200);
+        pluginVbox.setSpacing(10);
+        pluginVbox.setPadding(new Insets(10));
+
+        Label pluginboxTitle = new Label("Plugin");
+        pluginboxTitle.setFont(new Font(24));
+        VBox.setMargin(pluginboxTitle, new Insets(0, 0, 0, 0));
+
+        HBox mainPluginBox = new HBox();
+
+        pluginVbox.getChildren().setAll(pluginboxTitle, mainPluginBox);
+
+        mainVbox.getChildren().addAll(dataVbox, pluginVbox);
+
+        settingPage.getChildren().addAll(titleLabel, mainVbox);
+
+        VBox.setVgrow(mainVbox, Priority.ALWAYS);
+
+        return settingPage;
     }
 
 
