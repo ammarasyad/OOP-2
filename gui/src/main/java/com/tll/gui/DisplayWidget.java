@@ -1,5 +1,6 @@
 package com.tll.gui;
 
+import com.tll.backend.model.barang.Barang;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -24,12 +25,14 @@ public class DisplayWidget extends Pane {
     private String name;
     private String productId;
     private String price;
+    private Barang barang;
 
-    public DisplayWidget(String name, String productId, String price, String imageUrl) {
+    public DisplayWidget(Barang barang) {
         setPrefSize(WIDTH, HEIGHT);
-        this.name = name;
-        this.productId = productId;
-        this.price = price;
+        this.barang = barang;
+        this.name = barang.getNama();
+        this.productId = barang.getId().toString();
+        this.price = barang.getHarga().toString();
         Label nameLabel = new Label("Name: " + name);
         Label idLabel = new Label("ID: " + productId);
         Label priceLabel = new Label("Price: " + price);
@@ -40,7 +43,7 @@ public class DisplayWidget extends Pane {
         rectangle.setStrokeWidth(1.5);
 
         // Create and configure the image view
-        Image a = new Image(getClass().getResourceAsStream(imageUrl));
+        Image a = new Image(getClass().getResourceAsStream("a.jpg"));
         ImageView imageView = new ImageView(a);
         imageView.setFitWidth(IMAGE_SIZE);
         imageView.setFitHeight(IMAGE_SIZE);

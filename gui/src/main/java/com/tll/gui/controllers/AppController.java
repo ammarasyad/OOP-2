@@ -1,6 +1,8 @@
 package com.tll.gui.controllers;
 
+import com.tll.backend.model.bill.TemporaryBill;
 import com.tll.backend.repository.impl.barang.BarangRepository;
+import com.tll.backend.repository.impl.bill.TemporaryBillRepository;
 import com.tll.gui.ClosableTab;
 import com.tll.gui.factory.PageFactory;
 import javafx.scene.control.*;
@@ -24,11 +26,13 @@ public class AppController {
     private RegisterPageModel registerPageModel;
     private UpdatePageModel updatePageModel;
     private BarangRepository barangRepository;
+    private TemporaryBillRepository temporaryBillRepository;
 
     private VBox sidebar;
 
-    public AppController(BarangRepository barangRepository) {
+    public AppController(BarangRepository barangRepository, TemporaryBillRepository temporaryBillRepository) {
         this.barangRepository = barangRepository;
+        this.temporaryBillRepository = temporaryBillRepository;
         mainPageModel = new MainPageModel();
         registerPageModel = new RegisterPageModel();
         updatePageModel = new UpdatePageModel();
@@ -77,8 +81,10 @@ public class AppController {
     }
 
     private void addKasirPage() {
+        var tempBill = temporaryBillRepository.findById(0).orElseThrow(() -> new RuntimeException());
+        KasirPageModel kasirPageModel = new KasirPageModel(tempBill);
         ClosableTab tab = new ClosableTab("History Page");
-        tab.setContent(PageFactory.getKasirPage(barangRepository.findAll()));
+        tab.setContent(PageFactory.getKasirPage(temporaryBillRepository, barangRepository, kasirPageModel));
         tabPane.getTabs().add(tab);
     }
 

@@ -1,13 +1,18 @@
 package com.tll.gui.factory;
 
 import com.tll.backend.model.barang.Barang;
+import com.tll.backend.model.bill.TemporaryBill;
+import com.tll.backend.repository.impl.barang.BarangRepository;
+import com.tll.backend.repository.impl.bill.TemporaryBillRepository;
 import com.tll.gui.AutoCompleteComboBox;
 import com.tll.gui.DisplayWidget;
 import com.tll.gui.ProductWidget;
 import com.tll.gui.TransactionWidget;
+import com.tll.gui.controllers.KasirPageModel;
 import com.tll.gui.controllers.MainPageModel;
 import com.tll.gui.controllers.RegisterPageModel;
 import com.tll.gui.controllers.UpdatePageModel;
+import com.tll.gui.models.KasirPageControl;
 import com.tll.gui.models.MainPageControl;
 import com.tll.gui.models.RegisterPageControl;
 import com.tll.gui.models.UpdatePageControl;
@@ -242,8 +247,10 @@ public class PageFactory {
         return historyPage;
     }
 
-    public static VBox getKasirPage(Iterable<Barang> barangs){
+    public static VBox getKasirPage(TemporaryBillRepository temporaryBillRepository, BarangRepository barangRepository, KasirPageModel kasirPageModel){
         VBox kasirPage = new VBox();
+        KasirPageControl kasirPageControl = new KasirPageControl(temporaryBillRepository, barangRepository, kasirPageModel);
+
         kasirPage.setPadding(new Insets(10));
         kasirPage.setSpacing(10);
 
@@ -266,11 +273,11 @@ public class PageFactory {
         searchBar.setSpacing(10);
         searchBar.setPadding(new Insets(10));
 
-        FlowPane productVBox = new FlowPane();
+        FlowPane productVBox = kasirPageModel.getProductsList();
 //        productVBox.setSpacing(10);
         productVBox.setPadding(new Insets(10));
 
-        VBox selectedVBox = new VBox();
+        VBox selectedVBox = kasirPageModel.getSelectedItem();
         selectedVBox.setSpacing(10);
         selectedVBox.setPadding(new Insets(10));
 
@@ -292,36 +299,18 @@ public class PageFactory {
 //            productVBox.getChildren().addAll(displayWidget);
 //        }
 
-        for(Barang barang: barangs){
-            DisplayWidget displayWidget = new DisplayWidget(barang.getNama(), barang.getId().toString(),"99", "a.jpg");
-            displayWidget.setOnMouseClicked(event -> {
-                ProductWidget productWidget = new ProductWidget(displayWidget);
-                selectedVBox.getChildren().addAll(productWidget);
-            });
+//        for(Barang barang: barangs){
+//            DisplayWidget displayWidget = new DisplayWidget(barang);
+//            displayWidget.setOnMouseClicked(event -> {
+//                ProductWidget productWidget = new ProductWidget(displayWidget);
+//                selectedVBox.getChildren().addAll(productWidget);
+//            });
+//
+//            productVBox.getChildren().addAll(displayWidget);
+//        }
 
-            productVBox.getChildren().addAll(displayWidget);
-        }
-
-        DisplayWidget displayWidgets = new DisplayWidget("xxx", ""+9,"99", "a.jpg");
-        displayWidgets.setOnMouseClicked(event -> {
-            ProductWidget productWidget = new ProductWidget(displayWidgets);
-            selectedVBox.getChildren().addAll(productWidget);
-        });
-
-        productVBox.getChildren().addAll(displayWidgets);
-
-        for(int i =10; i < 20; i++){
-            DisplayWidget displayWidget = new DisplayWidget("xxx", ""+i,"99", "a.jpg");
-            displayWidget.setOnMouseClicked(event -> {
-                ProductWidget productWidget = new ProductWidget(displayWidget);
-                selectedVBox.getChildren().addAll(productWidget);
-            });
-
-            productVBox.getChildren().addAll(displayWidget);
-        }
-
-        displayWidgets.setVisible(false);
-        displayWidgets.setManaged(false);
+//        displayWidgets.setVisible(false);
+//        displayWidgets.setManaged(false);
 
 
         productListVBox.getChildren().addAll(searchBar,transactionLabel, transactionScrollPane);
@@ -450,6 +439,10 @@ public class PageFactory {
         VBox.setVgrow(mainVbox, Priority.ALWAYS);
 
         return settingPage;
+    }
+
+    public static VBox getKasirPage(TemporaryBill temporaryBill){
+        return getKasirPage(temporaryBill);
     }
 
 
