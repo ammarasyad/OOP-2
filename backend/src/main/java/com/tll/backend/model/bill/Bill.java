@@ -1,5 +1,9 @@
 package com.tll.backend.model.bill;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.tll.backend.datastore.loader.helper.BillSerializer;
+import com.tll.backend.datastore.loader.helper.ListPairDeserializer;
 import com.tll.backend.model.barang.Barang;
 import com.tll.backend.repository.StorableObject;
 import lombok.AccessLevel;
@@ -19,10 +23,13 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
+@JsonSerialize(using = BillSerializer.class)
 public class Bill implements Serializable, StorableObject<Integer> {
 
     protected Integer id;
     protected Integer userId;
+
+    @JsonDeserialize(using = ListPairDeserializer.class)
     protected List<Pair<Barang, Integer>> cart;
 
     public BigDecimal getTotalPrice() {
