@@ -4,8 +4,8 @@ import com.tll.backend.datastore.loader.FileRepository;
 import com.tll.backend.datastore.loader.JsonAdapter;
 import com.tll.backend.datastore.loader.ObjAdapter;
 import com.tll.backend.datastore.loader.XmlAdapter;
+import com.tll.backend.datastore.loader.hikari.HikariConfig;
 import com.tll.backend.datastore.loader.sql.SqlAdapter;
-import com.tll.backend.datastore.loader.sql.SqlConnection;
 import com.tll.backend.model.barang.Barang;
 import com.tll.backend.model.barang.KategoriBarang;
 import com.tll.backend.model.bill.Bill;
@@ -46,7 +46,7 @@ public class FileRepositoryTest {
         List<Barang> obj = FileRepository.load(Barang.class, objAdapter);
 
         List<Barang> sql;
-        try (SqlConnection connection = SqlConnection.INSTANCE) {
+        try (HikariConfig connection = HikariConfig.INSTANCE) {
             SqlAdapter sqlAdapter = new SqlAdapter("src/test/resources/barang.sql", connection);
             FileRepository.save(barangList, sqlAdapter);
             sql = FileRepository.load(Barang.class, sqlAdapter);
@@ -82,7 +82,7 @@ public class FileRepositoryTest {
         List<Bill> obj = FileRepository.load(Bill.class, objAdapter);
 
         List<Bill> sql;
-        try (SqlConnection connection = SqlConnection.INSTANCE) {
+        try (HikariConfig connection = HikariConfig.INSTANCE) {
             SqlAdapter sqlAdapter = new SqlAdapter("src/test/resources/bill.sql", connection);
             FileRepository.save(barangList, sqlAdapter);
             FileRepository.save(billList, sqlAdapter);

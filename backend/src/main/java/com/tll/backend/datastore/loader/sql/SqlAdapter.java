@@ -1,6 +1,7 @@
 package com.tll.backend.datastore.loader.sql;
 
 import com.tll.backend.datastore.DataStore;
+import com.tll.backend.datastore.loader.hikari.HikariConfig;
 import com.tll.backend.model.barang.Barang;
 import com.tll.backend.model.barang.KategoriBarang;
 import com.tll.backend.model.bill.Bill;
@@ -21,7 +22,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class SqlAdapter implements DataStore {
     @Setter
     private String fileName; // Needed?
-    private SqlConnection connection;
+    private HikariConfig connection;
 
     @Override
     public void save(List<?> objects) throws IOException {
@@ -41,7 +42,7 @@ public class SqlAdapter implements DataStore {
         }
     }
 
-    private void createTablesIfNotExist(SqlConnection connection) throws SQLException {
+    private void createTablesIfNotExist(HikariConfig connection) throws SQLException {
         List<String> queries = List.of(
                 // 1. Kategori
                 "CREATE TABLE IF NOT EXISTS KategoriBarang (" +
@@ -91,7 +92,7 @@ public class SqlAdapter implements DataStore {
         }
     }
 
-    private void insertBarang(SqlConnection connection, List<?> objects) throws SQLException {
+    private void insertBarang(HikariConfig connection, List<?> objects) throws SQLException {
         String query = "INSERT IGNORE INTO barang (id, stok, nama, harga, harga_beli, id_kategori, url_gambar, dijual) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement statement = connection.getDataSource().getConnection().prepareStatement(query)) {
             for (Object o : objects) {
@@ -110,7 +111,7 @@ public class SqlAdapter implements DataStore {
         }
     }
 
-    private void insertKategori(SqlConnection connection, List<?> objects) throws SQLException {
+    private void insertKategori(HikariConfig connection, List<?> objects) throws SQLException {
         String query = "INSERT IGNORE INTO KategoriBarang (id, nama) VALUES (?, ?)";
         try (PreparedStatement statement = connection.getDataSource().getConnection().prepareStatement(query)) {
             for (Object o : objects) {
@@ -123,7 +124,7 @@ public class SqlAdapter implements DataStore {
         }
     }
 
-    private void insertCart(SqlConnection connection, List<?> objects) throws SQLException {
+    private void insertCart(HikariConfig connection, List<?> objects) throws SQLException {
         String query = "INSERT IGNORE INTO Cart (id_barang, jumlah, id_bill) VALUES (?, ?, ?)";
         try (PreparedStatement statement = connection.getDataSource().getConnection().prepareStatement(query)) {
             objects.forEach(o -> {
@@ -153,7 +154,7 @@ public class SqlAdapter implements DataStore {
         }
     }
 
-    private void insertBill(SqlConnection connection, List<?> objects) throws SQLException {
+    private void insertBill(HikariConfig connection, List<?> objects) throws SQLException {
         String query = "INSERT IGNORE INTO Bill (id, user_id) VALUES (?, ?)";
         try (PreparedStatement statement = connection.getDataSource().getConnection().prepareStatement(query)) {
             for (Object o : objects) {
@@ -182,7 +183,7 @@ public class SqlAdapter implements DataStore {
         throw new RuntimeException("Class not supported");
     }
 
-    private List<Barang> loadBarang(SqlConnection connection) throws SQLException {
+    private List<Barang> loadBarang(HikariConfig connection) throws SQLException {
         String query = "SELECT * FROM Barang";
         try (PreparedStatement statement = connection.getDataSource().getConnection().prepareStatement(query);
              ResultSet resultSet = statement.executeQuery()) {
@@ -209,7 +210,7 @@ public class SqlAdapter implements DataStore {
         }
     }
 
-    private Barang loadSingleBarang(SqlConnection connection, Integer id) {
+    private Barang loadSingleBarang(HikariConfig connection, Integer id) {
         String query = "SELECT * FROM Barang WHERE id = " + id;
         try (PreparedStatement statement = connection.getDataSource().getConnection().prepareStatement(query);
              ResultSet resultSet = statement.executeQuery()) {
@@ -234,7 +235,7 @@ public class SqlAdapter implements DataStore {
         return null;
     }
 
-    private KategoriBarang unmarshalKategori(SqlConnection connection, int kategoriId) throws SQLException {
+    private KategoriBarang unmarshalKategori(HikariConfig connection, int kategoriId) throws SQLException {
         KategoriBarang kategoriBarang = null;
         String kategoriQuery = "SELECT * FROM KategoriBarang WHERE id = " + kategoriId;
         try (PreparedStatement kategoriStatement = connection.getDataSource().getConnection().prepareStatement(kategoriQuery);
@@ -246,7 +247,7 @@ public class SqlAdapter implements DataStore {
         return kategoriBarang;
     }
 
-    private List<Bill> loadBill(SqlConnection connection) throws SQLException {
+    private List<Bill> loadBill(HikariConfig connection) throws SQLException {
         String query = "SELECT * FROM Bill";
         try (PreparedStatement statement = connection.getDataSource().getConnection().prepareStatement(query);
              ResultSet resultSet = statement.executeQuery()) {
