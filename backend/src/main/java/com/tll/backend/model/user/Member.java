@@ -45,10 +45,7 @@ public class Member implements StorableObject<Integer> {
     }
 
     public void changeActivation() {
-        if (isActiveStatus()) {
-            setActiveStatus(false);
-        }
-        else setActiveStatus(true);
+        setActiveStatus(!isActiveStatus());
     }
 
     public void addBill(FixedBill bill) {
@@ -56,7 +53,7 @@ public class Member implements StorableObject<Integer> {
     }
     public void printInfo() {
         System.out.println(getId() + " " + getType() + " " + getName() + " " + getPoint() + " " + activeStatus);
-        getBills().forEach(order -> System.out.println("Bill: " );
+        getBills().forEach(order -> System.out.println("Bill: " ));
     }
 
 }

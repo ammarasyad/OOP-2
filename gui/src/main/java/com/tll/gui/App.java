@@ -34,7 +34,7 @@ public class App extends Application {
 
         TemporaryBill tb = new TemporaryBill(0,0);
         tb.addToBill(barang2, 3);
-//        temporaryBillRepository.save(tb);
+        temporaryBillRepository.save(tb);
 
         stage.setTitle("Hello World!");
 
