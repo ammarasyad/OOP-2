@@ -7,13 +7,14 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @RequiredArgsConstructor
-public class Customer implements StorableObject<Integer> {
+public class Customer implements Serializable, StorableObject<Integer> {
     private final Integer id;
     private FixedBill bill;
 
