@@ -28,6 +28,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -40,16 +41,66 @@ public class PageFactory {
         mainPage.setPrefSize(600, 400);
         mainPage.setAlignment(Pos.TOP_CENTER);
 
+        VBox kelompok = new VBox();
+
         Label clockLabel = new Label();
         clockLabel.setFont(new Font(49.0));
 
+        Font font = new Font("Arial",20);
+
+        HBox ezra = new HBox();
+        Label nnezra = new Label("Ezra M C M H / 13521073");
+        nnezra.setFont(font);
+        ezra.getChildren().add(nnezra);
+
+        HBox chris = new HBox();
+        Label nnchris = new Label("Christian Albert Hasiholan / 13521078");
+        nnchris.setFont(font);
+        chris.getChildren().add(nnchris);
+
+        HBox tobi = new HBox();
+        Label nntobi = new Label("Tobias Natalio Sianipar / 13521090");
+        nntobi.setFont(font);
+        tobi.getChildren().add(nntobi);
+
+        HBox ammar = new HBox();
+        Label nnammar = new Label("Ammar Rasyad Chaeroel  / 13521136");
+        nnammar.setFont(font);
+        ammar.getChildren().add(nnammar);
+
+        HBox zidane = new HBox();
+        Label nnzidane = new Label("Zidane Firzatullah / 13521163");
+        nnzidane.setFont(font);
+        zidane.getChildren().add(nnzidane);
+
         Label bottomLabel = new Label();
+        LocalDate currentDate = LocalDate.now();
+        Label dateLabel = new Label(currentDate.toString());
+        dateLabel.setFont(font);
 
         clockLabel.textProperty().bindBidirectional(mainPageModel.getClockLabel().textProperty());
         bottomLabel.textProperty().bindBidirectional(mainPageModel.getBottomLabel().textProperty());
-//        mainPageController.startClock();
+        //        mainPageController.startClock();
 
-        mainPage.getChildren().addAll(clockLabel, bottomLabel);
+        kelompok.getChildren().addAll(ezra, chris, tobi, ammar, zidane);
+        ezra.setAlignment(Pos.BOTTOM_CENTER);
+        chris.setAlignment(Pos.BOTTOM_CENTER);
+        tobi.setAlignment(Pos.BOTTOM_CENTER);
+        ammar.setAlignment(Pos.BOTTOM_CENTER);
+        zidane.setAlignment(Pos.BOTTOM_CENTER);
+
+
+        //kelompok.setSpacing(10);
+        //kelompok.setAlignment(Pos.BOTTOM_RIGHT );
+        //ezra.setMargin()
+        //VBox.setMargin(kelompok, new Insets(350,0,0,0));
+        kelompok.setAlignment(Pos.BOTTOM_CENTER);
+        VBox.setVgrow(kelompok, Priority.ALWAYS);
+        mainPage.getChildren().addAll(clockLabel, dateLabel, kelompok);
+
+        VBox.setVgrow(mainPage, Priority.ALWAYS);
+        //mainPage.setSpacing(5);
+
 
         return mainPage;
     }
