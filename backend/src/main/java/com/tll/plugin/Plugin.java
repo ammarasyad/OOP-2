@@ -1,16 +1,15 @@
-package com.tll.baseclass;
+package com.tll.plugin;
 
-import com.tll.annotation.AutoWired;
 import javafx.scene.control.Menu;
 import javafx.scene.layout.VBox;
 
 
 public abstract class Plugin {
 
-    @AutoWired
+    @AutoWired(identifier = "page_menu")
     private Menu pageMenu;
 
-    @AutoWired
+    @AutoWired(identifier = "plugin_list")
     private VBox pluginList;
 
     public abstract void loadPage();
