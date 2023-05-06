@@ -3,7 +3,10 @@ package com.tll.gui.factory;
 import com.tll.backend.model.bill.TemporaryBill;
 import com.tll.backend.model.user.Member;
 import com.tll.backend.repository.impl.barang.BarangRepository;
+import com.tll.backend.repository.impl.bill.FixedBillRepository;
 import com.tll.backend.repository.impl.bill.TemporaryBillRepository;
+import com.tll.backend.repository.impl.user.CustomerRepository;
+import com.tll.gui.AutoCompleteComboBox;
 import com.tll.gui.TransactionWidget;
 import com.tll.gui.controllers.KasirPageModel;
 import com.tll.gui.controllers.MainPageModel;
@@ -152,7 +155,7 @@ public class PageFactory {
         topRightVbox.setPadding(new Insets(10, 10, 0, 20));
 
         Label akunLabel = new Label("Pilih Akun :");
-        ComboBox<Member> accounts = updatePageModel.getAccounts();
+        AutoCompleteComboBox<Member> accounts = updatePageModel.getAccounts();
         accounts.setEditable(true);
 
         accounts.setMaxWidth(1.7976931348623157E308);
@@ -233,9 +236,9 @@ public class PageFactory {
         return historyPage;
     }
 
-    public static VBox getKasirPage(TemporaryBillRepository temporaryBillRepository, BarangRepository barangRepository, KasirPageModel kasirPageModel){
+    public static VBox getKasirPage(TemporaryBillRepository temporaryBillRepository, BarangRepository barangRepository, FixedBillRepository fixedBillRepository, CustomerRepository customerRepository, KasirPageModel kasirPageModel){
         VBox kasirPage = new VBox();
-        KasirPageControl kasirPageControl = new KasirPageControl(temporaryBillRepository, barangRepository, kasirPageModel);
+        KasirPageControl kasirPageControl = new KasirPageControl(temporaryBillRepository, fixedBillRepository, barangRepository, customerRepository, kasirPageModel);
 
         kasirPage.setPadding(new Insets(10));
         kasirPage.setSpacing(10);
@@ -429,7 +432,7 @@ public class PageFactory {
 
         return settingPage;
     }
-    public static VBox getInsertBarangPage(){
+    public static VBox getInsertBarangPage(BarangRepository barangRepository){
         VBox InsertPage = new VBox();
         InsertPage.setPadding(new Insets(10));
         InsertPage.setSpacing(10);
@@ -510,10 +513,11 @@ public class PageFactory {
         rightVbox.setAlignment(Pos.BOTTOM_RIGHT);
         rightVbox.setPrefSize(100, 200);
 
+//        System.out.println(selectedFile.get().getName());
         Button TambahButton = new Button("Tambah Barang");
         TambahButton.setOnAction(event -> PageActionFactory.doInsertBarang( stokTextField.getText(), nameTextField.getText(),
                 PriceTextField.getText(), BuyPriceTextField.getText(), KategoriTextField.getText(),
-                selectedFile.get().toString(),true ));
+                selectedFile.get().getName(),true ,barangRepository));
 
         rightVbox.getChildren().add(TambahButton);
 

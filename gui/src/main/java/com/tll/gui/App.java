@@ -53,7 +53,8 @@ public class App extends Application {
 
         stage.setTitle("Hello World!");
 
-        AppController ac = new AppController(barangRepository, temporaryBillRepository, customerRepository, memberRepository);
+
+        AppController ac = new AppController(barangRepository, temporaryBillRepository, fixedBillRepository, customerRepository, memberRepository);
         VBox vbox = new AppModel(ac);
 
         Scene scene = new Scene(vbox, 820, 640);

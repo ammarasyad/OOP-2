@@ -7,6 +7,8 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.util.Callback;
+import javafx.util.StringConverter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +16,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 public class AutoCompleteComboBox<E extends Object> extends ComboBox<E> {
+    @Setter
     private Iterable<E> dataItems;
     public AutoCompleteComboBox(Iterable<E> dataItems){
         super();
@@ -47,15 +50,30 @@ public class AutoCompleteComboBox<E extends Object> extends ComboBox<E> {
                 setItems(FXCollections.observableArrayList(suggestions)); // Set the suggestions as the items of the combo box
             }
         });
-    }
 
-    public AutoCompleteComboBox(){
-        this(null);
+        setConverter(new StringConverter<>() {
+            @Override
+            public String toString(E obj) {
+                if (obj == null)
+                    return "";
+                return obj.toString();
+            }
+
+            @Override
+            public E fromString(String obj) {
+                for(E member: dataItems){
+                    if(member.toString().equals(obj)){
+                        return member;
+                    }
+                }
+                throw new RuntimeException("item in combobox is not valid");
+            }
+        });
+
     }
 
     private List<E> getSuggestions(String input) {
         List<E> suggestions = new ArrayList<>();
-
         for (E member : dataItems) {
             if (member.toString().toLowerCase().startsWith(input.toLowerCase())) {
                 suggestions.add(member);
