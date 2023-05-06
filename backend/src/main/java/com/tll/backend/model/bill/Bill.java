@@ -27,7 +27,6 @@ import java.util.List;
 public class Bill implements Serializable, StorableObject<Integer> {
 
     protected Integer id;
-    protected Integer userId;
 
     @JsonDeserialize(using = ListPairDeserializer.class)
     protected List<Pair<Barang, Integer>> cart;
