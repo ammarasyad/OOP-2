@@ -17,22 +17,22 @@ public class PluginLoader {
             Enumeration<JarEntry> entries = jarFile.entries();
 
             PluginContext pluginContext = PluginContext.getInstance();
-            URL[] urls = { new URL("jar:file:" + path +"!/") };
+            URL[] urls = { new URL("jar:file:" + Paths.get(path,jarName) +"!/") };
             URLClassLoader cl = URLClassLoader.newInstance(urls);
             while (entries.hasMoreElements()) {
                 JarEntry jarEntry = entries.nextElement();
                 if (jarEntry == null) {
                     break;
                 }
-                if (jarEntry.getName().endsWith(".class")) {
+                if (jarEntry.getName().endsWith(".class") && !jarEntry.getName().startsWith("module-info")) {
                     String className = jarEntry.getName().substring(0,jarEntry.getName().length()-6);
                     className = className.replace('/', '.');
-
+                    System.out.println(className);
                     Class<?> classLoad = cl.loadClass(className);
-                    Object obj = classLoad.cast(classLoad.getDeclaredConstructor().newInstance());
+                    var obj = classLoad.getDeclaredConstructor().newInstance();
                     if (classLoad.isInterface() || !(obj instanceof Plugin))
                         continue;
-                    pluginContext.addToContext(classLoad.getSimpleName(), obj);
+                    pluginContext.addToContext(String.valueOf(classLoad), null);
                     return (Plugin) obj;
                 }
             }
