@@ -43,7 +43,8 @@ public class DisplayWidget extends Pane {
         rectangle.setStrokeWidth(1.5);
 
         // Create and configure the image view
-        Image a = new Image(getClass().getResourceAsStream("a.jpg"));
+        System.out.println(barang.getUrlGambar());
+        Image a = new Image(getClass().getResourceAsStream(barang.getUrlGambar()));
         ImageView imageView = new ImageView(a);
         imageView.setFitWidth(IMAGE_SIZE);
         imageView.setFitHeight(IMAGE_SIZE);

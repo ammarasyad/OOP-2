@@ -1,9 +1,13 @@
 package com.tll.gui.factory;
 
 import com.tll.backend.model.bill.TemporaryBill;
+import com.tll.backend.model.user.Customer;
 import com.tll.backend.model.user.Member;
 import com.tll.backend.repository.impl.barang.BarangRepository;
+import com.tll.backend.repository.impl.bill.FixedBillRepository;
 import com.tll.backend.repository.impl.bill.TemporaryBillRepository;
+import com.tll.backend.repository.impl.user.CustomerRepository;
+import com.tll.gui.AutoCompleteComboBox;
 import com.tll.gui.TransactionWidget;
 import com.tll.gui.controllers.KasirPageModel;
 import com.tll.gui.controllers.MainPageModel;
@@ -22,7 +26,9 @@ import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import javax.swing.*;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class PageFactory {
@@ -48,7 +54,7 @@ public class PageFactory {
         return mainPage;
     }
 
-    public static VBox getRegisterPage(RegisterPageModel registerPageModel){
+    public static VBox getRegisterPage(CustomerRepository customerRepository, RegisterPageModel registerPageModel){
         VBox registerPage = new VBox();
         RegisterPageControl registerPageControl = new RegisterPageControl(registerPageModel);
 
@@ -75,7 +81,12 @@ public class PageFactory {
         TextField phoneTextField = new TextField();
         phoneTextField.setPromptText("e.g. 081806122004");
 
-        leftVbox.getChildren().addAll(nameLabel, nameTextField, phoneLabel, phoneTextField);
+        Label idLabel = new Label("Id Member :");
+        ArrayList<Integer> customerId = new ArrayList<>(customerRepository.getAllCustomerId());
+        AutoCompleteComboBox idComboBox = new AutoCompleteComboBox(customerRepository.getAllCustomerId());
+        idComboBox.getSelectionModel().selectFirst();
+
+        leftVbox.getChildren().addAll(nameLabel, nameTextField, phoneLabel, phoneTextField, idLabel, idComboBox);
         HBox.setMargin(leftVbox, new Insets(10, 10, 10, 20)); // set margin of left VBox in HBox
 
         VBox rightVbox = new VBox();
@@ -84,7 +95,7 @@ public class PageFactory {
 
         Button registerButton = new Button("Register");
         registerButton.setOnAction(actionEvent -> {
-            if (!checkEmpty(nameTextField, phoneTextField)) {
+            if (!checkEmpty(nameTextField, phoneTextField) && idComboBox.getSelectionModel().isEmpty()) {
                 return;
             }
             revertRedBorder(nameTextField, phoneTextField);
@@ -152,7 +163,7 @@ public class PageFactory {
         topRightVbox.setPadding(new Insets(10, 10, 0, 20));
 
         Label akunLabel = new Label("Pilih Akun :");
-        ComboBox<Member> accounts = updatePageModel.getAccounts();
+        AutoCompleteComboBox<Member> accounts = updatePageModel.getAccounts();
         accounts.setEditable(true);
 
         accounts.setMaxWidth(1.7976931348623157E308);
@@ -233,7 +244,7 @@ public class PageFactory {
         return historyPage;
     }
 
-    public static VBox getKasirPage(TemporaryBillRepository temporaryBillRepository, BarangRepository barangRepository, KasirPageModel kasirPageModel){
+    public static VBox getKasirPage(TemporaryBillRepository temporaryBillRepository, BarangRepository barangRepository, FixedBillRepository fixedBillRepository, CustomerRepository customerRepository, KasirPageModel kasirPageModel){
         VBox kasirPage = new VBox();
         KasirPageControl kasirPageControl = new KasirPageControl(temporaryBillRepository, barangRepository, kasirPageModel);
 
@@ -429,7 +440,7 @@ public class PageFactory {
 
         return settingPage;
     }
-    public static VBox getInsertBarangPage(){
+    public static VBox getInsertBarangPage(BarangRepository barangRepository){
         VBox InsertPage = new VBox();
         InsertPage.setPadding(new Insets(10));
         InsertPage.setSpacing(10);
@@ -510,10 +521,11 @@ public class PageFactory {
         rightVbox.setAlignment(Pos.BOTTOM_RIGHT);
         rightVbox.setPrefSize(100, 200);
 
+//        System.out.println(selectedFile.get().getName());
         Button TambahButton = new Button("Tambah Barang");
         TambahButton.setOnAction(event -> PageActionFactory.doInsertBarang( stokTextField.getText(), nameTextField.getText(),
                 PriceTextField.getText(), BuyPriceTextField.getText(), KategoriTextField.getText(),
-                selectedFile.get().toString(),true ));
+                selectedFile.get().getName(),true ,barangRepository));
 
         rightVbox.getChildren().add(TambahButton);
 
