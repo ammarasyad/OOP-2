@@ -32,7 +32,7 @@ public class App extends Application {
         barangRepository.save(barang2);
         barangRepository.save(barang3);
 
-        TemporaryBill tb = new TemporaryBill(0,0);
+        TemporaryBill tb = new TemporaryBill(0);
         tb.addToBill(barang2, 3);
         temporaryBillRepository.save(tb);
 

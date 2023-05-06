@@ -1,21 +1,15 @@
 package com.tll.gui.factory;
 
-import com.tll.backend.model.barang.Barang;
 import com.tll.backend.model.bill.TemporaryBill;
 import com.tll.backend.repository.impl.barang.BarangRepository;
 import com.tll.backend.repository.impl.bill.TemporaryBillRepository;
-import com.tll.gui.AutoCompleteComboBox;
-import com.tll.gui.DisplayWidget;
-import com.tll.gui.ProductWidget;
 import com.tll.gui.TransactionWidget;
 import com.tll.gui.controllers.KasirPageModel;
 import com.tll.gui.controllers.MainPageModel;
 import com.tll.gui.controllers.RegisterPageModel;
 import com.tll.gui.controllers.UpdatePageModel;
-import com.tll.gui.models.KasirPageControl;
-import com.tll.gui.models.MainPageControl;
-import com.tll.gui.models.RegisterPageControl;
-import com.tll.gui.models.UpdatePageControl;
+import com.tll.gui.models.*;
+import com.tll.gui.factory.PageActionFactory;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -28,6 +22,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class PageFactory {
 
@@ -467,6 +462,10 @@ public class PageFactory {
         leftVbox.setSpacing(10);
         leftVbox.setPadding(new Insets(10));
 
+        Label stokLabel = new Label("Stok :");
+        TextField stokTextField = new TextField();
+        stokTextField.setPromptText("e.g. 5 ");
+
         Label nameLabel = new Label("Nama Barang :");
         TextField nameTextField = new TextField();
         nameTextField.setPromptText("e.g. Barang ");
@@ -506,16 +505,17 @@ public class PageFactory {
         Label fileLabel = new Label("File :");
         fileLabel.setFont(new Font(14));
 
+        AtomicReference<File> selectedFile = new AtomicReference<>();
         selectButton.setOnAction(e -> {
-            File selectedFile = fileChooser.showOpenDialog(fileStage);
-            fileLabel.setText("File :" + selectedFile.getName());
+            selectedFile.set(fileChooser.showOpenDialog(fileStage));
+            fileLabel.setText("File :" + selectedFile.get().getName());
         });
 
         fileHbox.setSpacing(40);
         fileHbox.getChildren().addAll(selectButton, fileLabel);
         fileHbox.setAlignment(Pos.CENTER_LEFT);
 
-        leftVbox.getChildren().addAll(nameLabel, nameTextField, PriceLabel, PriceTextField,BuyPriceLabel,
+        leftVbox.getChildren().addAll(stokLabel, stokTextField ,nameLabel, nameTextField, PriceLabel, PriceTextField,BuyPriceLabel,
                 BuyPriceTextField, KategoriLabel, KategoriTextField, OnSaleLabel, saleHbox, fileHbox);
         HBox.setMargin(leftVbox, new Insets(10, 10, 10, 20)); // set margin of left VBox in HBox
 
@@ -524,6 +524,10 @@ public class PageFactory {
         rightVbox.setPrefSize(100, 200);
 
         Button TambahButton = new Button("Tambah Barang");
+        TambahButton.setOnAction(event -> PageActionFactory.doInsertBarang( stokTextField.getText(), nameTextField.getText(),
+                PriceTextField.getText(), BuyPriceTextField.getText(), KategoriTextField.getText(),
+                selectedFile.get().toString(),true ));
+
         rightVbox.getChildren().add(TambahButton);
 
         VBox.setMargin(TambahButton, new Insets(0, 30, 30, 0)); // set margin of button in right VBox
