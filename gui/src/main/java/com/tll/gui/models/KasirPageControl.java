@@ -1,8 +1,13 @@
 package com.tll.gui.models;
 
 import com.tll.backend.model.barang.Barang;
+import com.tll.backend.model.bill.FixedBill;
+import com.tll.backend.model.user.Customer;
 import com.tll.backend.repository.impl.barang.BarangRepository;
+import com.tll.backend.repository.impl.bill.FixedBillRepository;
 import com.tll.backend.repository.impl.bill.TemporaryBillRepository;
+import com.tll.backend.repository.impl.user.CustomerRepository;
+import com.tll.backend.repository.impl.user.MemberRepository;
 import com.tll.gui.DisplayWidget;
 import com.tll.gui.ProductWidget;
 import com.tll.gui.controllers.KasirPageModel;
@@ -17,12 +22,21 @@ public class KasirPageControl {
     private BarangRepository barangRepository;
     private KasirPageModel kasirPageModel;
     private TemporaryBillRepository temporaryBillRepository;
+    private FixedBillRepository fixedBillRepository;
+    private CustomerRepository customerRepository;
+    private MemberRepository memberRepository;
 
     public KasirPageControl(TemporaryBillRepository temporaryBillRepository,
+                            FixedBillRepository fixedBillRepository,
                             BarangRepository barangRepository,
+                            CustomerRepository customerRepository,
+                            MemberRepository memberRepository,
                             KasirPageModel kasirPageModel){
         this.temporaryBillRepository = temporaryBillRepository;
+        this.fixedBillRepository = fixedBillRepository;
         this.barangRepository = barangRepository;
+        this.customerRepository = customerRepository;
+        this.memberRepository = memberRepository;
         this.kasirPageModel = kasirPageModel;
 
         refreshProductList();
@@ -63,7 +77,22 @@ public class KasirPageControl {
     }
 
     public void saveTemporaryBill(){
+        kasirPageModel.getTemporaryBill().emptyBill();
+        for(Node node : kasirPageModel.getSelectedItem().getChildren()){
+            if(node instanceof ProductWidget){
+                ProductWidget productWidget = (ProductWidget) node;
+                kasirPageModel.getTemporaryBill().addToBill(productWidget.getBarang(), productWidget.getQuantity());
+            }
+        }
+    }
+
+    public void checkOut(){
+        Customer customer = new Customer(customerRepository.getLargestId()+1);
+        FixedBill fixedBill = new FixedBill(fixedBillRepository.getNextId(),customer.getId(), kasirPageModel.getTemporaryBill().getCart());
         temporaryBillRepository.delete(kasirPageModel.getTemporaryBill());
+        fixedBillRepository.save(fixedBill);
+//        memberRepository.memberPay()
     }
 
 }
+

@@ -17,8 +17,8 @@ import java.util.List;
 public class UpdatePageModel {
     private ComboBox<String> accountStatus;
     private ComboBox<String> activity;
-    private ComboBox<Member> accounts;
-    MemberRepository memberRepository;
+    private AutoCompleteComboBox<Member> accounts;
+    private MemberRepository memberRepository;
     private TextField nameTextField;
     private TextField phoneTextField;
     @Setter
@@ -32,46 +32,36 @@ public class UpdatePageModel {
         activity.getItems().addAll("Active", "Non-Active");
         nameTextField = new TextField();
         phoneTextField = new TextField();
-        accounts = new ComboBox<Member>();
-        for(Member member : memberRepository.findAll()){
-            accounts.getItems().add(member);
-        }
-        accounts.setEditable(true);
-        accounts.setCellFactory(new Callback<ListView<Member>, ListCell<Member>>() {
-            @Override
-            public ListCell<Member> call(ListView<Member> listView) {
-                return new ListCell<Member>() {
-                    @Override
-                    protected void updateItem(Member item, boolean empty) {
-                        super.updateItem(item, empty);
-                        if (empty || item == null) {
-                            setText(null);
-                        } else {
-                            setText(item.toString()); // Set the text of the cell to the member's name
-                        }
-                    }
-                };
-            }
-        });
+        accounts = new AutoCompleteComboBox<>(memberRepository.findAll());
+//        for(Member member : memberRepository.findAll()){
+//            accounts.getItems().add(member);
+//        }
+//        accounts.setEditable(true);
+//        accounts.setCellFactory(new Callback<ListView<Member>, ListCell<Member>>() {
+//            @Override
+//            public ListCell<Member> call(ListView<Member> listView) {
+//                return new ListCell<Member>() {
+//                    @Override
+//                    protected void updateItem(Member item, boolean empty) {
+//                        super.updateItem(item, empty);
+//                        if (empty || item == null) {
+//                            setText(null);
+//                        } else {
+//                            setText(item.toString()); // Set the text of the cell to the member's name
+//                        }
+//                    }
+//                };
+//            }
+//        });
+//
+//        accounts.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
+//            if (newValue == null || newValue.isEmpty()) {
+//                accounts.setItems(FXCollections.observableArrayList()); // Clear the suggestions if the editor is empty
+//            } else {
+//                List<Member> suggestions = getSuggestions(newValue); // Get the suggestions based on the typed string
+//                accounts.setItems(FXCollections.observableArrayList(suggestions)); // Set the suggestions as the items of the combo box
+//            }
+//        });
 
-        accounts.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue == null || newValue.isEmpty()) {
-                accounts.setItems(FXCollections.observableArrayList()); // Clear the suggestions if the editor is empty
-            } else {
-                List<Member> suggestions = getSuggestions(newValue); // Get the suggestions based on the typed string
-                accounts.setItems(FXCollections.observableArrayList(suggestions)); // Set the suggestions as the items of the combo box
-            }
-        });
-
-    }
-
-    private List<Member> getSuggestions(String input) {
-        List<Member> suggestions = new ArrayList<>();
-        for (Member member : memberRepository.findAll()) {
-            if (member.toString().toLowerCase().startsWith(input.toLowerCase())) {
-                suggestions.add(member);
-            }
-        }
-        return suggestions;
     }
 }

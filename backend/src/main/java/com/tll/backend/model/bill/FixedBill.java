@@ -1,12 +1,16 @@
 package com.tll.backend.model.bill;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.tll.backend.datastore.loader.helper.FixedBillDeserializer;
+import com.tll.backend.datastore.loader.helper.FixedBillSerializer;
 import com.tll.backend.model.barang.Barang;
 import com.tll.backend.repository.CloneableObject;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.javatuples.Pair;
@@ -18,8 +22,10 @@ import java.util.stream.Collectors;
 @Table(name = "fixed_bill")
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
+@JsonSerialize(using = FixedBillSerializer.class)
+@JsonDeserialize(using = FixedBillDeserializer.class)
 public class FixedBill extends Bill implements CloneableObject<FixedBill> {
-
+    @Getter
     @Setter(AccessLevel.PRIVATE)
     private Integer userId;
 

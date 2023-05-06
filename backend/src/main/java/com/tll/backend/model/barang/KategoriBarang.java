@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class KategoriBarang implements CloneableObject<KategoriBarang>, Serializable {
+public class KategoriBarang implements Cloneable, CloneableObject<KategoriBarang>, Serializable {
 
     @Id
     private Integer id;

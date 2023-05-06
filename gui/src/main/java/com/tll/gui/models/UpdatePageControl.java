@@ -10,24 +10,24 @@ public class UpdatePageControl {
     UpdatePageModel updatePageModel;
     public UpdatePageControl(UpdatePageModel updatePageModel){
         this.updatePageModel = updatePageModel;
-        updatePageModel.getAccounts().setConverter(new StringConverter<>() {
-            @Override
-            public String toString(Member obj) {
-                if (obj == null)
-                    return "";
-                return obj.toString();
-            }
-
-            @Override
-            public Member fromString(String obj) {
-                for(Member member: updatePageModel.getMemberRepository().findAll()){
-                    if(member.toString().equals(obj)){
-                        return member;
-                    }
-                }
-                throw new RuntimeException("item in combobox is not valid");
-            }
-        });
+//        updatePageModel.getAccounts().setConverter(new StringConverter<>() {
+//            @Override
+//            public String toString(Member obj) {
+//                if (obj == null)
+//                    return "";
+//                return obj.toString();
+//            }
+//
+//            @Override
+//            public Member fromString(String obj) {
+//                for(Member member: updatePageModel.getMemberRepository().findAll()){
+//                    if(member.toString().equals(obj)){
+//                        return member;
+//                    }
+//                }
+//                throw new RuntimeException("item in combobox is not valid");
+//            }
+//        });
 
         updatePageModel.getAccounts().valueProperty().addListener((obs, oldVal, newVal) -> {
             // Update the TextField text based on the selected value
@@ -52,6 +52,7 @@ public class UpdatePageControl {
                                                             updatePageModel.getNameTextField().getText(),
                                                             updatePageModel.getPhoneTextField().getText(),
                                                             updatePageModel.getAccountStatus().getValue());
+        updatePageModel.getAccounts().setDataItems(updatePageModel.getMemberRepository().findAll());
 
     }
 }
