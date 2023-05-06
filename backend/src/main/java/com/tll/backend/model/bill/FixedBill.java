@@ -3,6 +3,8 @@ package com.tll.backend.model.bill;
 import com.tll.backend.model.barang.Barang;
 import com.tll.backend.repository.CloneableObject;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Setter;
@@ -12,6 +14,8 @@ import org.javatuples.Pair;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Entity
+@Table(name = "fixed_bill")
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
 public class FixedBill extends Bill implements CloneableObject<FixedBill> {

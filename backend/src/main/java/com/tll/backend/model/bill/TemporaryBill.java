@@ -1,14 +1,17 @@
 package com.tll.backend.model.bill;
 
 import com.tll.backend.model.barang.Barang;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.javatuples.Pair;
 
 import java.util.ArrayList;
 
+@Entity
+@Table(name = "temporary_bill")
 @Data
-
 @EqualsAndHashCode(callSuper = true)
 public class TemporaryBill extends Bill {
 

@@ -6,6 +6,7 @@ import com.tll.backend.datastore.loader.helper.BillSerializer;
 import com.tll.backend.datastore.loader.helper.ListPairDeserializer;
 import com.tll.backend.model.barang.Barang;
 import com.tll.backend.repository.StorableObject;
+import jakarta.persistence.MappedSuperclass;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,10 +20,11 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Getter
-@Setter(AccessLevel.PROTECTED)
-@AllArgsConstructor
+@MappedSuperclass
 @NoArgsConstructor
+@AllArgsConstructor
 @Accessors(chain = true)
+@Setter(AccessLevel.PROTECTED)
 @JsonSerialize(using = BillSerializer.class)
 public class Bill implements Serializable, StorableObject<Integer> {
 
