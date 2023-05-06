@@ -95,7 +95,7 @@ public class PageFactory {
 
         Button registerButton = new Button("Register");
         registerButton.setOnAction(actionEvent -> {
-            if (!checkEmpty(nameTextField, phoneTextField)) {
+            if (!checkEmpty(nameTextField, phoneTextField) && idComboBox.getSelectionModel().isEmpty()) {
                 return;
             }
             revertRedBorder(nameTextField, phoneTextField);
