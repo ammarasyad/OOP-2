@@ -2,16 +2,14 @@ package com.tll.backend.model.user;
 
 import com.tll.backend.model.bill.FixedBill;
 import com.tll.backend.repository.StorableObject;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class Member implements Serializable, StorableObject<Integer> {
@@ -20,7 +18,7 @@ public class Member implements Serializable, StorableObject<Integer> {
     private boolean activeStatus;
     private String name;
     private String phone;
-    private ArrayList<FixedBill> bills;
+    private List<FixedBill> bills;
     private long point;
 
     @Override

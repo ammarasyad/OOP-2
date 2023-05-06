@@ -7,7 +7,7 @@ import com.tll.backend.model.barang.Barang;
 import org.javatuples.Pair;
 
 @JsonIgnoreProperties(value = "size", ignoreUnknown = true)
-public abstract class BillMixin {
+public abstract class PairMixin {
     @JsonCreator
     public static Pair<Barang, Integer> with(@JsonProperty("barang") Object barang, @JsonProperty("jumlah") Object jumlah) {
         return Pair.with((Barang) barang, (Integer) jumlah);

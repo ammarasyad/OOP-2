@@ -24,7 +24,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @Accessors(chain = true)
-public class Barang implements Serializable, CloneableObject<Barang>, StorableObject<Integer> {
+public class Barang implements Serializable, Cloneable, CloneableObject<Barang>, StorableObject<Integer> {
 
     @Id
     private Integer id;
