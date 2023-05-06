@@ -55,7 +55,7 @@ public class AppController {
         this.customerRepository = customerRepository;
         this.memberRepository = memberRepository;
         mainPageModel = new MainPageModel();
-        registerPageModel = new RegisterPageModel(customerRepository);
+        registerPageModel = new RegisterPageModel(customerRepository, memberRepository);
 
         pages = new Menu(OPEN_PAGE);
         mainPage = new MenuItem(MAIN_PAGE);
@@ -94,8 +94,9 @@ public class AppController {
         tabPane.getTabs().add(tab);
     }
     private void addRegisterPage() {
+        registerPageModel = new RegisterPageModel(customerRepository, memberRepository);
         ClosableTab tab = new ClosableTab(REGISTER_PAGE);
-        tab.setContent(PageFactory.getRegisterPage(customerRepository, registerPageModel));
+        tab.setContent(PageFactory.getRegisterPage(registerPageModel));
         tabPane.getTabs().add(tab);
     }
 
