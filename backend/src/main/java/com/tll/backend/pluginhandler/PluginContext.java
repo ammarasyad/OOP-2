@@ -28,7 +28,7 @@ public class PluginContext {
         objectContext.put(identifier, object);
     }
 
-    public void removeContext(String identifier) {
+    public void removeFromContext(String identifier) {
         objectContext.remove(identifier);
     }
 

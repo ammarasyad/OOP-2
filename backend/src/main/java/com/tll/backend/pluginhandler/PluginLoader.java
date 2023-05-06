@@ -1,5 +1,6 @@
 package com.tll.backend.pluginhandler;
 
+import com.tll.plugin.Plugin;
 
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -10,7 +11,7 @@ import java.util.jar.JarFile;
 
 public class PluginLoader {
 
-    public void load(String path, String jarName) {
+    public Plugin load(String path, String jarName) {
         try (JarFile jarFile = new JarFile(Paths.get(path, jarName).toFile())) {
 
             Enumeration<JarEntry> entries = jarFile.entries();
@@ -28,14 +29,17 @@ public class PluginLoader {
                     className = className.replace('/', '.');
 
                     Class<?> classLoad = cl.loadClass(className);
-                    if (classLoad.isInterface())
+                    Object obj = classLoad.cast(classLoad.getDeclaredConstructor().newInstance());
+                    if (classLoad.isInterface() || !(obj instanceof Plugin))
                         continue;
-                    pluginContext.addToContext(classLoad, null);
+                    pluginContext.addToContext(classLoad.getSimpleName(), obj);
+                    return (Plugin) obj;
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return null;
     }
 
 }
