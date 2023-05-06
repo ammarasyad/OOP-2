@@ -2,6 +2,7 @@ package com.tll.gui.factory;
 
 import com.tll.backend.model.bill.TemporaryBill;
 import com.tll.backend.model.user.Member;
+import com.tll.backend.pluginhandler.PluginContext;
 import com.tll.backend.repository.impl.barang.BarangRepository;
 import com.tll.backend.repository.impl.bill.FixedBillRepository;
 import com.tll.backend.repository.impl.bill.TemporaryBillRepository;
@@ -244,7 +245,7 @@ public class PageFactory {
     }
 
     public static VBox getKasirPage(TemporaryBillRepository temporaryBillRepository, BarangRepository barangRepository, FixedBillRepository fixedBillRepository,
-                                    CustomerRepository customerRepository, MemberRepository memberRepository, KasirPageModel kasirPageModel){
+                                    CustomerRepository customerRepository, MemberRepository memberRepository, KasirPageModel kasirPageModel, TextField... additions){
         VBox kasirPage = new VBox();
         KasirPageControl kasirPageControl = new KasirPageControl(temporaryBillRepository, fixedBillRepository, barangRepository, customerRepository, memberRepository, kasirPageModel);
 
@@ -288,30 +289,6 @@ public class PageFactory {
         selectedPane.setFitToWidth(true);
         VBox.setVgrow(selectedPane, Priority.ALWAYS);
 
-//        for(int i = 0; i < 9; i++){
-//            DisplayWidget displayWidget = new DisplayWidget("xxx", ""+i,"99", "a.jpg");
-//            displayWidget.setOnMouseClicked(event -> {
-//                ProductWidget productWidget = new ProductWidget(displayWidget);
-//                selectedVBox.getChildren().addAll(productWidget);
-//            });
-//
-//            productVBox.getChildren().addAll(displayWidget);
-//        }
-
-//        for(Barang barang: barangs){
-//            DisplayWidget displayWidget = new DisplayWidget(barang);
-//            displayWidget.setOnMouseClicked(event -> {
-//                ProductWidget productWidget = new ProductWidget(displayWidget);
-//                selectedVBox.getChildren().addAll(productWidget);
-//            });
-//
-//            productVBox.getChildren().addAll(displayWidget);
-//        }
-
-//        displayWidgets.setVisible(false);
-//        displayWidgets.setManaged(false);
-
-
         productListVBox.getChildren().addAll(searchBar,transactionLabel, selectedPane);
         VBox.setMargin(productListVBox, new Insets(10, 20, 10, 10));
 
@@ -327,11 +304,10 @@ public class PageFactory {
         buttonBox.setAlignment(Pos.CENTER_RIGHT);
         HBox.setHgrow(buttonBox, Priority.ALWAYS);
 
-
-
         Label detailLabel = new Label("Detail");
         ScrollPane selectedProduct = new ScrollPane(selectedVBox);
         selectedProduct.setFitToWidth(true);
+        selectedProduct.setPrefHeight(300);
         selectedProduct.setMaxHeight(300);
 //        selectedProduct.setFitToWidth(true);
         VBox.setVgrow(selectedProduct, Priority.ALWAYS);
@@ -354,7 +330,12 @@ public class PageFactory {
         useMember.setStyle("-fx-font-size: 16px;");
         useMember.setPadding(new Insets(0, 10, 0, 10));
         setuHbox.getChildren().addAll(leftSetuHbox,new Label("Use Member"), useMember, members,billButton);
-        bottomRightVbox.getChildren().addAll(setuHbox);
+
+        VBox kasirAdditionVBox = new VBox();
+        VBox.setVgrow(kasirAdditionVBox, Priority.ALWAYS);
+        kasirAdditionVBox.getChildren().addAll(additions);
+        
+        bottomRightVbox.getChildren().addAll(kasirAdditionVBox, setuHbox);
         bottomRightVbox.setMinHeight(100);
         VBox.setVgrow(bottomRightVbox, Priority.ALWAYS);
         billButton.setOnAction(event -> kasirPageControl.checkOut());
