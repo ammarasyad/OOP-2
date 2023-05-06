@@ -1,20 +1,51 @@
 package com.tll.gui;
 
+import com.tll.backend.model.user.Member;
 import javafx.collections.FXCollections;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.util.Callback;
 
-public class AutoCompleteComboBox extends ComboBox<String> {
-    private String[] dataItems;
-    public AutoCompleteComboBox(String[] dataItems){
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
+public class AutoCompleteComboBox<E extends Object> extends ComboBox<E> {
+    private Iterable<E> dataItems;
+    public AutoCompleteComboBox(Iterable<E> dataItems){
         super();
-        this.setEditable(true);
         this.dataItems = dataItems;
+        for(E member : dataItems){
+            getItems().add(member);
+        }
+        setEditable(true);
+        setCellFactory(new Callback<ListView<E>, ListCell<E>>() {
+            @Override
+            public ListCell<E> call(ListView<E> listView) {
+                return new ListCell<E>() {
+                    @Override
+                    protected void updateItem(E item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (empty || item == null) {
+                            setText(null);
+                        } else {
+                            setText(item.toString()); // Set the text of the cell to the member's name
+                        }
+                    }
+                };
+            }
+        });
 
-        TextField editor = this.getEditor();
-        editor.textProperty().addListener((observable, oldValue, newValue) -> {
-            System.out.println(editor.getText());
-            this.getItems().setAll(filterData(newValue));
+        getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == null || newValue.isEmpty()) {
+                setItems(FXCollections.observableArrayList()); // Clear the suggestions if the editor is empty
+            } else {
+                List<E> suggestions = getSuggestions(newValue); // Get the suggestions based on the typed string
+                setItems(FXCollections.observableArrayList(suggestions)); // Set the suggestions as the items of the combo box
+            }
         });
     }
 
@@ -22,10 +53,14 @@ public class AutoCompleteComboBox extends ComboBox<String> {
         this(null);
     }
 
-    private String[] filterData(String input) {
-        String lowerCaseInput = input.toLowerCase();
-        return FXCollections.observableArrayList(dataItems)
-                .filtered(item -> item.toLowerCase().startsWith(lowerCaseInput))
-                .toArray(String[]::new);
+    private List<E> getSuggestions(String input) {
+        List<E> suggestions = new ArrayList<>();
+
+        for (E member : dataItems) {
+            if (member.toString().toLowerCase().startsWith(input.toLowerCase())) {
+                suggestions.add(member);
+            }
+        }
+        return suggestions;
     }
 }

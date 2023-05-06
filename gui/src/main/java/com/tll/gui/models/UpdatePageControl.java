@@ -16,5 +16,29 @@ public class UpdatePageControl {
     UpdatePageModel updatePageModel;
     public UpdatePageControl(UpdatePageModel updatePageModel){
         this.updatePageModel = updatePageModel;
+        updatePageModel.getAccounts().valueProperty().addListener((obs, oldVal, newVal) -> {
+            // Update the TextField text based on the selected value
+            updatePageModel.getNameTextField().setText(newVal.getName());
+            updatePageModel.getPhoneTextField().setText(newVal.getPhone());
+            updatePageModel.setMemberId(newVal.getId());
+            if(newVal.isActiveStatus()){
+                updatePageModel.getActivity().getSelectionModel().select(0);
+            } else {
+                updatePageModel.getActivity().getSelectionModel().select(1);
+            }
+            if(newVal.getType() == "VIP") {
+                updatePageModel.getAccountStatus().getSelectionModel().select(0);
+            } else {
+                updatePageModel.getAccountStatus().getSelectionModel().select(1);
+            }
+        });
+    }
+
+    public void saveChanges(){
+        updatePageModel.getMemberRepository().updateMember(updatePageModel.getMemberId(),
+                                                            updatePageModel.getNameTextField().getText(),
+                                                            updatePageModel.getPhoneTextField().getText(),
+                                                            updatePageModel.getAccountStatus().getValue());
+
     }
 }

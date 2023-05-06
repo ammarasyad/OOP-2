@@ -3,6 +3,8 @@ package com.tll.gui.controllers;
 import com.tll.backend.model.bill.TemporaryBill;
 import com.tll.backend.repository.impl.barang.BarangRepository;
 import com.tll.backend.repository.impl.bill.TemporaryBillRepository;
+import com.tll.backend.repository.impl.user.CustomerRepository;
+import com.tll.backend.repository.impl.user.MemberRepository;
 import com.tll.gui.ClosableTab;
 import com.tll.gui.factory.PageFactory;
 import javafx.scene.control.*;
@@ -28,6 +30,7 @@ public class AppController {
     private UpdatePageModel updatePageModel;
     private BarangRepository barangRepository;
     private TemporaryBillRepository temporaryBillRepository;
+    private CustomerRepository customerRepository;
 
     private static final String OPEN_PAGE = "Open Page";
     private static final String MAIN_PAGE = "Main";
@@ -39,12 +42,14 @@ public class AppController {
     private static final String SETTING_PAGE = "Setting";
 
 
-    public AppController(BarangRepository barangRepository, TemporaryBillRepository temporaryBillRepository) {
+    public AppController(BarangRepository barangRepository, TemporaryBillRepository temporaryBillRepository,
+                         CustomerRepository customerRepository, MemberRepository memberRepository) {
         this.barangRepository = barangRepository;
         this.temporaryBillRepository = temporaryBillRepository;
+        this.customerRepository = customerRepository;
         mainPageModel = new MainPageModel();
-        registerPageModel = new RegisterPageModel();
-        updatePageModel = new UpdatePageModel();
+        registerPageModel = new RegisterPageModel(customerRepository);
+        updatePageModel = new UpdatePageModel(memberRepository);
 
         pages = new Menu(OPEN_PAGE);
         mainPage = new MenuItem(MAIN_PAGE);
@@ -62,10 +67,20 @@ public class AppController {
         registerPage.setOnAction(event -> addRegisterPage());
         updatePage.setOnAction(event -> addUpdatePage());
         historyPage.setOnAction(event -> addHistoryPage());
-        kasirPage.setOnAction(event -> addKasirPage());
+        kasirPage.setOnAction(event -> {
+            TemporaryBill temporaryBill = new TemporaryBill(0);
+            temporaryBillRepository.save(temporaryBill);
+            addKasirPage(new KasirPageModel(temporaryBill));
+        });
         settingPage.setOnAction(event -> addSetting());
         InsertPage.setOnAction(event ->addInsertPage());
 
+        loadKasirPages();
+    }
+    private void loadKasirPages(){
+        for(TemporaryBill temporaryBill : temporaryBillRepository.findAll()){
+            addKasirPage(new KasirPageModel(temporaryBill));
+        }
     }
     private void addMainPage() {
         ClosableTab tab = new ClosableTab(MAIN_PAGE);
@@ -90,10 +105,10 @@ public class AppController {
         tabPane.getTabs().add(tab);
     }
 
-    private void addKasirPage() {
-        temporaryBillRepository.save(new TemporaryBill( 0));
-        var tempBill = temporaryBillRepository.findById(0).orElseThrow(() -> new RuntimeException());
-        KasirPageModel kasirPageModel = new KasirPageModel(tempBill);
+    private void addKasirPage(KasirPageModel kasirPageModel) {
+//        temporaryBillRepository.save(new TemporaryBill(0, 0));
+//        var tempBill = temporaryBillRepository.findById(0).orElseThrow(() -> new RuntimeException());
+//        KasirPageModel kasirPageModel = new KasirPageModel(tempBill);
         ClosableTab tab = new ClosableTab(KASIR_PAGE);
         tab.setContent(PageFactory.getKasirPage(temporaryBillRepository, barangRepository, kasirPageModel));
         tabPane.getTabs().add(tab);

@@ -4,9 +4,12 @@ import com.tll.backend.model.barang.Barang;
 import com.tll.backend.model.barang.KategoriBarang;
 import com.tll.backend.model.bill.FixedBill;
 import com.tll.backend.model.bill.TemporaryBill;
+import com.tll.backend.model.user.Member;
 import com.tll.backend.repository.impl.barang.BarangRepository;
 import com.tll.backend.repository.impl.bill.FixedBillRepository;
 import com.tll.backend.repository.impl.bill.TemporaryBillRepository;
+import com.tll.backend.repository.impl.user.CustomerRepository;
+import com.tll.backend.repository.impl.user.MemberRepository;
 import com.tll.gui.controllers.AppController;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -16,6 +19,7 @@ import com.tll.gui.models.AppModel;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 
 public class App extends Application {
     @Override
@@ -36,9 +40,20 @@ public class App extends Application {
         tb.addToBill(barang2, 3);
         temporaryBillRepository.save(tb);
 
+        CustomerRepository customerRepository = new CustomerRepository();
+        MemberRepository memberRepository = new MemberRepository();
+        Member member = new Member(0, "paancoba", true, "asukon", "112", new ArrayList<FixedBill>(), 10);
+        Member member1 = new Member(1, "paancba", true, "asuksson", "112", new ArrayList<FixedBill>(), 10);
+        Member member2 = new Member(2, "paancobaa", true, "asusssskon", "112", new ArrayList<FixedBill>(), 10);
+
+        memberRepository.save(member);
+        memberRepository.save(member1);
+        memberRepository.save(member2);
+
+
         stage.setTitle("Hello World!");
 
-        AppController ac = new AppController(barangRepository, temporaryBillRepository);
+        AppController ac = new AppController(barangRepository, temporaryBillRepository, customerRepository, memberRepository);
         VBox vbox = new AppModel(ac);
 
         Scene scene = new Scene(vbox, 820, 640);

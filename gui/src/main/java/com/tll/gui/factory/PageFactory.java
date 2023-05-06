@@ -1,6 +1,7 @@
 package com.tll.gui.factory;
 
 import com.tll.backend.model.bill.TemporaryBill;
+import com.tll.backend.model.user.Member;
 import com.tll.backend.repository.impl.barang.BarangRepository;
 import com.tll.backend.repository.impl.bill.TemporaryBillRepository;
 import com.tll.gui.TransactionWidget;
@@ -123,14 +124,12 @@ public class PageFactory {
         leftVbox.setPadding(new Insets(10));
 
         Label nameLabel = new Label("Nama :");
-        TextField nameTextField = new TextField();
+        TextField nameTextField = updatePageModel.getNameTextField();
         Label phoneLabel = new Label("Nomor Telepon :");
-        TextField phoneTextField = new TextField();
-        Label statusLabel = new Label("Status Akun :");
-        ComboBox<String> accountStatus = new ComboBox<>();
-        accountStatus.itemsProperty().bindBidirectional(updatePageModel.getAccountStatus().itemsProperty());
-        ComboBox<String> activity = new ComboBox<>();
-        activity.itemsProperty().bindBidirectional(updatePageModel.getActivity().itemsProperty());
+        TextField phoneTextField = updatePageModel.getPhoneTextField();
+        Label statusLabel = new Label("Tipe Akun :");
+        ComboBox<String> accountStatus = updatePageModel.getAccountStatus();
+        ComboBox<String> activity = updatePageModel.getActivity();
 
         leftVbox.getChildren().addAll(nameLabel, nameTextField, phoneLabel, phoneTextField,
                 statusLabel, accountStatus, activity);
@@ -145,6 +144,7 @@ public class PageFactory {
         bottomRightVbox.setPrefSize(100, 200);
 
         Button updateButton = new Button("Update");
+        updateButton.setOnAction(e -> updatePageControl.saveChanges());
         bottomRightVbox.getChildren().add(updateButton);
 
         VBox topRightVbox = new VBox();
@@ -152,24 +152,11 @@ public class PageFactory {
         topRightVbox.setPadding(new Insets(10, 10, 0, 20));
 
         Label akunLabel = new Label("Pilih Akun :");
-        ComboBox<String> accounts = new ComboBox<>();
+        ComboBox<Member> accounts = updatePageModel.getAccounts();
         accounts.setEditable(true);
-        accounts.itemsProperty().bind(updatePageModel.getAccounts().itemsProperty());
-        updatePageModel.getAccounts().getEditor().textProperty().bind(accounts.getEditor().textProperty());
 
         accounts.setMaxWidth(1.7976931348623157E308);
         accounts.setPrefWidth(2.0);
-        //set function
-        accounts.valueProperty().addListener((obs, oldVal, newVal) -> {
-            // Update the TextField text based on the selected value
-            updatePageModel.getAccounts().getEditor().textProperty().unbind();
-            nameTextField.setText(newVal);
-        });
-
-        accounts.getEditor().setOnKeyTyped(event -> {
-            // Check if the event source is the editor's text field
-            updatePageModel.getAccounts().getEditor().textProperty().bind(accounts.getEditor().textProperty());
-        });
 
         topRightVbox.getChildren().addAll(akunLabel, accounts);
 
