@@ -2,6 +2,7 @@ package com.tll.gui.factory;
 
 import com.tll.backend.model.bill.TemporaryBill;
 import com.tll.backend.model.user.Member;
+import com.tll.backend.pluginhandler.PluginContext;
 import com.tll.backend.repository.impl.barang.BarangRepository;
 import com.tll.backend.repository.impl.bill.FixedBillRepository;
 import com.tll.backend.repository.impl.bill.TemporaryBillRepository;
@@ -53,7 +54,7 @@ public class PageFactory {
         return mainPage;
     }
 
-    public static VBox getRegisterPage(CustomerRepository customerRepository, RegisterPageModel registerPageModel){
+    public static VBox getRegisterPage(RegisterPageModel registerPageModel){
         VBox registerPage = new VBox();
         RegisterPageControl registerPageControl = new RegisterPageControl(registerPageModel);
 
@@ -73,17 +74,16 @@ public class PageFactory {
         leftVbox.setPadding(new Insets(10));
 
         Label nameLabel = new Label("Nama :");
-        TextField nameTextField = new TextField();
+        TextField nameTextField = registerPageModel.getNameTextField();
         nameTextField.setPromptText("e.g. Hayam Wuruk");
 
         Label phoneLabel = new Label("Nomor Telepon :");
-        TextField phoneTextField = new TextField();
+        TextField phoneTextField = registerPageModel.getPhoneTextField();
         phoneTextField.setPromptText("e.g. 081806122004");
 
         Label idLabel = new Label("Id Member :");
-        ArrayList<Integer> customerId = new ArrayList<>(customerRepository.getAllCustomerId());
-        AutoCompleteComboBox idComboBox = new AutoCompleteComboBox(customerRepository.getAllCustomerId());
-        idComboBox.getSelectionModel().selectFirst();
+        AutoCompleteComboBox idComboBox = registerPageModel.getAccounts();
+        idComboBox.setEditable(true);
 
         leftVbox.getChildren().addAll(nameLabel, nameTextField, phoneLabel, phoneTextField, idLabel, idComboBox);
         HBox.setMargin(leftVbox, new Insets(10, 10, 10, 20)); // set margin of left VBox in HBox
@@ -94,9 +94,10 @@ public class PageFactory {
 
         Button registerButton = new Button("Register");
         registerButton.setOnAction(actionEvent -> {
-            if (!checkEmpty(nameTextField, phoneTextField) && idComboBox.getSelectionModel().isEmpty()) {
+            if (!checkEmpty(nameTextField, phoneTextField) || idComboBox.getSelectionModel().isEmpty()) {
                 return;
             }
+            registerPageControl.createMember();
             revertRedBorder(nameTextField, phoneTextField);
         });
         rightVbox.getChildren().add(registerButton);
@@ -244,7 +245,7 @@ public class PageFactory {
     }
 
     public static VBox getKasirPage(TemporaryBillRepository temporaryBillRepository, BarangRepository barangRepository, FixedBillRepository fixedBillRepository,
-                                    CustomerRepository customerRepository, MemberRepository memberRepository, KasirPageModel kasirPageModel){
+                                    CustomerRepository customerRepository, MemberRepository memberRepository, KasirPageModel kasirPageModel, TextField... additions){
         VBox kasirPage = new VBox();
         KasirPageControl kasirPageControl = new KasirPageControl(temporaryBillRepository, fixedBillRepository, barangRepository, customerRepository, memberRepository, kasirPageModel);
 
@@ -282,37 +283,13 @@ public class PageFactory {
 
         VBox productListVBox = new VBox();
         Label transactionLabel = new Label("Products");
-        ScrollPane transactionScrollPane = new ScrollPane(productVBox);
-        transactionScrollPane.setPrefHeight(327.0);
-        transactionScrollPane.setMinWidth(230);
-        transactionScrollPane.setFitToWidth(true);
-        VBox.setVgrow(transactionScrollPane, Priority.ALWAYS);
+        ScrollPane selectedPane = new ScrollPane(productVBox);
+        selectedPane.setPrefHeight(327.0);
+        selectedPane.setMinWidth(230);
+        selectedPane.setFitToWidth(true);
+        VBox.setVgrow(selectedPane, Priority.ALWAYS);
 
-//        for(int i = 0; i < 9; i++){
-//            DisplayWidget displayWidget = new DisplayWidget("xxx", ""+i,"99", "a.jpg");
-//            displayWidget.setOnMouseClicked(event -> {
-//                ProductWidget productWidget = new ProductWidget(displayWidget);
-//                selectedVBox.getChildren().addAll(productWidget);
-//            });
-//
-//            productVBox.getChildren().addAll(displayWidget);
-//        }
-
-//        for(Barang barang: barangs){
-//            DisplayWidget displayWidget = new DisplayWidget(barang);
-//            displayWidget.setOnMouseClicked(event -> {
-//                ProductWidget productWidget = new ProductWidget(displayWidget);
-//                selectedVBox.getChildren().addAll(productWidget);
-//            });
-//
-//            productVBox.getChildren().addAll(displayWidget);
-//        }
-
-//        displayWidgets.setVisible(false);
-//        displayWidgets.setManaged(false);
-
-
-        productListVBox.getChildren().addAll(searchBar,transactionLabel, transactionScrollPane);
+        productListVBox.getChildren().addAll(searchBar,transactionLabel, selectedPane);
         VBox.setMargin(productListVBox, new Insets(10, 20, 10, 10));
 
         VBox detailVBox = new VBox();
@@ -327,19 +304,24 @@ public class PageFactory {
         buttonBox.setAlignment(Pos.CENTER_RIGHT);
         HBox.setHgrow(buttonBox, Priority.ALWAYS);
 
-
-
         Label detailLabel = new Label("Detail");
         ScrollPane selectedProduct = new ScrollPane(selectedVBox);
         selectedProduct.setFitToWidth(true);
+        selectedProduct.setPrefHeight(300);
+        selectedProduct.setMaxHeight(300);
 //        selectedProduct.setFitToWidth(true);
         VBox.setVgrow(selectedProduct, Priority.ALWAYS);
 
         VBox bottomRightVbox = new VBox();
         bottomRightVbox.setAlignment(Pos.BOTTOM_RIGHT);
 
+        HBox leftSetuHbox = new HBox();
+        Button saveTempButton = new Button("Save Bill");
+        leftSetuHbox.getChildren().addAll(saveTempButton);
+        HBox.setHgrow(leftSetuHbox, Priority.ALWAYS);
+
         HBox setuHbox = new HBox();
-        Button billButton = new Button("Bill");
+        Button billButton = new Button("Checkout");
         AutoCompleteComboBox<Member> members = kasirPageModel.getMembers();
         HBox.setHgrow(setuHbox, Priority.ALWAYS);
         members.setPrefWidth(220);
@@ -347,18 +329,23 @@ public class PageFactory {
         CheckBox useMember = kasirPageModel.getUseMember();
         useMember.setStyle("-fx-font-size: 16px;");
         useMember.setPadding(new Insets(0, 10, 0, 10));
+        setuHbox.getChildren().addAll(leftSetuHbox,new Label("Use Member"), useMember, members,billButton);
 
-        setuHbox.getChildren().addAll(new Label("Use Member"), useMember, members,billButton);
-        bottomRightVbox.getChildren().addAll(setuHbox);
+        VBox kasirAdditionVBox = new VBox();
+        VBox.setVgrow(kasirAdditionVBox, Priority.ALWAYS);
+        kasirAdditionVBox.getChildren().addAll(additions);
+        
+        bottomRightVbox.getChildren().addAll(kasirAdditionVBox, setuHbox);
         bottomRightVbox.setMinHeight(100);
         VBox.setVgrow(bottomRightVbox, Priority.ALWAYS);
-        billButton.setOnAction(event -> kasirPageControl.saveTemporaryBill());
+        billButton.setOnAction(event -> kasirPageControl.checkOut());
+        saveTempButton.setOnAction(event -> kasirPageControl.saveTemporaryBill());
 
         detailVBox.getChildren().addAll(detailLabel, selectedProduct, bottomRightVbox);
 
 //        HBox mainHBox = new HBox(transactionVBox, detailVBox);
         detailVBox.setPadding(new Insets(45, 0, 0, 0));
-        bottomRightVbox.setPadding(new Insets(10, 30, 30, 0));
+        bottomRightVbox.setPadding(new Insets(10, 30, 30, 30));
         SplitPane mainHBox = new SplitPane(productListVBox, detailVBox);
         HBox.setHgrow(productVBox, Priority.ALWAYS);
         HBox.setHgrow(detailVBox, Priority.ALWAYS);

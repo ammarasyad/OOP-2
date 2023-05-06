@@ -31,6 +31,9 @@ public class UpdatePageControl {
 
         updatePageModel.getAccounts().valueProperty().addListener((obs, oldVal, newVal) -> {
             // Update the TextField text based on the selected value
+            if (newVal == null) {
+                return;
+            }
             updatePageModel.getNameTextField().setText(newVal.getName());
             updatePageModel.getPhoneTextField().setText(newVal.getPhone());
             updatePageModel.setMemberId(newVal.getId());

@@ -1,5 +1,6 @@
 package com.tll.gui;
 
+import com.tll.backend.model.barang.Barang;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -16,6 +17,7 @@ public class ProductWidget extends HBox {
     private String name;
     private String productId;
     private String price;
+    private Barang barang;
     private int quantity;
     @Getter(value = AccessLevel.NONE)
     private EventHandler<MouseEvent> previousEventHandler;
@@ -26,6 +28,7 @@ public class ProductWidget extends HBox {
         this.name = displayWidget.getName();
         this.productId = displayWidget.getProductId();
         this.price = displayWidget.getPrice();
+        this.barang = displayWidget.getBarang();
         this.quantity = 1;
         Label nameLabel = new Label("Name: " + name);
         Label idLabel = new Label("ID: " + productId);

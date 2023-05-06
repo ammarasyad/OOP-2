@@ -12,6 +12,6 @@ public abstract class Plugin {
     @AutoWired(identifier = "plugin_list")
     private VBox pluginList;
 
-    public abstract void loadPage();
+    public abstract void load();
 
 }

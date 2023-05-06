@@ -14,13 +14,14 @@ public class PluginResolver {
             if (field.isAnnotationPresent(AutoWired.class)){
                 AutoWired wiredReq = field.getAnnotation(AutoWired.class);
                 field.setAccessible(true);
+
                 Class<?> fieldType = field.getClass();
                 String identifier = wiredReq.identifier();
                 if (wiredReq.identifier().isBlank()) {
                     identifier = fieldType.getSimpleName();
                 }
 
-                var value = pluginContext.getFromContext(identifier, fieldType);
+                var value = pluginContext.getFromContext(identifier, field.getType());
                 try {
                     if (value == null) {
                         value = fieldType.getDeclaredConstructor().newInstance();
