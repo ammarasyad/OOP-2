@@ -69,7 +69,6 @@ public class SqlAdapter implements DataStore {
                 """
                         CREATE TABLE IF NOT EXISTS Bill (
                             id INT NOT NULL,
-                            user_id INT NOT NULL,
                             PRIMARY KEY (id)
                         )
                 """,
@@ -155,12 +154,11 @@ public class SqlAdapter implements DataStore {
     }
 
     private void insertBill(HikariConfig connection, List<?> objects) throws SQLException {
-        String query = "INSERT IGNORE INTO Bill (id, user_id) VALUES (?, ?)";
+        String query = "INSERT IGNORE INTO Bill (id) VALUES (?)";
         try (PreparedStatement statement = connection.getDataSource().getConnection().prepareStatement(query)) {
             for (Object o : objects) {
                 Bill bill = (Bill) o;
                 statement.setInt(1, bill.getId());
-                statement.setInt(2, bill.getUserId());
                 statement.executeUpdate();
                 statement.clearParameters();
             }
@@ -274,7 +272,7 @@ public class SqlAdapter implements DataStore {
                     }
                     pairs.add(new Pair<>(barang.get(), jumlah));
                 });
-                Bill bill = new Bill(resultSet.getInt("id"), resultSet.getInt("user_id"), pairs);
+                Bill bill = new Bill(resultSet.getInt("id"), pairs);
                 billList.add(bill);
             }
 

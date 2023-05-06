@@ -64,9 +64,9 @@ public class FileRepositoryTest {
         List<Barang> barangList = List.of(barang);
 
         List<Bill> billList = List.of(
-                new Bill(1, 2, List.of(Pair.with(barang, 2), Pair.with(barang, 3))),
-                new Bill(2, 9, List.of(Pair.with(barang, 1), Pair.with(barang, 4))),
-                new Bill(3, 1, List.of(Pair.with(barang, 5), Pair.with(barang, 6)))
+                new Bill(1, List.of(Pair.with(barang, 2), Pair.with(barang, 3))),
+                new Bill(2, List.of(Pair.with(barang, 1), Pair.with(barang, 4))),
+                new Bill(3, List.of(Pair.with(barang, 5), Pair.with(barang, 6)))
         );
 
         JsonAdapter jsonAdapter = new JsonAdapter("src/test/resources/bill.json");
