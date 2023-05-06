@@ -34,7 +34,7 @@ public class DataHandler {
         try (HikariConfig config = HikariConfig.INSTANCE) {
             DataStore dataStore = getAppropriateDataAdapter(name, fileType, config);
             List<V> objects = dataStore.load(clazz);
-            InMemoryCrudRepository<ID, V> repository = new InMemoryCrudRepository<>(new HashMap<>());
+            InMemoryCrudRepository<ID, V> repository = new InMemoryCrudRepository<>(new HashMap<ID, V>());
             objects.forEach(repository::save);
             return repository;
         }
