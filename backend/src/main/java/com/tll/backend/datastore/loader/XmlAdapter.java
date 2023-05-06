@@ -8,6 +8,8 @@ import com.tll.backend.datastore.DataStore;
 import com.tll.backend.datastore.loader.helper.CustomerMixin;
 import com.tll.backend.datastore.loader.helper.MemberMixin;
 import com.tll.backend.datastore.loader.helper.PairMixin;
+import com.tll.backend.datastore.loader.helper.TemporaryBillMixin;
+import com.tll.backend.model.bill.TemporaryBill;
 import com.tll.backend.model.user.Customer;
 import com.tll.backend.model.user.Member;
 import lombok.AllArgsConstructor;
@@ -38,6 +40,7 @@ public class XmlAdapter implements DataStore {
                 .addMixIn(Pair.class, PairMixin.class)
                 .addMixIn(Customer.class, CustomerMixin.class)
                 .addMixIn(Member.class, MemberMixin.class)
+                .addMixIn(TemporaryBill.class, TemporaryBillMixin.class)
                 .readValue(new File(fileName), javaType);
     }
 }
