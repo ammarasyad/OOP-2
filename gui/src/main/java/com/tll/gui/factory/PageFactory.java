@@ -19,8 +19,6 @@ import com.tll.gui.models.UpdatePageControl;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -30,9 +28,9 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
-import java.util.BitSet;
 
 public class PageFactory {
+
     public static VBox getMainPage(MainPageModel mainPageModel){
         VBox mainPage = new VBox();
         MainPageControl mc = new MainPageControl(mainPageModel);
@@ -89,6 +87,12 @@ public class PageFactory {
         rightVbox.setPrefSize(100, 200);
 
         Button registerButton = new Button("Register");
+        registerButton.setOnAction(actionEvent -> {
+            if (!checkEmpty(nameTextField, phoneTextField)) {
+                return;
+            }
+            revertRedBorder(nameTextField, phoneTextField);
+        });
         rightVbox.getChildren().add(registerButton);
 
         VBox.setMargin(registerButton, new Insets(0, 30, 30, 0)); // set margin of button in right VBox
@@ -534,6 +538,24 @@ public class PageFactory {
 
         return InsertPage;
     }
+
+    private static boolean checkEmpty(TextField... textFields) {
+        var foundEmpty = false;
+        for (var textField: textFields) {
+            if (textField.getText().isBlank()) {
+                textField.setStyle("-fx-border-color: red");
+                foundEmpty = true;
+            }
+        }
+        return !foundEmpty;
+    }
+
+    private static void revertRedBorder(TextField... textFields) {
+        for (var textField: textFields) {
+            textField.setStyle("-fx-border-color: none");
+        }
+    }
+
     public static VBox getKasirPage(TemporaryBill temporaryBill){
         return getKasirPage(temporaryBill);
     }
