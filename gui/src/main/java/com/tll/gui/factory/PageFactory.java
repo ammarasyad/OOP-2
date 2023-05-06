@@ -1,6 +1,7 @@
 package com.tll.gui.factory;
 
 import com.tll.backend.model.bill.TemporaryBill;
+import com.tll.backend.model.user.Customer;
 import com.tll.backend.model.user.Member;
 import com.tll.backend.repository.impl.barang.BarangRepository;
 import com.tll.backend.repository.impl.bill.FixedBillRepository;
@@ -25,7 +26,9 @@ import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import javax.swing.*;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class PageFactory {
@@ -51,7 +54,7 @@ public class PageFactory {
         return mainPage;
     }
 
-    public static VBox getRegisterPage(RegisterPageModel registerPageModel){
+    public static VBox getRegisterPage(CustomerRepository customerRepository, RegisterPageModel registerPageModel){
         VBox registerPage = new VBox();
         RegisterPageControl registerPageControl = new RegisterPageControl(registerPageModel);
 
@@ -78,7 +81,12 @@ public class PageFactory {
         TextField phoneTextField = new TextField();
         phoneTextField.setPromptText("e.g. 081806122004");
 
-        leftVbox.getChildren().addAll(nameLabel, nameTextField, phoneLabel, phoneTextField);
+        Label idLabel = new Label("Id Member :");
+        ArrayList<Integer> customerId = new ArrayList<>(customerRepository.getAllCustomerId());
+        AutoCompleteComboBox idComboBox = new AutoCompleteComboBox(customerRepository.getAllCustomerId());
+        idComboBox.getSelectionModel().selectFirst();
+
+        leftVbox.getChildren().addAll(nameLabel, nameTextField, phoneLabel, phoneTextField, idLabel, idComboBox);
         HBox.setMargin(leftVbox, new Insets(10, 10, 10, 20)); // set margin of left VBox in HBox
 
         VBox rightVbox = new VBox();
@@ -238,7 +246,7 @@ public class PageFactory {
 
     public static VBox getKasirPage(TemporaryBillRepository temporaryBillRepository, BarangRepository barangRepository, FixedBillRepository fixedBillRepository, CustomerRepository customerRepository, KasirPageModel kasirPageModel){
         VBox kasirPage = new VBox();
-        KasirPageControl kasirPageControl = new KasirPageControl(temporaryBillRepository, fixedBillRepository, barangRepository, customerRepository, kasirPageModel);
+        KasirPageControl kasirPageControl = new KasirPageControl(temporaryBillRepository, barangRepository, kasirPageModel);
 
         kasirPage.setPadding(new Insets(10));
         kasirPage.setSpacing(10);

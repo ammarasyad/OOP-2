@@ -95,7 +95,7 @@ public class AppController {
     }
     private void addRegisterPage() {
         ClosableTab tab = new ClosableTab(REGISTER_PAGE);
-        tab.setContent(PageFactory.getRegisterPage(registerPageModel));
+        tab.setContent(PageFactory.getRegisterPage(customerRepository, registerPageModel));
         tabPane.getTabs().add(tab);
     }
 

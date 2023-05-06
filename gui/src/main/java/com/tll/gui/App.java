@@ -4,6 +4,7 @@ import com.tll.backend.model.barang.Barang;
 import com.tll.backend.model.barang.KategoriBarang;
 import com.tll.backend.model.bill.FixedBill;
 import com.tll.backend.model.bill.TemporaryBill;
+import com.tll.backend.model.user.Customer;
 import com.tll.backend.model.user.Member;
 import com.tll.backend.repository.impl.barang.BarangRepository;
 import com.tll.backend.repository.impl.bill.FixedBillRepository;
@@ -41,6 +42,15 @@ public class App extends Application {
         temporaryBillRepository.save(tb);
 
         CustomerRepository customerRepository = new CustomerRepository();
+        Customer customer = new Customer(0);
+        Customer customer1 = new Customer(1);
+        Customer customer2 = new Customer(2);
+        Customer customer3 = new Customer(3);
+        customerRepository.save(customer);
+        customerRepository.save(customer1);
+        customerRepository.save(customer2);
+        customerRepository.save(customer3);
+
         MemberRepository memberRepository = new MemberRepository();
         Member member = new Member(0, "paancoba", true, "asukon", "112", new ArrayList<FixedBill>(), 10);
         Member member1 = new Member(1, "paancba", true, "asuksson", "112", new ArrayList<FixedBill>(), 10);

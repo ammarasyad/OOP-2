@@ -45,8 +45,8 @@ public class MemberRepository extends InMemoryCrudRepository<Integer, Member> {
         super.save(member);
     }
 
-    public void memberPay(String name, FixedBill bill) {
-        searchMember(name).addBill(bill);
+    public void memberPay(Integer idMember, FixedBill bill) {
+        findById(idMember).get().addBill(bill);
     }
 
     public void changeActivationStatus(String name) {
