@@ -25,12 +25,7 @@ public class Member implements Serializable, StorableObject<Integer> {
 
     @Override
     public String toString() {
-        return "Member{" +
-                "id=" + id +
-                ", type='" + type + '\'' +
-                ", name='" + name + '\'' +
-                ", orders=" + bills +
-                '}';
+        return name + " id: " + id;
     }
 
     public void updateMember(String name, String phone, String type) {
