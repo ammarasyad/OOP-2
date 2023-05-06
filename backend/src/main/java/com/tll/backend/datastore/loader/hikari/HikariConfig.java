@@ -10,7 +10,7 @@ public enum HikariConfig implements AutoCloseable {
     INSTANCE;
 
     // For now, the property file is hardcoded
-    private static final String PROPERTY_FILE_PATH = "hikari.properties";
+    private static final String PROPERTY_FILE_PATH = "src/test/resources/hikari.properties";
 
     // I think it's better to use Properties, but I'll change it later
     private static final com.zaxxer.hikari.HikariConfig config = new com.zaxxer.hikari.HikariConfig(PROPERTY_FILE_PATH);
