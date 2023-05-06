@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 import org.javatuples.Pair;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 @Entity
 @Table(name = "temporary_bill")
@@ -21,6 +22,19 @@ public class TemporaryBill extends Bill {
 
     public void addToBill(Barang barang, int jumlah) {
         cart.add(Pair.with(barang, jumlah));
+    }
+
+    public void emptyBill() {
+        cart.clear();
+    }
+
+    public void removeFromBill(Barang barang) {
+        for (int i = 0; i < cart.size(); i++) {
+            if (Objects.equals(cart.get(i).getValue0().getId(), barang.getId())) {
+                cart.remove(i);
+                return;
+            }
+        }
     }
 
     public FixedBill convertToFixedBill(int userId) {
