@@ -33,8 +33,8 @@ public class MemberRepository extends InMemoryCrudRepository<Integer, Member> {
         return storage.keySet().stream().map(el -> storage.get(el)).filter(member -> name.equals(member.getName())).findAny().get();
     }
 
-    public void updateMember(String memberName, String newName, String newPhone, String newType) {
-        searchMember(memberName).updateMember(newName, newPhone, newType);
+    public void updateMember(Integer id, String newName, String newPhone, String newType) {
+        findById(id).get().updateMember(newName, newPhone, newType);
     }
 
     public void addMember(Customer customer, String name, String phone, String type) {
