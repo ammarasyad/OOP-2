@@ -1,12 +1,12 @@
 package com.tll.gui.factory;
 
 import com.tll.backend.model.bill.TemporaryBill;
-import com.tll.backend.model.user.Customer;
 import com.tll.backend.model.user.Member;
 import com.tll.backend.repository.impl.barang.BarangRepository;
 import com.tll.backend.repository.impl.bill.FixedBillRepository;
 import com.tll.backend.repository.impl.bill.TemporaryBillRepository;
 import com.tll.backend.repository.impl.user.CustomerRepository;
+import com.tll.backend.repository.impl.user.MemberRepository;
 import com.tll.gui.AutoCompleteComboBox;
 import com.tll.gui.TransactionWidget;
 import com.tll.gui.controllers.KasirPageModel;
@@ -26,7 +26,6 @@ import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-import javax.swing.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicReference;
@@ -244,9 +243,10 @@ public class PageFactory {
         return historyPage;
     }
 
-    public static VBox getKasirPage(TemporaryBillRepository temporaryBillRepository, BarangRepository barangRepository, FixedBillRepository fixedBillRepository, CustomerRepository customerRepository, KasirPageModel kasirPageModel){
+    public static VBox getKasirPage(TemporaryBillRepository temporaryBillRepository, BarangRepository barangRepository, FixedBillRepository fixedBillRepository,
+                                    CustomerRepository customerRepository, MemberRepository memberRepository, KasirPageModel kasirPageModel){
         VBox kasirPage = new VBox();
-        KasirPageControl kasirPageControl = new KasirPageControl(temporaryBillRepository, barangRepository, kasirPageModel);
+        KasirPageControl kasirPageControl = new KasirPageControl(temporaryBillRepository, fixedBillRepository, barangRepository, customerRepository, memberRepository, kasirPageModel);
 
         kasirPage.setPadding(new Insets(10));
         kasirPage.setSpacing(10);
@@ -338,8 +338,18 @@ public class PageFactory {
         VBox bottomRightVbox = new VBox();
         bottomRightVbox.setAlignment(Pos.BOTTOM_RIGHT);
 
+        HBox setuHbox = new HBox();
         Button billButton = new Button("Bill");
-        bottomRightVbox.getChildren().addAll(billButton);
+        AutoCompleteComboBox<Member> members = kasirPageModel.getMembers();
+        HBox.setHgrow(setuHbox, Priority.ALWAYS);
+        members.setPrefWidth(220);
+        setuHbox.setAlignment(Pos.BOTTOM_RIGHT);
+        CheckBox useMember = kasirPageModel.getUseMember();
+        useMember.setStyle("-fx-font-size: 16px;");
+        useMember.setPadding(new Insets(0, 10, 0, 10));
+
+        setuHbox.getChildren().addAll(new Label("Use Member"), useMember, members,billButton);
+        bottomRightVbox.getChildren().addAll(setuHbox);
         bottomRightVbox.setMinHeight(100);
         VBox.setVgrow(bottomRightVbox, Priority.ALWAYS);
         billButton.setOnAction(event -> kasirPageControl.saveTemporaryBill());
