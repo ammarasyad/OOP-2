@@ -7,13 +7,14 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @RequiredArgsConstructor
-public class Member implements StorableObject<Integer> {
+public class Member implements Serializable, StorableObject<Integer> {
     private final Integer id;
     private String type;
     private boolean activeStatus;
@@ -50,6 +51,21 @@ public class Member implements StorableObject<Integer> {
 
     public void addBill(FixedBill bill) {
         this.bills.add(bill);
+        if (isActiveStatus()) {
+            long totalAmount = bill.getTotalPrice().longValue();
+            if (getType().equals("Vip")) {
+                totalAmount -= totalAmount*0.1;
+            }
+
+            if (getPoint() > totalAmount) {
+                setPoint(getPoint() - totalAmount);
+            }
+            else {
+                long temp = (totalAmount - getPoint())/100;
+                setPoint(temp);
+            }
+        }
+
     }
     public void printInfo() {
         System.out.println(getId() + " " + getType() + " " + getName() + " " + getPoint() + " " + activeStatus);
