@@ -29,13 +29,17 @@ import java.util.List;
 public class Bill implements Serializable, StorableObject<Integer> {
 
     protected Integer id;
+    @Setter(AccessLevel.PUBLIC)
+    private static BigDecimal priceMultiplier = new BigDecimal(1);
+    @Setter(AccessLevel.PUBLIC)
+    private static BigDecimal priceAddition = new BigDecimal(0);
 
     @JsonDeserialize(using = ListPairDeserializer.class)
     protected List<Pair<Barang, Integer>> cart;
 
     public BigDecimal getTotalPrice() {
         return cart.stream().map(el -> el.getValue0().getHarga().multiply(BigDecimal.valueOf(el.getValue1())))
-                .reduce(new BigDecimal(0), BigDecimal::add, BigDecimal::add);
+                .reduce(new BigDecimal(0), BigDecimal::add, BigDecimal::add).multiply(priceMultiplier).add(priceAddition);
     }
 
 }
