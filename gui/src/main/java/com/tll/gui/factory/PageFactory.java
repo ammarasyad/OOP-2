@@ -53,7 +53,7 @@ public class PageFactory {
         return mainPage;
     }
 
-    public static VBox getRegisterPage(CustomerRepository customerRepository, RegisterPageModel registerPageModel){
+    public static VBox getRegisterPage(RegisterPageModel registerPageModel){
         VBox registerPage = new VBox();
         RegisterPageControl registerPageControl = new RegisterPageControl(registerPageModel);
 
@@ -73,17 +73,16 @@ public class PageFactory {
         leftVbox.setPadding(new Insets(10));
 
         Label nameLabel = new Label("Nama :");
-        TextField nameTextField = new TextField();
+        TextField nameTextField = registerPageModel.getNameTextField();
         nameTextField.setPromptText("e.g. Hayam Wuruk");
 
         Label phoneLabel = new Label("Nomor Telepon :");
-        TextField phoneTextField = new TextField();
+        TextField phoneTextField = registerPageModel.getPhoneTextField();
         phoneTextField.setPromptText("e.g. 081806122004");
 
         Label idLabel = new Label("Id Member :");
-        ArrayList<Integer> customerId = new ArrayList<>(customerRepository.getAllCustomerId());
-        AutoCompleteComboBox idComboBox = new AutoCompleteComboBox(customerRepository.getAllCustomerId());
-        idComboBox.getSelectionModel().selectFirst();
+        AutoCompleteComboBox idComboBox = registerPageModel.getAccounts();
+        idComboBox.setEditable(true);
 
         leftVbox.getChildren().addAll(nameLabel, nameTextField, phoneLabel, phoneTextField, idLabel, idComboBox);
         HBox.setMargin(leftVbox, new Insets(10, 10, 10, 20)); // set margin of left VBox in HBox
@@ -94,9 +93,10 @@ public class PageFactory {
 
         Button registerButton = new Button("Register");
         registerButton.setOnAction(actionEvent -> {
-            if (!checkEmpty(nameTextField, phoneTextField) && idComboBox.getSelectionModel().isEmpty()) {
+            if (!checkEmpty(nameTextField, phoneTextField) || idComboBox.getSelectionModel().isEmpty()) {
                 return;
             }
+            registerPageControl.createMember();
             revertRedBorder(nameTextField, phoneTextField);
         });
         rightVbox.getChildren().add(registerButton);

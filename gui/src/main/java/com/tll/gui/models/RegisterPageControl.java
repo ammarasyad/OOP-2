@@ -1,5 +1,6 @@
 package com.tll.gui.models;
 
+import com.tll.backend.model.user.Customer;
 import com.tll.gui.controllers.RegisterPageModel;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -15,5 +16,15 @@ public class RegisterPageControl {
     RegisterPageModel registerPageModel;
     public RegisterPageControl(RegisterPageModel registerPageModel){
         this.registerPageModel = registerPageModel;
+    }
+
+    public void createMember() {
+        Customer customer = registerPageModel.getAccounts().getValue();
+        registerPageModel.getMemberRepository().addMember(customer, registerPageModel.getNameTextField().getText(), registerPageModel.getPhoneTextField().getText(), "Member");
+        registerPageModel.getCustomerRepository().delete(customer);
+        registerPageModel.getAccounts().getSelectionModel().clearSelection();
+        registerPageModel.getAccounts().setDataItems(registerPageModel.getCustomerRepository().findAll());
+        registerPageModel.getNameTextField().setText("");
+        registerPageModel.getPhoneTextField().setText("");
     }
 }
