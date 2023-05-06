@@ -77,7 +77,13 @@ public class KasirPageControl {
     }
 
     public void saveTemporaryBill(){
-        kasirPageModel.getTemporaryBill();
+        kasirPageModel.getTemporaryBill().emptyBill();
+        for(Node node : kasirPageModel.getSelectedItem().getChildren()){
+            if(node instanceof ProductWidget){
+                ProductWidget productWidget = (ProductWidget) node;
+                kasirPageModel.getTemporaryBill().addToBill(productWidget.getBarang(), productWidget.getQuantity());
+            }
+        }
     }
 
     public void checkOut(){
