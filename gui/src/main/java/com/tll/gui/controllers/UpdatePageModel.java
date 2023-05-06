@@ -18,7 +18,7 @@ public class UpdatePageModel {
     private ComboBox<String> accountStatus;
     private ComboBox<String> activity;
     private AutoCompleteComboBox<Member> accounts;
-    MemberRepository memberRepository;
+    private MemberRepository memberRepository;
     private TextField nameTextField;
     private TextField phoneTextField;
     @Setter

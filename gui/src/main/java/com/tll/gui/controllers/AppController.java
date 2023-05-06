@@ -76,7 +76,7 @@ public class AppController {
         kasirPage.setOnAction(event -> {
             TemporaryBill temporaryBill = new TemporaryBill(0);
             temporaryBillRepository.save(temporaryBill);
-            addKasirPage(new KasirPageModel(temporaryBill));
+            addKasirPage(new KasirPageModel(temporaryBill, memberRepository));
         });
         settingPage.setOnAction(event -> addSetting());
         InsertPage.setOnAction(event ->addInsertPage());
@@ -85,7 +85,7 @@ public class AppController {
     }
     private void loadKasirPages(){
         for(TemporaryBill temporaryBill : temporaryBillRepository.findAll()){
-            addKasirPage(new KasirPageModel(temporaryBill));
+            addKasirPage(new KasirPageModel(temporaryBill, memberRepository));
         }
     }
     private void addMainPage() {
@@ -117,7 +117,8 @@ public class AppController {
 //        var tempBill = temporaryBillRepository.findById(0).orElseThrow(() -> new RuntimeException());
 //        KasirPageModel kasirPageModel = new KasirPageModel(tempBill);
         ClosableTab tab = new ClosableTab(KASIR_PAGE);
-        tab.setContent(PageFactory.getKasirPage(temporaryBillRepository, barangRepository, fixedBillRepository, customerRepository, kasirPageModel));
+        tab.setContent(PageFactory.getKasirPage(temporaryBillRepository, barangRepository, fixedBillRepository, customerRepository,
+                                                memberRepository, kasirPageModel));
         tabPane.getTabs().add(tab);
     }
 
