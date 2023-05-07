@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class AdditionPlugin extends Plugin {
 
-    private static final String FILE_PATH = "src/main/resources/addition-plugin-state.json";
+    private static final String FILE_PATH = "addition-plugin-state.json";
     private static final JsonAdapter jsonAdapter = new JsonAdapter(FILE_PATH);
 
     @AutoWired(identifier = "AppController")
@@ -32,7 +32,7 @@ public class AdditionPlugin extends Plugin {
         var fileExists = loadFileIfExists();
 
         if (!fileExists) {
-            additionState = new AdditionState(new BigDecimal(1), false);
+            additionState = new AdditionState(new BigDecimal(1));
         }
 
         TextField idTextField = new TextField();
@@ -41,10 +41,6 @@ public class AdditionPlugin extends Plugin {
         AtomicReference<FieldStatus> idStatus = new AtomicReference<>(new FieldStatus(false));
         idTextField.textProperty().addListener(el -> {
             try {
-                if (!additionState.isEnabled()) {
-                    return;
-                }
-
                 var id = Integer.parseInt(idTextField.getText());
                 Optional<TemporaryBill> optTempBill = appController.getTemporaryBillRepository().findById(id);
                 if (optTempBill.isEmpty()) {
@@ -65,10 +61,6 @@ public class AdditionPlugin extends Plugin {
 
         discTextField.textProperty().addListener((observable, oldValue, newValue) -> {
             try {
-                if (!additionState.isEnabled()) {
-                    return;
-                }
-
                 if (!idStatus.get().isValid()) {
                     discTextField.setStyle("-fx-border-color: red");
                     return;
@@ -103,9 +95,6 @@ public class AdditionPlugin extends Plugin {
         }
         tsField.textProperty().addListener((observable, oldValue, newValue) -> {
             try {
-                if (!additionState.isEnabled()) {
-                    return;
-                }
                 var addition = Integer.parseInt(tsField.getText());
                 if (addition >= 0) {
                     Bill.setPriceAddition(new BigDecimal(addition));
@@ -123,22 +112,8 @@ public class AdditionPlugin extends Plugin {
         saveButton.setText("save");
         saveButton.setOnAction(el -> save());
 
-        var button = new Button();
-        button.setText(additionState.isEnabled() ? "disable addition" : "enable addition");
-        button.setOnAction(el -> {
-            if (additionState.isEnabled()) {
-                button.setText("enable addition");
-                additionState.setEnabled(false);
-                Bill.setPriceAddition(new BigDecimal(0));
-                return;
-            }
-            button.setText("disable addition");
-            additionState.setEnabled(true);
-            Bill.setPriceAddition(additionState.getPriceAddition());
-        });
-
         VBox vbox = new VBox();
-        vbox.getChildren().addAll(hBox, tsField, button);
+        vbox.getChildren().addAll(hBox, tsField, saveButton);
 
         appController.getPluginNodes().add(vbox);
     }

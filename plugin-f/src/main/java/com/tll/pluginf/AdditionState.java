@@ -10,6 +10,5 @@ import java.math.BigDecimal;
 public class AdditionState {
 
     private BigDecimal priceAddition;
-    private boolean enabled;
 
 }
