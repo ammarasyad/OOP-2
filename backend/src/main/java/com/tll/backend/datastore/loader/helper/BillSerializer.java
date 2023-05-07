@@ -21,7 +21,6 @@ public class BillSerializer extends StdSerializer<Bill> {
     public void serialize(Bill bill, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
         jsonGenerator.writeStartObject();
         jsonGenerator.writeNumberField("id", bill.getId());
-        jsonGenerator.writeNumberField("userId", bill.getId());
 
         jsonGenerator.writeFieldName("cart");
         jsonGenerator.writeStartArray();

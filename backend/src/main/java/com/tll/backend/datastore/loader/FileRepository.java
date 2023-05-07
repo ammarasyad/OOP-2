@@ -29,12 +29,4 @@ public class FileRepository {
     public static <T> List<T> load(@NotNull Class<T> clazz, DataStore dataStore) throws IOException {
         return dataStore.load(clazz);
     }
-
-    public enum FileTypes {
-        JSON,
-        XML,
-        OBJ,
-        SQL,
-        SQL_ORM
-    }
 }

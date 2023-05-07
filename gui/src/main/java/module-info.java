@@ -4,6 +4,7 @@ module com.tll.gui {
     requires lombok;
     requires backend;
     requires javatuples;
+    requires org.jetbrains.annotations;
 
     opens com.tll.gui to javafx.fxml;
     exports com.tll.gui;

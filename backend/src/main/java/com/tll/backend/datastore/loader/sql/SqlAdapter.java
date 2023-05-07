@@ -5,6 +5,7 @@ import com.tll.backend.datastore.loader.hikari.HikariConfig;
 import com.tll.backend.model.barang.Barang;
 import com.tll.backend.model.barang.KategoriBarang;
 import com.tll.backend.model.bill.FixedBill;
+import com.tll.backend.model.bill.TemporaryBill;
 import com.tll.backend.model.user.Customer;
 import com.tll.backend.model.user.Member;
 import lombok.AllArgsConstructor;
@@ -32,6 +33,9 @@ public class SqlAdapter implements DataStore {
                 // THIS WILL INTRODUCE DUPLICATES. UNDER THE ASSUMPTION THAT DUPLICATE BILLS EXIST, IT WILL NOT BE HANDLED.
                 insertFixedBill(connection, objects);
                 insertCart(connection, objects);
+            } else if (objects.get(0) instanceof TemporaryBill) { // Temporary bill saved to persistent storage?????
+                insertTemporaryBill(connection, objects);
+                insertTemporaryCart(connection, objects);
             } else if (objects.get(0) instanceof Customer) {
                 insertFixedBill(connection, objects.stream().map(o -> ((Customer) o).getBill()).toList());
                 insertCart(connection, objects.stream().map(o -> ((Customer) o).getBill()).toList());
@@ -52,6 +56,15 @@ public class SqlAdapter implements DataStore {
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public void deleteTemporaryBill(HikariConfig connection, Integer id) throws SQLException {
+        String query = "DELETE FROM TemporaryBill WHERE id = ?";
+        try (Connection conn = connection.getDataSource().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, id);
+            stmt.executeUpdate();
         }
     }
 
@@ -88,7 +101,7 @@ public class SqlAdapter implements DataStore {
                 """,
                 """
                         CREATE TABLE IF NOT EXISTS Cart (
-                            id INT NOT NULL AUTO_INCREMENT UNIQUE,
+                            id INT NOT NULL AUTO_INCREMENT,
                             id_barang INT NOT NULL,
                             jumlah INT NOT NULL,
                             id_bill INT NOT NULL,
@@ -98,7 +111,31 @@ public class SqlAdapter implements DataStore {
                         )
                 """,
 
-                // 4. Customer
+                // 4. TemporaryBill
+                """
+                        CREATE TABLE IF NOT EXISTS TemporaryBill (
+                            id INT NOT NULL,
+                            PRIMARY KEY (id)
+                        )
+                """,
+                """
+                        CREATE TABLE IF NOT EXISTS TemporaryCart (
+                            id INT NOT NULL AUTO_INCREMENT,
+                            id_barang INT NOT NULL,
+                            jumlah INT NOT NULL,
+                            id_bill INT NOT NULL,
+                            PRIMARY KEY (id_barang, id_bill),
+                            FOREIGN KEY (id_barang) REFERENCES Barang(id),
+                            
+                            CONSTRAINT `fk_temporary_cart_bill`
+                                FOREIGN KEY (id_bill) REFERENCES TemporaryBill(id)
+                                ON DELETE CASCADE
+                                ON UPDATE RESTRICT
+                        )
+                """
+
+                ,
+                // 5. Customer
                 """
                         CREATE TABLE IF NOT EXISTS Customer (
                             id INT NOT NULL,
@@ -108,7 +145,7 @@ public class SqlAdapter implements DataStore {
                         )
                 """,
 
-                // 5. Member
+                // 6. Member
                 """
                         CREATE TABLE IF NOT EXISTS Member (
                             id INT NOT NULL,
@@ -172,7 +209,7 @@ public class SqlAdapter implements DataStore {
     }
 
     private void insertCart(HikariConfig connection, List<?> objects) throws SQLException {
-        String query = "INSERT INTO Cart (id_barang, jumlah, id_bill) VALUES (?, ?, ?)";
+        String query = "INSERT IGNORE INTO Cart (id_barang, jumlah, id_bill) VALUES (?, ?, ?)";
         try (Connection conn = connection.getDataSource().getConnection()) {
             objects.forEach(o -> {
                 FixedBill bill = (FixedBill) o;
@@ -199,6 +236,38 @@ public class SqlAdapter implements DataStore {
                 FixedBill fixedBill = (FixedBill) o;
                 statement.setInt(1, fixedBill.getId());
                 statement.setInt(2, fixedBill.getUserId());
+                statement.executeUpdate();
+                statement.clearParameters();
+            }
+        }
+    }
+
+    private void insertTemporaryCart(HikariConfig connection, List<?> objects) throws SQLException {
+        String query = "INSERT IGNORE INTO TemporaryCart (id_barang, jumlah, id_bill) VALUES (?, ?, ?)";
+        try (Connection conn = connection.getDataSource().getConnection()) {
+            objects.forEach(o -> {
+                TemporaryBill tempBill = (TemporaryBill) o;
+                tempBill.getCart().forEach(pair -> {
+                    try (PreparedStatement statement = conn.prepareStatement(query)) {
+                        statement.setInt(1, pair.getValue0().getId());
+                        statement.setInt(2, pair.getValue1());
+                        statement.setInt(3, tempBill.getId());
+                        statement.executeUpdate();
+                        statement.clearParameters();
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+            });
+        }
+    }
+
+    private void insertTemporaryBill(HikariConfig connection, List<?> objects) throws SQLException {
+        String query = "INSERT IGNORE INTO TemporaryBill (id) VALUES (?)";
+        try (Connection conn = connection.getDataSource().getConnection()) {
+            PreparedStatement statement = conn.prepareStatement(query);
+            for (Object o : objects) {
+                statement.setInt(1, ((TemporaryBill) o).getId());
                 statement.executeUpdate();
                 statement.clearParameters();
             }
