@@ -1,44 +1,29 @@
 package com.tll.pluginchart1;
 
-import com.tll.backend.datastore.loader.JsonAdapter;
 import com.tll.backend.model.barang.Barang;
-import com.tll.backend.model.barang.KategoriBarang;
-import com.tll.backend.model.bill.Bill;
-import com.tll.backend.repository.impl.barang.BarangRepository;
 import com.tll.gui.ClosableTab;
 import com.tll.gui.controllers.AppController;
 import com.tll.plugin.AutoWired;
 import com.tll.plugin.Plugin;
+import javafx.application.Platform;
 import javafx.scene.chart.*;
-import javafx.scene.chart.LineChart;
-import javafx.scene.chart.BarChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import javafx.embed.swing.SwingNode;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import lombok.NoArgsConstructor;
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
-import org.jfree.data.category.DefaultCategoryDataset;
 
-import javax.swing.*;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.TimeUnit;
 
 @NoArgsConstructor
 public class LineBarPlugin extends Plugin {
-    private static final String FILE_PATH = "src/main/resources/addition-plugin-state.json";
-    private static final JsonAdapter jsonAdapter = new JsonAdapter(FILE_PATH);
-    private static final String TAB_NAME = "Line Chart";
+//    private static final ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(2, runnable -> {
+//        Thread thread = new Thread(runnable);
+//        thread.setDaemon(true);
+//        return thread;
+//    });
 
     @AutoWired(identifier = "AppController")
     private AppController appController;
@@ -108,17 +93,29 @@ public class LineBarPlugin extends Plugin {
         yAxis.setTickLabelFont(Font.font("Arial", FontWeight.BOLD, 18));
 
         // Create a BarChart with the CategoryAxis and NumberAxis
-        LineChart<Number, Number> chart = new LineChart(xAxis, yAxis);
+        LineChart<Number, Number> chart = new LineChart<>(xAxis, yAxis);
 
         chart.setTitle("Data Barang");
 
         // Create a series and add some data to it
         XYChart.Series<Number, Number> series = new XYChart.Series<>();
 
-        BarangRepository barangRepository = appController.getBarangRepository();
-        for (Barang barang : barangRepository.findAll()) {
-            series.getData().add(new XYChart.Data<>(barang.getStok(), barang.getHarga()));
-        }
+        appController.getBarangRepository().findAll().forEach(barang -> series.getData().add(new XYChart.Data<>(barang.getStok(), barang.getHarga())));
+        appController.getCommonScheduledThreadPool().scheduleAtFixedRate(() -> Platform.runLater(() -> {
+            for (Barang barang : appController.getBarangRepository().findAll()) {
+                boolean found = false;
+                for (XYChart.Data<Number, Number> data : series.getData()) {
+                    if (data.getXValue().equals(barang.getStok())) {
+                        data.setYValue(barang.getHarga());
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    series.getData().add(new XYChart.Data<>(barang.getStok(), barang.getHarga()));
+                }
+            }
+        }), 1, 1, TimeUnit.SECONDS);
 
         // Add the series to the chart
         chart.getData().add(series);
@@ -149,10 +146,24 @@ public class LineBarPlugin extends Plugin {
         // Create a series and add some data to it
         XYChart.Series<String, Number> series = new XYChart.Series<>();
 
-        BarangRepository barangRepository = appController.getBarangRepository();
-        for (Barang barang : barangRepository.findAll()) {
-            series.getData().add(new XYChart.Data<>(barang.getNama(), barang.getStok()));
-        }
+
+        appController.getBarangRepository().findAll().forEach(barang -> series.getData().add(new XYChart.Data<>(barang.getNama(), barang.getStok())));
+
+        appController.getCommonScheduledThreadPool().scheduleAtFixedRate(() -> Platform.runLater(() -> {
+            for (Barang barang : appController.getBarangRepository().findAll()) {
+                boolean found = false;
+                for (XYChart.Data<String, Number> data : series.getData()) {
+                    if (data.getXValue().equals(barang.getNama())) {
+                        data.setYValue(barang.getStok());
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    series.getData().add(new XYChart.Data<>(barang.getNama(), barang.getStok()));
+                }
+            }
+        }), 1, 1, TimeUnit.SECONDS);
 
         // Add the series to the chart
         chart.getData().add(series);

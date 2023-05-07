@@ -2,7 +2,6 @@ package com.tll.gui;
 
 import com.tll.backend.model.barang.Barang;
 import com.tll.backend.model.barang.KategoriBarang;
-import com.tll.backend.model.bill.FixedBill;
 import com.tll.backend.model.bill.TemporaryBill;
 import com.tll.backend.model.user.Customer;
 import com.tll.backend.model.user.Member;
@@ -15,12 +14,11 @@ import com.tll.backend.repository.impl.bill.TemporaryBillRepository;
 import com.tll.backend.repository.impl.user.CustomerRepository;
 import com.tll.backend.repository.impl.user.MemberRepository;
 import com.tll.gui.controllers.AppController;
-import com.tll.gui.data.DataHandler;
+import com.tll.gui.models.AppModel;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import com.tll.gui.models.AppModel;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -34,8 +32,8 @@ public class App extends Application {
         TemporaryBillRepository temporaryBillRepository = new TemporaryBillRepository();
 //        FixedBill fixedBill =
         Barang barang = new Barang(1,1,"a",new BigDecimal(1),new BigDecimal(1),new KategoriBarang(1,"x"), "a.jpg", true);
-        Barang barang2 = new Barang(3,3,"a",new BigDecimal(1),new BigDecimal(1),new KategoriBarang(1,"x"), "a.jpg", true);
-        Barang barang3 = new Barang(7,5,"a",new BigDecimal(1),new BigDecimal(1),new KategoriBarang(1,"x"), "a.jpg", true);
+        Barang barang2 = new Barang(3,3,"b",new BigDecimal(1),new BigDecimal(1),new KategoriBarang(1,"x"), "a.jpg", true);
+        Barang barang3 = new Barang(7,5,"c",new BigDecimal(1),new BigDecimal(1),new KategoriBarang(1,"x"), "a.jpg", true);
 
         barangRepository.save(barang);
         barangRepository.save(barang2);
@@ -56,9 +54,9 @@ public class App extends Application {
         customerRepository.save(customer3);
 
         MemberRepository memberRepository = new MemberRepository();
-        Member member = new Member(0, "paancoba", true, "asukon", "112", new ArrayList<FixedBill>(), 10);
-        Member member1 = new Member(1, "paancba", true, "asuksson", "112", new ArrayList<FixedBill>(), 10);
-        Member member2 = new Member(2, "paancobaa", true, "asusssskon", "112", new ArrayList<FixedBill>(), 10);
+        Member member = new Member(0, "paancoba", true, "asukon", "112", new ArrayList<>(), 10);
+        Member member1 = new Member(1, "paancba", true, "asuksson", "112", new ArrayList<>(), 10);
+        Member member2 = new Member(2, "paancobaa", true, "asusssskon", "112", new ArrayList<>(), 10);
 
         memberRepository.save(member);
         memberRepository.save(member1);
@@ -78,12 +76,12 @@ public class App extends Application {
         Scene scene = new Scene(vbox, 1200, 640);
         stage.setTitle("Kasir-Kasiran Mantap!!!!!");
 
-
         stage.setScene(scene);
         stage.show();
     }
 
     public static void main(String[] args) {
+        Runtime.getRuntime().addShutdownHook(new Thread(AppController::shutdownPoolNow));
         launch();
     }
 }
