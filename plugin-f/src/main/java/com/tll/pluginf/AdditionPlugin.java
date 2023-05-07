@@ -3,17 +3,17 @@ package com.tll.pluginf;
 import com.tll.backend.datastore.loader.JsonAdapter;
 import com.tll.backend.model.bill.Bill;
 import com.tll.backend.model.bill.TemporaryBill;
-import com.tll.gui.ClosableTab;
 import com.tll.gui.controllers.AppController;
 import com.tll.plugin.AutoWired;
 import com.tll.plugin.Plugin;
 import javafx.scene.control.Button;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -22,63 +22,18 @@ public class AdditionPlugin extends Plugin {
     private static final String FILE_PATH = "src/main/resources/addition-plugin-state.json";
     private static final JsonAdapter jsonAdapter = new JsonAdapter(FILE_PATH);
 
-    private static final String TAB_NAME = "tax, service, discount";
-
     @AutoWired(identifier = "AppController")
     private AppController appController;
 
     private AdditionState additionState;
-    private MenuItem menuItem;
 
     @Override
     public void load() {
-        menuItem = new MenuItem(TAB_NAME);
-        menuItem.setOnAction(el -> openDiscountPage());
         var fileExists = loadFileIfExists();
 
         if (!fileExists) {
             additionState = new AdditionState(new BigDecimal(1), false);
         }
-
-        var button = new Button();
-        button.setText(additionState.isEnabled() ? "disable" : "enable" + " add");
-        button.setOnAction(el -> {
-            if (!additionState.isEnabled()) {
-                button.setText("enable add");
-                additionState.setEnabled(false);
-                Bill.setPriceAddition(new BigDecimal(0));
-                removeMenu();
-                return;
-            }
-            button.setText("disable add");
-            additionState.setEnabled(true);
-            Bill.setPriceAddition(additionState.getPriceAddition());
-            addMenu();
-        });
-
-        if (additionState.isEnabled()) {
-            addMenu();
-        }
-    }
-
-    private void addMenu() {
-        appController.getPages().getItems().add(menuItem);
-    }
-
-    private void removeMenu() {
-        int i = 0;
-        var items = appController.getPages().getItems();
-        for (var item: items) {
-            if (item.hashCode() == menuItem.hashCode()) {
-                items.remove(i);
-                return;
-            }
-            ++i;
-        }
-    }
-
-    private void openDiscountPage() {
-        VBox discountVBox = new VBox();
 
         TextField idTextField = new TextField();
         idTextField.setPromptText("Masukkan id bill");
@@ -86,6 +41,10 @@ public class AdditionPlugin extends Plugin {
         AtomicReference<FieldStatus> idStatus = new AtomicReference<>(new FieldStatus(false));
         idTextField.textProperty().addListener(el -> {
             try {
+                if (!additionState.isEnabled()) {
+                    return;
+                }
+
                 var id = Integer.parseInt(idTextField.getText());
                 Optional<TemporaryBill> optTempBill = appController.getTemporaryBillRepository().findById(id);
                 if (optTempBill.isEmpty()) {
@@ -106,6 +65,10 @@ public class AdditionPlugin extends Plugin {
 
         discTextField.textProperty().addListener((observable, oldValue, newValue) -> {
             try {
+                if (!additionState.isEnabled()) {
+                    return;
+                }
+
                 if (!idStatus.get().isValid()) {
                     discTextField.setStyle("-fx-border-color: red");
                     return;
@@ -130,6 +93,9 @@ public class AdditionPlugin extends Plugin {
             additionState.setPriceAddition(Bill.getPriceAddition());
         });
 
+        HBox hBox = new HBox();
+        hBox.getChildren().addAll(idTextField, discTextField);
+
         TextField tsField = new TextField();
         tsField.setPromptText("masukkan tax & service charge");
         if (additionState.getPriceAddition() != null) {
@@ -137,11 +103,11 @@ public class AdditionPlugin extends Plugin {
         }
         tsField.textProperty().addListener((observable, oldValue, newValue) -> {
             try {
+                if (!additionState.isEnabled()) {
+                    return;
+                }
                 var addition = Integer.parseInt(tsField.getText());
                 if (addition >= 0) {
-                    if (addition == 999) {
-                        removeMenu();
-                    }
                     Bill.setPriceAddition(new BigDecimal(addition));
                     tsField.setStyle("-fx-border-color: none");
                 } else {
@@ -150,14 +116,39 @@ public class AdditionPlugin extends Plugin {
             } catch (NumberFormatException ex) {
                 tsField.setStyle("-fx-border-color: red");
             }
-                additionState.setPriceAddition(Bill.getPriceAddition());
+            additionState.setPriceAddition(Bill.getPriceAddition());
         });
 
-        discountVBox.getChildren().addAll(idTextField, discTextField, tsField);
+        var saveButton = new Button();
+        saveButton.setText("save");
+        saveButton.setOnAction(el -> save());
 
-        ClosableTab closableTab = new ClosableTab(TAB_NAME);
-        closableTab.setContent(discountVBox);
-        appController.getTabPane().getTabs().add(closableTab);
+        var button = new Button();
+        button.setText(additionState.isEnabled() ? "disable addition" : "enable addition");
+        button.setOnAction(el -> {
+            if (additionState.isEnabled()) {
+                button.setText("enable addition");
+                additionState.setEnabled(false);
+                Bill.setPriceAddition(new BigDecimal(0));
+                return;
+            }
+            button.setText("disable addition");
+            additionState.setEnabled(true);
+            Bill.setPriceAddition(additionState.getPriceAddition());
+        });
+
+        VBox vbox = new VBox();
+        vbox.getChildren().addAll(hBox, tsField, button);
+
+        appController.getPluginNodes().add(vbox);
+    }
+
+    private void save() {
+        try {
+            jsonAdapter.save(List.of(additionState));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private boolean loadFileIfExists() {
