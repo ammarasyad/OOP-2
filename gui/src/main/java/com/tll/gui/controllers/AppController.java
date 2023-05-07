@@ -1,6 +1,5 @@
 package com.tll.gui.controllers;
 
-import com.tll.backend.model.bill.FixedBill;
 import com.tll.backend.model.bill.TemporaryBill;
 import com.tll.backend.repository.impl.barang.BarangRepository;
 import com.tll.backend.repository.impl.bill.FixedBillRepository;
@@ -9,37 +8,40 @@ import com.tll.backend.repository.impl.user.CustomerRepository;
 import com.tll.backend.repository.impl.user.MemberRepository;
 import com.tll.gui.ClosableTab;
 import com.tll.gui.factory.PageFactory;
-import com.tll.gui.models.HistoryPageControl;
-import javafx.scene.control.*;
-import javafx.scene.layout.VBox;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import lombok.Getter;
-import com.tll.gui.models.UpdatePageControl;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 @Getter
 public class AppController {
     //Pages menu
-    private Menu pages;
+    private final Menu pages;
     // items :
-    private MenuItem mainPage;
-    private MenuItem registerPage;
-    private MenuItem updatePage;
-    private MenuItem historyPage;
-    private MenuItem kasirPage;
-    private MenuItem settingPage;
-    private MenuItem InsertPage;
-    private TabPane tabPane;
-    private MainPageModel mainPageModel;
+    private final MenuItem mainPage;
+    private final MenuItem registerPage;
+    private final MenuItem updatePage;
+    private final MenuItem historyPage;
+    private final MenuItem kasirPage;
+    private final MenuItem settingPage;
+    private final MenuItem InsertPage;
+    private final TabPane tabPane;
+    private final MainPageModel mainPageModel;
     private RegisterPageModel registerPageModel;
     private UpdatePageModel updatePageModel;
-    private BarangRepository barangRepository;
-    private TemporaryBillRepository temporaryBillRepository;
-    private FixedBillRepository fixedBillRepository;
-    private CustomerRepository customerRepository;
-    private MemberRepository memberRepository;
-    private List<File> fileList;
+    private final BarangRepository barangRepository;
+    private final TemporaryBillRepository temporaryBillRepository;
+    private final FixedBillRepository fixedBillRepository;
+    private final CustomerRepository customerRepository;
+    private final MemberRepository memberRepository;
+    private final List<File> fileList;
 
     private static final String OPEN_PAGE = "Open Page";
     private static final String MAIN_PAGE = "Main";
@@ -50,6 +52,12 @@ public class AppController {
     private static final String INSERT_PAGE = "Insert";
     private static final String SETTING_PAGE = "Setting";
 
+    // Thread pool for running background tasks (for plugins)
+    private static final ScheduledExecutorService commonScheduledThreadPool = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors(), runnable -> {
+        Thread thread = new Thread(runnable);
+        thread.setDaemon(true);
+        return thread;
+    });
 
     public AppController(BarangRepository barangRepository, TemporaryBillRepository temporaryBillRepository,
                          FixedBillRepository fixedBillRepository,
@@ -88,7 +96,7 @@ public class AppController {
             boolean existSetting = false;
             for(Tab tab : tabPane.getTabs()){
                 System.out.println(((ClosableTab) tab).getName());
-                if(((ClosableTab) tab).getName() == SETTING_PAGE){
+                if(((ClosableTab) tab).getName().equals(SETTING_PAGE)){
                     existSetting = true;
                 }
             }
@@ -153,5 +161,11 @@ public class AppController {
         tabPane.getTabs().add(tab);
     }
 
+    public ScheduledExecutorService getCommonScheduledThreadPool() {
+        return commonScheduledThreadPool;
+    }
 
+    public static void shutdownPoolNow() {
+        commonScheduledThreadPool.shutdownNow();
+    }
 }

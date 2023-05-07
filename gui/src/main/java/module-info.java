@@ -10,4 +10,5 @@ module com.tll.gui {
 
     opens com.tll.gui to javafx.fxml;
     exports com.tll.gui;
+    exports com.tll.gui.controllers;
 }
