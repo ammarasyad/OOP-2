@@ -9,26 +9,30 @@ import com.tll.backend.repository.impl.bill.TemporaryBillRepository;
 import com.tll.backend.repository.impl.user.CustomerRepository;
 import com.tll.backend.repository.impl.user.MemberRepository;
 import com.tll.gui.AutoCompleteComboBox;
+import com.tll.gui.ProductWidget;
 import com.tll.gui.TransactionWidget;
 import com.tll.gui.controllers.*;
 import com.tll.gui.models.*;
 import com.tll.gui.factory.PageActionFactory;
-import javafx.beans.InvalidationListener;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.*;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import org.javatuples.Pair;
 
+import javax.security.auth.PrivateCredentialPermission;
 import java.io.File;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -81,6 +85,7 @@ public class PageFactory {
         clockLabel.textProperty().bindBidirectional(mainPageModel.getClockLabel().textProperty());
         bottomLabel.textProperty().bindBidirectional(mainPageModel.getBottomLabel().textProperty());
         //        mainPageController.startClock();
+//        mainPageController.startClock();
 
         kelompok.getChildren().addAll(ezra, chris, tobi, ammar, zidane);
         ezra.setAlignment(Pos.BOTTOM_CENTER);
@@ -242,8 +247,9 @@ public class PageFactory {
         return updatePage;
     }
 
-    public static VBox getHistoryPage(){
+    public static VBox getHistoryPage(FixedBillRepository fixedBillRepository, HistoryPageModel historyPageModel){
         VBox historyPage = new VBox();
+        HistoryPageControl historyPageControl = new HistoryPageControl(fixedBillRepository, historyPageModel);
         historyPage.setPadding(new Insets(10));
         historyPage.setSpacing(10);
 
@@ -251,27 +257,28 @@ public class PageFactory {
         titleLabel.setFont(new Font(38));
         VBox.setMargin(titleLabel, new Insets(0, 0, 0, 10));
 
-        VBox transactionWidgetsVBox = new VBox();
+        VBox transactionWidgetsVBox = historyPageModel.getTransactionContainer();
         transactionWidgetsVBox.setSpacing(10);
         transactionWidgetsVBox.setPadding(new Insets(10));
-        for(int i = 0; i < 6; i++){
-            TransactionWidget widget1 = new TransactionWidget("John Doe", "12345", "2023-05-01");
-            TransactionWidget widget2 = new TransactionWidget("Jane Smith", "67890", "2023-05-02");
-            TransactionWidget widget3 = new TransactionWidget("Alice Johnson", "54321", "2023-05-03");
-
-            transactionWidgetsVBox.getChildren().addAll(widget1, widget2, widget3);
-        }
 
         VBox transactionVBox = new VBox();
         Label transactionLabel = new Label("Transaction");
+        Button refreshButton = new Button("↻");
+        HBox refreshHbox = new HBox(refreshButton);
+        HBox.setHgrow(refreshHbox, Priority.ALWAYS);
+        refreshHbox.setAlignment(Pos.BOTTOM_RIGHT);
+        HBox transHbox = new HBox(transactionLabel, refreshHbox);
+        HBox.setHgrow(transHbox, Priority.ALWAYS);
         ScrollPane transactionScrollPane = new ScrollPane(transactionWidgetsVBox);
         transactionScrollPane.setPrefHeight(327.0);
         transactionScrollPane.setMinWidth(230);
         transactionScrollPane.setFitToWidth(true);
         VBox.setVgrow(transactionScrollPane, Priority.ALWAYS);
 
+        refreshButton.setOnAction(actionEvent -> historyPageControl.refreshHistory());
 
-        transactionVBox.getChildren().addAll(transactionLabel, transactionScrollPane);
+
+        transactionVBox.getChildren().addAll(transHbox, transactionScrollPane);
         VBox.setMargin(transactionVBox, new Insets(10, 20, 10, 10));
 
         VBox detailVBox = new VBox();
@@ -279,12 +286,51 @@ public class PageFactory {
         VBox.setMargin(detailVBox, new Insets(10, 10, 10, 10));
 
         Label detailLabel = new Label("Detail");
-        TextArea detailTextArea = new TextArea();
+        TextArea detailTextArea = historyPageModel.getDetailTextArea();
         detailTextArea.setEditable(false);
         VBox.setVgrow(detailTextArea, Priority.ALWAYS);
         detailVBox.setMinWidth(300);
 
-        detailVBox.getChildren().addAll(detailLabel, detailTextArea);
+        HBox bottomRightHbox = new HBox();
+        Button getPathButton = new Button("Select Folder");
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+
+        Stage fileStage = new Stage();
+        getPathButton.setOnAction(e -> {
+            File selectedFile = directoryChooser.showDialog(fileStage);
+            if (selectedFile != null) {
+                historyPageModel.setSavePath(selectedFile.getAbsolutePath());
+            }
+        });
+
+        TextField path = new TextField();
+        path.setPromptText("Enter save folder");
+        TextField fileName = new TextField();
+        fileName.setPromptText("Enter file name");
+        Button savePDFButton = new Button("Save All");
+        Button saveOnePDFButton = new Button("Save Details");
+        savePDFButton.setOnAction(e -> {
+            try {
+                historyPageControl.savePDF(fileName.getText()+".pdf");
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+        saveOnePDFButton.setOnAction(e -> {
+            try {
+                historyPageControl.savePDFcurrent(fileName.getText()+".pdf");
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+        HBox hbox1 = new HBox(path,getPathButton);
+        HBox hBox2 = new HBox(fileName,savePDFButton,saveOnePDFButton);
+        HBox.setHgrow(hBox2, Priority.ALWAYS);
+        HBox.setHgrow(hbox1, Priority.ALWAYS);
+        bottomRightHbox.getChildren().addAll(hbox1, hBox2);
+        HBox.setHgrow(bottomRightHbox, Priority.ALWAYS);
+
+        detailVBox.getChildren().addAll(detailLabel, detailTextArea, bottomRightHbox);
 
 //        HBox mainHBox = new HBox(transactionVBox, detailVBox);
 
@@ -317,6 +363,11 @@ public class PageFactory {
         TextField searchField = new TextField();
         Button searchButton = new Button("Search");
 
+        searchField.textProperty().addListener((observable, oldValue, newValue) -> {
+            // your function logic here
+            kasirPageControl.searchByName(newValue);
+        });
+
         // Configure the search button action
         searchButton.setOnAction(event -> {
             String searchTerm = searchField.getText();
@@ -341,13 +392,19 @@ public class PageFactory {
 
         VBox productListVBox = new VBox();
         Label transactionLabel = new Label("Products");
+        Button refreshButton = new Button("↻");
+        HBox refreshHbox = new HBox(refreshButton);
+        HBox.setHgrow(refreshHbox, Priority.ALWAYS);
+        refreshHbox.setAlignment(Pos.BOTTOM_RIGHT);
+        HBox transHbox = new HBox(transactionLabel, refreshHbox);
+        HBox.setHgrow(transHbox, Priority.ALWAYS);
         ScrollPane selectedPane = new ScrollPane(productVBox);
         selectedPane.setPrefHeight(327.0);
         selectedPane.setMinWidth(230);
         selectedPane.setFitToWidth(true);
         VBox.setVgrow(selectedPane, Priority.ALWAYS);
 
-        productListVBox.getChildren().addAll(searchBar,transactionLabel, selectedPane);
+        productListVBox.getChildren().addAll(searchBar,transHbox, selectedPane);
         VBox.setMargin(productListVBox, new Insets(10, 20, 10, 10));
 
         VBox detailVBox = new VBox();
@@ -362,7 +419,8 @@ public class PageFactory {
         buttonBox.setAlignment(Pos.CENTER_RIGHT);
         HBox.setHgrow(buttonBox, Priority.ALWAYS);
 
-        Label detailLabel = new Label("Detail");
+        Label detailLabel = kasirPageModel.getBillStatus();
+        detailLabel.setPadding(new Insets(0, 0, 9, 10));
         ScrollPane selectedProduct = new ScrollPane(selectedVBox);
         selectedProduct.setFitToWidth(true);
         selectedProduct.setPrefHeight(300);
@@ -392,12 +450,16 @@ public class PageFactory {
         VBox kasirAdditionVBox = new VBox();
         VBox.setVgrow(kasirAdditionVBox, Priority.ALWAYS);
         kasirAdditionVBox.getChildren().addAll(additions);
-        
+
         bottomRightVbox.getChildren().addAll(kasirAdditionVBox, setuHbox);
         bottomRightVbox.setMinHeight(100);
         VBox.setVgrow(bottomRightVbox, Priority.ALWAYS);
-        billButton.setOnAction(event -> kasirPageControl.checkOut());
+        billButton.setOnAction(event -> {
+            kasirPageControl.checkOut();
+            billButton.setOnAction(event1 -> {});
+        });
         saveTempButton.setOnAction(event -> kasirPageControl.saveTemporaryBill());
+        refreshButton.setOnAction(event -> kasirPageControl.refreshProductList());
 
         detailVBox.getChildren().addAll(detailLabel, selectedProduct, bottomRightVbox);
 
@@ -438,42 +500,69 @@ public class PageFactory {
         databoxTitle.setFont(new Font(24));
         VBox.setMargin(databoxTitle, new Insets(0, 0, 0, 0));
 
+        HBox loadHbox = new HBox();
+        FileChooser loadFileChooser = new FileChooser();
+
+        Stage loadStage = new Stage();
+        loadStage.setTitle("Select File");
+
+        Button selectButton = new Button("Open File");
+        Label fileLabel = new Label("File :");
+        fileLabel.setFont(new Font(14));
+
+        selectButton.setOnAction(e -> {
+            File selectedFile = loadFileChooser.showOpenDialog(loadStage);
+            fileLabel.setText("File :" + selectedFile.getName());
+        });
+
+        loadHbox.setSpacing(40);
+        loadHbox.getChildren().addAll(selectButton, fileLabel);
+        loadHbox.setAlignment(Pos.CENTER_LEFT);
+
         HBox formatHbox = new HBox();
         Label formatLabel = new Label("Format File :");
         formatLabel.setFont(new Font(14));
 
         ComboBox formatFile = new ComboBox<>();
         formatFile.getItems().addAll("JSON", "XML");
+        formatFile.getSelectionModel().selectFirst();
         formatHbox.getChildren().addAll(formatLabel, formatFile);
         formatHbox.setSpacing(40);
         formatHbox.setAlignment(Pos.CENTER_LEFT);
 
-        HBox fileHbox = new HBox();
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("Text Files", "*.txt")
-                ,new FileChooser.ExtensionFilter("HTML Files", "*.htm")
-        );
+        HBox saveHbox = new HBox();
+        FileChooser saveFileChooser = new FileChooser();
+        if (formatFile.getSelectionModel().getSelectedItem() == "JSON") {
+            saveFileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON File", "*.json"));
+        }
+        else {
+            saveFileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("XML File", "*.xml"));
+        }
 
-        Stage stage = new Stage();
-        stage.setTitle("Select File");
+        Stage saveStage = new Stage();
+        saveStage.setTitle("Select File");
 
-        Button selectButton = new Button("Select File");
-        Label fileLabel = new Label("File :");
+        Button saveButton = new Button("Save File");
+        Label saveLabel = new Label("");
         fileLabel.setFont(new Font(14));
 
-        selectButton.setOnAction(e -> {
-            File selectedFile = fileChooser.showOpenDialog(stage);
-            fileLabel.setText("File :" + selectedFile.getName());
+        saveButton.setOnAction(e -> {
+            File selectedFile = saveFileChooser.showSaveDialog(saveStage);
+            if (selectedFile.exists()) {
+                saveLabel.setText("File saved");
+            }
+            else {
+                saveLabel.setText("Failed to save file. Try again");
+            }
         });
 
-        fileHbox.setSpacing(40);
-        fileHbox.getChildren().addAll(selectButton, fileLabel);
-        fileHbox.setAlignment(Pos.CENTER_LEFT);
+        saveHbox.setSpacing(40);
+        saveHbox.getChildren().addAll(saveButton, saveLabel);
+        saveHbox.setAlignment(Pos.CENTER_LEFT);
 
-        dataVbox.setSpacing(30);
+        dataVbox.setSpacing(20);
         dataVbox.setStyle("-fx-border-color: black;" + "-fx-border-style: hidden hidden solid hidden");
-        dataVbox.getChildren().addAll(databoxTitle, formatHbox, fileHbox);
+        dataVbox.getChildren().addAll(databoxTitle, loadHbox, formatHbox, saveHbox);
 
         VBox pluginVbox = new VBox();
         pluginVbox.setPrefSize(100, 200);
@@ -492,7 +581,7 @@ public class PageFactory {
         Button selectPluginButton = new Button("Select File");
 
         selectPluginButton.setOnAction(e -> {
-            File selectedFile = pluginChooser.showOpenDialog(stage);
+            File selectedFile = pluginChooser.showOpenDialog(loadStage);
             if (selectedFile != null) {
                 fileList.add(selectedFile);
                 settingPageControl.refreshFileList();

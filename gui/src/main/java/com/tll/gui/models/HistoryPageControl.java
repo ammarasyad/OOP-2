@@ -11,10 +11,14 @@ import org.javatuples.Pair;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class HistoryPageControl {
     private HistoryPageModel historyPageModel;
     private FixedBillRepository fixedBillRepository;
+    private FixedBill currentFB;
+    private static ExecutorService executor = Executors.newFixedThreadPool(10);
     public HistoryPageControl(FixedBillRepository fixedBillRepository, HistoryPageModel historyPageModel){
         this.historyPageModel = historyPageModel;
         this.fixedBillRepository = fixedBillRepository;
@@ -36,23 +40,43 @@ public class HistoryPageControl {
     }
 
     public void showDetails(TransactionWidget transactionWidget){
-        FixedBill fixedBill = transactionWidget.getFixedBill();
+        currentFB = transactionWidget.getFixedBill();
         String listItem = "";
-        for(Pair<Barang, Integer> item : fixedBill.getCart()){
+        for(Pair<Barang, Integer> item : currentFB.getCart()){
             listItem = listItem + " > " + item.getValue0().getNama() + "\t.\t.\t.\t.\t.\t.\t." + item.getValue1() + " x "
-                        + "$" + item.getValue0().getHarga() + "\n";
+                    + "$" + item.getValue0().getHarga() + "\n";
         }
         historyPageModel.getDetailTextArea().setText(
-                        "UID   :\t" + fixedBill.getUserId() +
+                "UID   :\t" + currentFB.getUserId() +
                         "\nBarang : \n" + listItem +
-                                "\n Total : " + fixedBill.getTotalPrice()
+                        "\n Total : " + currentFB.getTotalPrice()
 
         );
     }
 
     public void savePDF(String fileName) throws IOException {
-        Laporan laporan = new Laporan(historyPageModel.getSavePath()+"\\"+fileName,
+        Laporan laporan = new Laporan(historyPageModel.getSavePath()+"/"+fileName,
                 (List<FixedBill>) fixedBillRepository.findAll());
-        laporan.save();
+        executor.submit(() -> {
+            try {
+                laporan.save();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+    public void savePDFcurrent(String fileName) throws IOException {
+        if(currentFB != null) {
+            Laporan laporan = new Laporan(historyPageModel.getSavePath() + "/" + fileName,
+                    currentFB);
+            executor.submit(() -> {
+                try {
+                    laporan.save();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        }
     }
 }

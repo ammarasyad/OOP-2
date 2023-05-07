@@ -52,9 +52,9 @@ public class UpdatePageControl {
 
     public void saveChanges(){
         updatePageModel.getMemberRepository().updateMember(updatePageModel.getMemberId(),
-                                                            updatePageModel.getNameTextField().getText(),
-                                                            updatePageModel.getPhoneTextField().getText(),
-                                                            updatePageModel.getAccountStatus().getValue());
+                updatePageModel.getNameTextField().getText(),
+                updatePageModel.getPhoneTextField().getText(),
+                updatePageModel.getAccountStatus().getValue());
         updatePageModel.getAccounts().setDataItems(updatePageModel.getMemberRepository().findAll());
 
     }

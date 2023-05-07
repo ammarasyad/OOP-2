@@ -12,6 +12,7 @@ import com.tll.backend.repository.impl.bill.TemporaryBillRepository;
 import com.tll.backend.repository.impl.user.CustomerRepository;
 import com.tll.backend.repository.impl.user.MemberRepository;
 import com.tll.gui.controllers.AppController;
+import com.tll.gui.data.DataHandler;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.VBox;
@@ -62,6 +63,9 @@ public class App extends Application {
 
 
         stage.setTitle("Hello World!");
+
+//        DataHandler.save(barangRepository, "members", DataHandler.FileTypes.JSON);
+//        BarangRepository another = DataHandler.load(BarangRepository.class, "members", DataHandler.FileTypes.JSON);
 
 
         AppController ac = new AppController(barangRepository, temporaryBillRepository, fixedBillRepository, customerRepository, memberRepository);
