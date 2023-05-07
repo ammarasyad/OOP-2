@@ -47,12 +47,12 @@ public class TemporaryBill extends Bill {
         }
     }
 
-    public FixedBill convertToFixedBill(int userId) {
+    public FixedBill convertToFixedBill(int fixedBillId, int userId) {
         var tempCart = cart.stream()
                 .map(el -> Pair.with(el.getValue0().clone(), el.getValue1()))
                 .toList();
 
-        return new FixedBill(this.id, userId, tempCart);
+        return new FixedBill(fixedBillId, userId, tempCart);
     }
 
     public void setTemporaryCart(List<Pair<Barang, Integer>> cart) {
