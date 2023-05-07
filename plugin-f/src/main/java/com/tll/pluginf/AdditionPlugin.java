@@ -11,8 +11,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
-import lombok.AllArgsConstructor;
-import lombok.Data;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -43,22 +41,24 @@ public class AdditionPlugin extends Plugin {
         }
 
         var button = new Button();
-        button.setText(additionState.isEnabled() ? "disable" : "enable");
+        button.setText(additionState.isEnabled() ? "disable" : "enable" + " add");
         button.setOnAction(el -> {
             if (!additionState.isEnabled()) {
-                button.setText("enable");
+                button.setText("enable add");
                 additionState.setEnabled(false);
                 Bill.setPriceAddition(new BigDecimal(0));
                 removeMenu();
                 return;
             }
-            button.setText("disable");
+            button.setText("disable add");
             additionState.setEnabled(true);
             Bill.setPriceAddition(additionState.getPriceAddition());
             addMenu();
         });
 
-        addMenu();
+        if (additionState.isEnabled()) {
+            addMenu();
+        }
     }
 
     private void addMenu() {
