@@ -20,6 +20,8 @@ import com.tll.backend.repository.impl.bill.FixedBillRepository;
 import com.tll.backend.repository.impl.bill.TemporaryBillRepository;
 import com.tll.backend.repository.impl.user.CustomerRepository;
 import com.tll.backend.repository.impl.user.MemberRepository;
+import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -30,7 +32,9 @@ import java.util.List;
 
 public class DataHandler implements AutoCloseable {
 
-    private static final String FILE_PATH = getFolderPath();
+    @Getter
+    @Setter
+    private String saveFolderPath = getFolderPath();
     private static HikariConfig connection = null;
 
     public <V extends StorableObject<?>> void save(@NotNull InMemoryCrudRepository<?, V> repository, @NotNull String fileName, FileTypes fileType) throws IOException {
@@ -73,15 +77,15 @@ public class DataHandler implements AutoCloseable {
 
     private DataStore getAppropriateDataAdapter(@NotNull String fileName, FileTypes fileType) {
         return switch (fileType) {
-            case JSON -> new JsonAdapter(FILE_PATH + fileName + ".json");
-            case XML -> new XmlAdapter(FILE_PATH + fileName + ".xml");
-            case OBJ -> new ObjAdapter(FILE_PATH + fileName + ".obj");
+            case JSON -> new JsonAdapter(saveFolderPath + fileName + ".json");
+            case XML -> new XmlAdapter(saveFolderPath + fileName + ".xml");
+            case OBJ -> new ObjAdapter(saveFolderPath + fileName + ".obj");
             case SQL -> new SqlAdapter(connection = HikariConfig.INSTANCE);
             case SQL_ORM -> new HibernateAdapter(new HibernateDataStore());
         };
     }
 
-    private static String getFolderPath() {
+    private String getFolderPath() {
         String path = DataHandler.class.getProtectionDomain().getCodeSource().getLocation().getPath();
         String finalPath = path.substring(0, path.lastIndexOf("/")) + "/data/";
         File file = new File(finalPath);
