@@ -8,6 +8,7 @@ import com.tll.backend.repository.impl.user.CustomerRepository;
 import com.tll.backend.repository.impl.user.MemberRepository;
 import com.tll.gui.ClosableTab;
 import com.tll.gui.factory.PageFactory;
+import javafx.scene.Node;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tab;
@@ -42,6 +43,7 @@ public class AppController {
     private final CustomerRepository customerRepository;
     private final MemberRepository memberRepository;
     private final List<File> fileList;
+    private final List<Node> pluginNodes;
 
     private static final String OPEN_PAGE = "Open Page";
     private static final String MAIN_PAGE = "Main";
@@ -68,6 +70,7 @@ public class AppController {
         this.customerRepository = customerRepository;
         this.memberRepository = memberRepository;
         this.fileList = new ArrayList<>();
+        this.pluginNodes = new ArrayList<>();
         mainPageModel = new MainPageModel();
         registerPageModel = new RegisterPageModel(customerRepository, memberRepository);
 
@@ -151,7 +154,7 @@ public class AppController {
 
     private void addSetting(SettingPageModel settingPageModel) {
         ClosableTab tab = new ClosableTab(SETTING_PAGE);
-        tab.setContent(PageFactory.getSetting(fileList, settingPageModel));
+        tab.setContent(PageFactory.getSetting(fileList, settingPageModel, pluginNodes));
         tabPane.getTabs().add(tab);
     }
 

@@ -2,20 +2,17 @@ package com.tll.gui.factory;
 
 import com.tll.backend.model.bill.TemporaryBill;
 import com.tll.backend.model.user.Member;
-import com.tll.backend.pluginhandler.PluginContext;
 import com.tll.backend.repository.impl.barang.BarangRepository;
 import com.tll.backend.repository.impl.bill.FixedBillRepository;
 import com.tll.backend.repository.impl.bill.TemporaryBillRepository;
 import com.tll.backend.repository.impl.user.CustomerRepository;
 import com.tll.backend.repository.impl.user.MemberRepository;
 import com.tll.gui.AutoCompleteComboBox;
-import com.tll.gui.ProductWidget;
-import com.tll.gui.TransactionWidget;
 import com.tll.gui.controllers.*;
 import com.tll.gui.models.*;
-import com.tll.gui.factory.PageActionFactory;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -28,11 +25,9 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-import javax.security.auth.PrivateCredentialPermission;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -479,7 +474,7 @@ public class PageFactory {
         return kasirPage;
     }
 
-    public static VBox getSetting(List<File> fileList, SettingPageModel settingPageModel) {
+    public static VBox getSetting(List<File> fileList, SettingPageModel settingPageModel, List<Node> pluginNodes) {
         VBox settingPage = new VBox();
         SettingPageControl settingPageControl = new SettingPageControl(fileList, settingPageModel);
         settingPage.setSpacing(10);
@@ -589,6 +584,7 @@ public class PageFactory {
         });
 
         FlowPane pluginListBox = settingPageModel.getPluginList();
+        pluginListBox.getChildren().addAll(pluginNodes);
         pluginListBox.setStyle("-fx-border-color: black;");
         pluginListBox.setMinHeight(200);
         pluginListBox.setPadding(new Insets(10));
