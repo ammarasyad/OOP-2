@@ -10,7 +10,6 @@ import com.tll.backend.model.user.Customer;
 import com.tll.backend.model.user.Member;
 import lombok.AllArgsConstructor;
 import org.javatuples.Pair;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.sql.*;
@@ -432,11 +431,6 @@ public class SqlAdapter implements DataStore {
 
     private List<Pair<Barang, Integer>> loadCart(HikariConfig connection, Integer idBill) throws SQLException {
         String query = "SELECT * FROM Cart WHERE id_bill = " + idBill;
-        return unmarshalCart(connection, query);
-    }
-
-    @NotNull
-    private List<Pair<Barang, Integer>> unmarshalCart(HikariConfig connection, String query) throws SQLException {
         try (Connection conn = connection.getDataSource().getConnection();
              PreparedStatement statement = conn.prepareStatement(query);
              ResultSet resultSet = statement.executeQuery()) {
