@@ -33,16 +33,16 @@ public class DataHandler implements AutoCloseable {
     private static final String FILE_PATH = getFolderPath();
     private static HikariConfig connection = null;
 
-    public <V extends StorableObject<?>> void save(@NotNull InMemoryCrudRepository<?, V> repository, @NotNull String name, FileTypes fileType) throws IOException {
-        DataStore dataStore = getAppropriateDataAdapter(name, fileType);
+    public <V extends StorableObject<?>> void save(@NotNull InMemoryCrudRepository<?, V> repository, @NotNull String fileName, FileTypes fileType) throws IOException {
+        DataStore dataStore = getAppropriateDataAdapter(fileName, fileType);
         List<V> objects = new ArrayList<>();
         repository.findAll().forEach(objects::add);
         dataStore.save(objects);
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends InMemoryCrudRepository<ID, V>, ID extends Comparable<ID>, V extends StorableObject<ID>> T load(Class<T> repositoryClass, @NotNull String name, FileTypes fileType) throws IOException {
-        DataStore dataStore = getAppropriateDataAdapter(name, fileType);
+    public <T extends InMemoryCrudRepository<ID, V>, ID extends Comparable<ID>, V extends StorableObject<ID>> T load(Class<T> repositoryClass, @NotNull String fileName, FileTypes fileType) throws IOException {
+        DataStore dataStore = getAppropriateDataAdapter(fileName, fileType);
 
         T repository;
         try {
@@ -71,11 +71,11 @@ public class DataHandler implements AutoCloseable {
         return repository;
     }
 
-    private DataStore getAppropriateDataAdapter(@NotNull String name, FileTypes fileType) {
+    private DataStore getAppropriateDataAdapter(@NotNull String fileName, FileTypes fileType) {
         return switch (fileType) {
-            case JSON -> new JsonAdapter(FILE_PATH + name + ".json");
-            case XML -> new XmlAdapter(FILE_PATH + name + ".xml");
-            case OBJ -> new ObjAdapter(FILE_PATH + name + ".obj");
+            case JSON -> new JsonAdapter(FILE_PATH + fileName + ".json");
+            case XML -> new XmlAdapter(FILE_PATH + fileName + ".xml");
+            case OBJ -> new ObjAdapter(FILE_PATH + fileName + ".obj");
             case SQL -> new SqlAdapter(connection = HikariConfig.INSTANCE);
             case SQL_ORM -> new HibernateAdapter(new HibernateDataStore());
         };

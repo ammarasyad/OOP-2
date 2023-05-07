@@ -37,7 +37,6 @@ public class Bill implements Serializable, StorableObject<Integer> {
     protected List<Pair<Barang, Integer>> cart;
 
     public BigDecimal getTotalPrice() {
-        Class<Bill> x = Bill.class;
         return cart.stream().map(el -> el.getValue0().getHarga().multiply(BigDecimal.valueOf(el.getValue1())))
                 .reduce(new BigDecimal(0), BigDecimal::add, BigDecimal::add).add(priceAddition);
     }
