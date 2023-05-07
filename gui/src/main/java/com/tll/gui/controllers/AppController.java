@@ -14,6 +14,10 @@ import javafx.scene.layout.VBox;
 import lombok.Getter;
 import com.tll.gui.models.UpdatePageControl;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 public class AppController {
     //Pages menu
@@ -35,6 +39,7 @@ public class AppController {
     private FixedBillRepository fixedBillRepository;
     private CustomerRepository customerRepository;
     private MemberRepository memberRepository;
+    private List<File> fileList;
 
     private static final String OPEN_PAGE = "Open Page";
     private static final String MAIN_PAGE = "Main";
@@ -54,6 +59,8 @@ public class AppController {
         this.fixedBillRepository = fixedBillRepository;
         this.customerRepository = customerRepository;
         this.memberRepository = memberRepository;
+        this.fileList = new ArrayList<>();
+
         mainPageModel = new MainPageModel();
         registerPageModel = new RegisterPageModel(customerRepository, memberRepository);
 
@@ -78,7 +85,18 @@ public class AppController {
             temporaryBillRepository.save(temporaryBill);
             addKasirPage(new KasirPageModel(temporaryBill, memberRepository));
         });
-        settingPage.setOnAction(event -> addSetting());
+        settingPage.setOnAction(event -> {
+            boolean existSetting = false;
+            for(Tab tab : tabPane.getTabs()){
+                System.out.println(((ClosableTab) tab).getName());
+                if(((ClosableTab) tab).getName() == SETTING_PAGE){
+                    existSetting = true;
+                }
+            }
+            if (!existSetting) {
+                addSetting(new SettingPageModel());
+            }
+        });
         InsertPage.setOnAction(event ->addInsertPage());
 
         loadKasirPages();
@@ -123,9 +141,9 @@ public class AppController {
         tabPane.getTabs().add(tab);
     }
 
-    private void addSetting() {
+    private void addSetting(SettingPageModel settingPageModel) {
         ClosableTab tab = new ClosableTab(SETTING_PAGE);
-        tab.setContent(PageFactory.getSetting());
+        tab.setContent(PageFactory.getSetting(fileList, settingPageModel));
         tabPane.getTabs().add(tab);
     }
 

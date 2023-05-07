@@ -26,6 +26,7 @@ public class SidebarFactory {
         VBox vbox = new VBox();
         vbox.getChildren().addAll(clockLabel);
         vbox.setStyle("-fx-background-color: #0077B5;");
+        vbox.setMinWidth(150);
         vbox.setPrefWidth(MAIN_SIDEBAR_WIDTH);
         vbox.setMaxWidth(MAIN_SIDEBAR_HEIGHT);
         vbox.setAlignment(Pos.TOP_CENTER);

@@ -10,10 +10,7 @@ import com.tll.backend.repository.impl.user.CustomerRepository;
 import com.tll.backend.repository.impl.user.MemberRepository;
 import com.tll.gui.AutoCompleteComboBox;
 import com.tll.gui.TransactionWidget;
-import com.tll.gui.controllers.KasirPageModel;
-import com.tll.gui.controllers.MainPageModel;
-import com.tll.gui.controllers.RegisterPageModel;
-import com.tll.gui.controllers.UpdatePageModel;
+import com.tll.gui.controllers.*;
 import com.tll.gui.models.*;
 import com.tll.gui.factory.PageActionFactory;
 import javafx.geometry.Insets;
@@ -30,6 +27,7 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class PageFactory {
@@ -410,8 +408,9 @@ public class PageFactory {
         return kasirPage;
     }
 
-    public static VBox getSetting() {
+    public static VBox getSetting(List<File> fileList, SettingPageModel settingPageModel) {
         VBox settingPage = new VBox();
+        SettingPageControl settingPageControl = new SettingPageControl(fileList, settingPageModel);
         settingPage.setSpacing(10);
 
         Label titleLabel = new Label("Setting");
@@ -476,9 +475,29 @@ public class PageFactory {
         pluginboxTitle.setFont(new Font(24));
         VBox.setMargin(pluginboxTitle, new Insets(0, 0, 0, 0));
 
-        HBox mainPluginBox = new HBox();
+        FileChooser pluginChooser = new FileChooser();
 
-        pluginVbox.getChildren().setAll(pluginboxTitle, mainPluginBox);
+        Stage pluginStage = new Stage();
+        pluginStage.setTitle("Select File");
+
+        Button selectPluginButton = new Button("Select File");
+
+        selectPluginButton.setOnAction(e -> {
+            File selectedFile = pluginChooser.showOpenDialog(stage);
+            if (selectedFile != null) {
+                fileList.add(selectedFile);
+                settingPageControl.refreshFileList();
+            }
+        });
+
+        FlowPane pluginListBox = settingPageModel.getPluginList();
+        pluginListBox.setStyle("-fx-border-color: black;");
+        pluginListBox.setMinHeight(200);
+        pluginListBox.setPadding(new Insets(10));
+        pluginListBox.setHgap(100);
+        pluginListBox.setVgap(10);
+
+        pluginVbox.getChildren().setAll(pluginboxTitle, selectPluginButton, pluginListBox);
 
         mainVbox.getChildren().addAll(dataVbox, pluginVbox);
 
