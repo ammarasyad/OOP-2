@@ -13,6 +13,7 @@ import com.tll.gui.TransactionWidget;
 import com.tll.gui.controllers.*;
 import com.tll.gui.models.*;
 import com.tll.gui.factory.PageActionFactory;
+import javafx.beans.InvalidationListener;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -23,10 +24,12 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import org.javatuples.Pair;
 
 import java.io.File;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 

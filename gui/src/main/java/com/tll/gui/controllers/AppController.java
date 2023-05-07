@@ -9,10 +9,16 @@ import com.tll.backend.repository.impl.user.CustomerRepository;
 import com.tll.backend.repository.impl.user.MemberRepository;
 import com.tll.gui.ClosableTab;
 import com.tll.gui.factory.PageFactory;
+import javafx.beans.InvalidationListener;
+import javafx.beans.value.ChangeListener;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import lombok.Getter;
 import com.tll.gui.models.UpdatePageControl;
+import org.javatuples.Pair;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -98,7 +104,6 @@ public class AppController {
             }
         });
         InsertPage.setOnAction(event ->addInsertPage());
-
         loadKasirPages();
     }
     private void loadKasirPages(){
