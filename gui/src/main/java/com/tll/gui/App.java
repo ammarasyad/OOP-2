@@ -6,6 +6,9 @@ import com.tll.backend.model.bill.FixedBill;
 import com.tll.backend.model.bill.TemporaryBill;
 import com.tll.backend.model.user.Customer;
 import com.tll.backend.model.user.Member;
+import com.tll.backend.pluginhandler.PluginContext;
+import com.tll.backend.pluginhandler.PluginLoader;
+import com.tll.backend.pluginhandler.PluginResolver;
 import com.tll.backend.repository.impl.barang.BarangRepository;
 import com.tll.backend.repository.impl.bill.FixedBillRepository;
 import com.tll.backend.repository.impl.bill.TemporaryBillRepository;
@@ -60,15 +63,22 @@ public class App extends Application {
         memberRepository.save(member1);
         memberRepository.save(member2);
 
+        PluginContext pluginContext = PluginContext.getInstance();
+
 
         stage.setTitle("Hello World!");
 
 
         AppController ac = new AppController(barangRepository, temporaryBillRepository, fixedBillRepository, customerRepository, memberRepository);
         VBox vbox = new AppModel(ac);
-
-        Scene scene = new Scene(vbox, 820, 640);
-        stage.setTitle("Hello!");
+        pluginContext.addToContext("AppController", ac);
+        PluginLoader pluginLoader = new PluginLoader();
+        var pl = pluginLoader.load("/home/zidane/kuliah/Semester-4/IF2210-Pemrograman-Berorientasi-Objek/oop-2/gui/src/main/resources", "plugin-f-1.0-SNAPSHOT.jar");
+        PluginResolver pluginResolver = new PluginResolver();
+        pluginResolver.injectPluginDependency(pl);
+        pl.load();
+        Scene scene = new Scene(vbox, 1200, 640);
+        stage.setTitle("Kasir-Kasiran Mantap!!!!!");
 
 
         stage.setScene(scene);
