@@ -9,27 +9,27 @@ import com.tll.backend.repository.impl.bill.TemporaryBillRepository;
 import com.tll.backend.repository.impl.user.CustomerRepository;
 import com.tll.backend.repository.impl.user.MemberRepository;
 import com.tll.gui.AutoCompleteComboBox;
-import com.tll.gui.ProductWidget;
 import com.tll.gui.TransactionWidget;
 import com.tll.gui.controllers.*;
 import com.tll.gui.models.*;
 import com.tll.gui.factory.PageActionFactory;
+import javafx.beans.InvalidationListener;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.*;
 import javafx.scene.text.Font;
-import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import org.javatuples.Pair;
 
-import javax.security.auth.PrivateCredentialPermission;
 import java.io.File;
-import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class PageFactory {
@@ -41,16 +41,73 @@ public class PageFactory {
         mainPage.setPrefSize(600, 400);
         mainPage.setAlignment(Pos.TOP_CENTER);
 
+        VBox kelompok = new VBox();
+
         Label clockLabel = new Label();
         clockLabel.setFont(new Font(49.0));
 
+        Font font = new Font("Arial",20);
+
+        HBox ezra = new HBox();
+        Label nnezra = new Label("Ezra M C M H / 13521073");
+        nnezra.setFont(font);
+        ezra.getChildren().add(nnezra);
+
+        HBox chris = new HBox();
+        Label nnchris = new Label("Christian Albert Hasiholan / 13521078");
+        nnchris.setFont(font);
+        chris.getChildren().add(nnchris);
+
+        HBox tobi = new HBox();
+        Label nntobi = new Label("Tobias Natalio Sianipar / 13521090");
+        nntobi.setFont(font);
+        tobi.getChildren().add(nntobi);
+
+        HBox ammar = new HBox();
+        Label nnammar = new Label("Ammar Rasyad Chaeroel  / 13521136");
+        nnammar.setFont(font);
+        ammar.getChildren().add(nnammar);
+
+        HBox zidane = new HBox();
+        Label nnzidane = new Label("Zidane Firzatullah / 13521163");
+        nnzidane.setFont(font);
+        zidane.getChildren().add(nnzidane);
+
         Label bottomLabel = new Label();
+        LocalDate currentDate = LocalDate.now();
+        Label dateLabel = new Label(currentDate.toString());
+        dateLabel.setFont(font);
 
         clockLabel.textProperty().bindBidirectional(mainPageModel.getClockLabel().textProperty());
         bottomLabel.textProperty().bindBidirectional(mainPageModel.getBottomLabel().textProperty());
-//        mainPageController.startClock();
+        //        mainPageController.startClock();
 
-        mainPage.getChildren().addAll(clockLabel, bottomLabel);
+        kelompok.getChildren().addAll(ezra, chris, tobi, ammar, zidane);
+        ezra.setAlignment(Pos.BOTTOM_CENTER);
+        chris.setAlignment(Pos.BOTTOM_CENTER);
+        tobi.setAlignment(Pos.BOTTOM_CENTER);
+        ammar.setAlignment(Pos.BOTTOM_CENTER);
+        zidane.setAlignment(Pos.BOTTOM_CENTER);
+
+        String imagepath = System.getProperty("user.dir") + "/" + "gui/src/main/resources/Telolet.png";
+
+        ImageView imageView = new ImageView();
+        Image image = new Image(imagepath);
+        imageView.setImage(image);
+        imageView.setFitWidth(540);
+        imageView.setFitHeight(360);
+//        region.getChildren().add(imageView);
+        //kelompok.setSpacing(10);
+        //kelompok.setAlignment(Pos.BOTTOM_RIGHT );
+        //ezra.setMargin()
+        //VBox.setMargin(kelompok, new Insets(350,0,0,0));
+        kelompok.setAlignment(Pos.BOTTOM_CENTER);
+        VBox.setVgrow(kelompok, Priority.ALWAYS);
+        mainPage.getChildren().addAll(clockLabel, dateLabel, imageView, kelompok);
+
+        VBox.setVgrow(mainPage, Priority.ALWAYS);
+        //mainPage.setSpacing(5);
+
 
         return mainPage;
     }
@@ -185,9 +242,8 @@ public class PageFactory {
         return updatePage;
     }
 
-    public static VBox getHistoryPage(FixedBillRepository fixedBillRepository, HistoryPageModel historyPageModel){
+    public static VBox getHistoryPage(){
         VBox historyPage = new VBox();
-        HistoryPageControl historyPageControl = new HistoryPageControl(fixedBillRepository, historyPageModel);
         historyPage.setPadding(new Insets(10));
         historyPage.setSpacing(10);
 
@@ -195,28 +251,27 @@ public class PageFactory {
         titleLabel.setFont(new Font(38));
         VBox.setMargin(titleLabel, new Insets(0, 0, 0, 10));
 
-        VBox transactionWidgetsVBox = historyPageModel.getTransactionContainer();
+        VBox transactionWidgetsVBox = new VBox();
         transactionWidgetsVBox.setSpacing(10);
         transactionWidgetsVBox.setPadding(new Insets(10));
+        for(int i = 0; i < 6; i++){
+            TransactionWidget widget1 = new TransactionWidget("John Doe", "12345", "2023-05-01");
+            TransactionWidget widget2 = new TransactionWidget("Jane Smith", "67890", "2023-05-02");
+            TransactionWidget widget3 = new TransactionWidget("Alice Johnson", "54321", "2023-05-03");
+
+            transactionWidgetsVBox.getChildren().addAll(widget1, widget2, widget3);
+        }
 
         VBox transactionVBox = new VBox();
         Label transactionLabel = new Label("Transaction");
-        Button refreshButton = new Button("↻");
-        HBox refreshHbox = new HBox(refreshButton);
-        HBox.setHgrow(refreshHbox, Priority.ALWAYS);
-        refreshHbox.setAlignment(Pos.BOTTOM_RIGHT);
-        HBox transHbox = new HBox(transactionLabel, refreshHbox);
-        HBox.setHgrow(transHbox, Priority.ALWAYS);
         ScrollPane transactionScrollPane = new ScrollPane(transactionWidgetsVBox);
         transactionScrollPane.setPrefHeight(327.0);
         transactionScrollPane.setMinWidth(230);
         transactionScrollPane.setFitToWidth(true);
         VBox.setVgrow(transactionScrollPane, Priority.ALWAYS);
 
-        refreshButton.setOnAction(actionEvent -> historyPageControl.refreshHistory());
 
-
-        transactionVBox.getChildren().addAll(transHbox, transactionScrollPane);
+        transactionVBox.getChildren().addAll(transactionLabel, transactionScrollPane);
         VBox.setMargin(transactionVBox, new Insets(10, 20, 10, 10));
 
         VBox detailVBox = new VBox();
@@ -224,40 +279,12 @@ public class PageFactory {
         VBox.setMargin(detailVBox, new Insets(10, 10, 10, 10));
 
         Label detailLabel = new Label("Detail");
-        TextArea detailTextArea = historyPageModel.getDetailTextArea();
+        TextArea detailTextArea = new TextArea();
         detailTextArea.setEditable(false);
         VBox.setVgrow(detailTextArea, Priority.ALWAYS);
         detailVBox.setMinWidth(300);
 
-        HBox bottomRightHbox = new HBox();
-        Button getPathButton = new Button("Select Folder");
-        DirectoryChooser directoryChooser = new DirectoryChooser();
-
-        Stage fileStage = new Stage();
-        getPathButton.setOnAction(e -> {
-            File selectedFile = directoryChooser.showDialog(fileStage);
-            if (selectedFile != null) {
-                historyPageModel.setSavePath(selectedFile.getAbsolutePath());
-            }
-        });
-
-        TextField path = new TextField();
-        Button savePDFButton = new Button("Save All");
-        savePDFButton.setOnAction(e -> {
-            try {
-                historyPageControl.savePDF("a.pdf");
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
-        });
-        HBox hbox1 = new HBox(getPathButton);
-        HBox hBox2 = new HBox(savePDFButton);
-        HBox.setHgrow(hBox2, Priority.ALWAYS);
-        HBox.setHgrow(hbox1, Priority.ALWAYS);
-        bottomRightHbox.getChildren().addAll(hbox1, hBox2);
-        HBox.setHgrow(bottomRightHbox, Priority.ALWAYS);
-
-        detailVBox.getChildren().addAll(detailLabel, detailTextArea, bottomRightHbox);
+        detailVBox.getChildren().addAll(detailLabel, detailTextArea);
 
 //        HBox mainHBox = new HBox(transactionVBox, detailVBox);
 
@@ -290,11 +317,6 @@ public class PageFactory {
         TextField searchField = new TextField();
         Button searchButton = new Button("Search");
 
-        searchField.textProperty().addListener((observable, oldValue, newValue) -> {
-            // your function logic here
-            kasirPageControl.searchByName(newValue);
-        });
-
         // Configure the search button action
         searchButton.setOnAction(event -> {
             String searchTerm = searchField.getText();
@@ -319,19 +341,13 @@ public class PageFactory {
 
         VBox productListVBox = new VBox();
         Label transactionLabel = new Label("Products");
-        Button refreshButton = new Button("↻");
-        HBox refreshHbox = new HBox(refreshButton);
-        HBox.setHgrow(refreshHbox, Priority.ALWAYS);
-        refreshHbox.setAlignment(Pos.BOTTOM_RIGHT);
-        HBox transHbox = new HBox(transactionLabel, refreshHbox);
-        HBox.setHgrow(transHbox, Priority.ALWAYS);
         ScrollPane selectedPane = new ScrollPane(productVBox);
         selectedPane.setPrefHeight(327.0);
         selectedPane.setMinWidth(230);
         selectedPane.setFitToWidth(true);
         VBox.setVgrow(selectedPane, Priority.ALWAYS);
 
-        productListVBox.getChildren().addAll(searchBar,transHbox, selectedPane);
+        productListVBox.getChildren().addAll(searchBar,transactionLabel, selectedPane);
         VBox.setMargin(productListVBox, new Insets(10, 20, 10, 10));
 
         VBox detailVBox = new VBox();
@@ -346,8 +362,7 @@ public class PageFactory {
         buttonBox.setAlignment(Pos.CENTER_RIGHT);
         HBox.setHgrow(buttonBox, Priority.ALWAYS);
 
-        Label detailLabel = kasirPageModel.getBillStatus();
-        detailLabel.setPadding(new Insets(0, 0, 9, 10));
+        Label detailLabel = new Label("Detail");
         ScrollPane selectedProduct = new ScrollPane(selectedVBox);
         selectedProduct.setFitToWidth(true);
         selectedProduct.setPrefHeight(300);
@@ -381,12 +396,8 @@ public class PageFactory {
         bottomRightVbox.getChildren().addAll(kasirAdditionVBox, setuHbox);
         bottomRightVbox.setMinHeight(100);
         VBox.setVgrow(bottomRightVbox, Priority.ALWAYS);
-        billButton.setOnAction(event -> {
-            kasirPageControl.checkOut();
-            billButton.setOnAction(event1 -> {});
-        });
+        billButton.setOnAction(event -> kasirPageControl.checkOut());
         saveTempButton.setOnAction(event -> kasirPageControl.saveTemporaryBill());
-        refreshButton.setOnAction(event -> kasirPageControl.refreshProductList());
 
         detailVBox.getChildren().addAll(detailLabel, selectedProduct, bottomRightVbox);
 
@@ -406,8 +417,9 @@ public class PageFactory {
         return kasirPage;
     }
 
-    public static VBox getSetting() {
+    public static VBox getSetting(List<File> fileList, SettingPageModel settingPageModel) {
         VBox settingPage = new VBox();
+        SettingPageControl settingPageControl = new SettingPageControl(fileList, settingPageModel);
         settingPage.setSpacing(10);
 
         Label titleLabel = new Label("Setting");
@@ -472,9 +484,29 @@ public class PageFactory {
         pluginboxTitle.setFont(new Font(24));
         VBox.setMargin(pluginboxTitle, new Insets(0, 0, 0, 0));
 
-        HBox mainPluginBox = new HBox();
+        FileChooser pluginChooser = new FileChooser();
 
-        pluginVbox.getChildren().setAll(pluginboxTitle, mainPluginBox);
+        Stage pluginStage = new Stage();
+        pluginStage.setTitle("Select File");
+
+        Button selectPluginButton = new Button("Select File");
+
+        selectPluginButton.setOnAction(e -> {
+            File selectedFile = pluginChooser.showOpenDialog(stage);
+            if (selectedFile != null) {
+                fileList.add(selectedFile);
+                settingPageControl.refreshFileList();
+            }
+        });
+
+        FlowPane pluginListBox = settingPageModel.getPluginList();
+        pluginListBox.setStyle("-fx-border-color: black;");
+        pluginListBox.setMinHeight(200);
+        pluginListBox.setPadding(new Insets(10));
+        pluginListBox.setHgap(100);
+        pluginListBox.setVgap(10);
+
+        pluginVbox.getChildren().setAll(pluginboxTitle, selectPluginButton, pluginListBox);
 
         mainVbox.getChildren().addAll(dataVbox, pluginVbox);
 
