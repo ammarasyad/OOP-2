@@ -18,6 +18,7 @@ import com.tll.backend.repository.impl.bill.FixedBillRepository;
 import com.tll.backend.repository.impl.bill.TemporaryBillRepository;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -25,7 +26,7 @@ import java.util.List;
 
 public class DataHandler {
 
-    private static final String FILE_PATH = "";
+    private static final String FILE_PATH = getFolderPath();
 
     public static <V extends StorableObject<?>> void save(@NotNull InMemoryCrudRepository<?, V> repository, @NotNull String name, FileTypes fileType) throws IOException {
         try (HikariConfig config = HikariConfig.INSTANCE) {
@@ -73,6 +74,19 @@ public class DataHandler {
             case SQL -> new SqlAdapter(config);
             case SQL_ORM -> new HibernateAdapter(new HibernateDataStore());
         };
+    }
+
+    private static String getFolderPath() {
+        String path = DataHandler.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        String finalPath = path.substring(0, path.lastIndexOf("/")) + "/data/";
+        File file = new File(finalPath);
+        if (!file.exists()) {
+            if (file.mkdir()) {
+                return finalPath;
+            }
+            throw new RuntimeException("Failed to create data folder");
+        }
+        return finalPath;
     }
 
 
