@@ -2,6 +2,13 @@ package com.tll.backend.model.user;
 
 import com.tll.backend.model.bill.FixedBill;
 import com.tll.backend.repository.StorableObject;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import lombok.*;
 
 import java.io.Serializable;
@@ -10,14 +17,21 @@ import java.util.List;
 @Getter
 @Setter
 @Builder
+@Entity
+@Table(name = "Member")
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class Member implements Serializable, StorableObject<Integer> {
+
+    @Id
     private final Integer id;
     private String type;
+    @Column(name = "status")
     private boolean activeStatus;
     private String name;
     private String phone;
+    @OneToMany
+    @JoinColumn(name = "fixed_bill", nullable = false)
     private List<FixedBill> bills;
     private long point;
 

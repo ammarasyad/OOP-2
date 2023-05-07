@@ -18,7 +18,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "barang")
+@Table(name = "Barang")
 @Data
 @Builder
 @NoArgsConstructor

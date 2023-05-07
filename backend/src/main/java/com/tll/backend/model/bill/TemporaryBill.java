@@ -5,6 +5,7 @@ import com.tll.backend.datastore.loader.helper.TemporaryBillDeserializer;
 import com.tll.backend.model.barang.Barang;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -16,13 +17,14 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Table(name = "temporary_bill")
+@Table(name = "TemporaryBill")
 @Data
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @JsonDeserialize(using = TemporaryBillDeserializer.class)
 public class TemporaryBill extends Bill {
 
+    @Transient
     private BigDecimal priceMultiplier;
 
     public TemporaryBill(Integer id) {

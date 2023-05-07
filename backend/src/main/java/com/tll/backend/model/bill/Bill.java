@@ -6,7 +6,9 @@ import com.tll.backend.datastore.loader.helper.BillSerializer;
 import com.tll.backend.datastore.loader.helper.ListPairDeserializer;
 import com.tll.backend.model.barang.Barang;
 import com.tll.backend.repository.StorableObject;
+import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.Transient;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -28,12 +30,15 @@ import java.util.List;
 @JsonSerialize(using = BillSerializer.class)
 public class Bill implements Serializable, StorableObject<Integer> {
 
+    @Id
     protected Integer id;
 
     @Setter @Getter
     private static BigDecimal priceAddition = new BigDecimal(0);
 
+    @Transient
     @JsonDeserialize(using = ListPairDeserializer.class)
+    @Setter
     protected List<Pair<Barang, Integer>> cart;
 
     public BigDecimal getTotalPrice() {
