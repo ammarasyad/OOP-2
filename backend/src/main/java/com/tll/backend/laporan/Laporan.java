@@ -26,22 +26,16 @@ public class Laporan {
 
     // Submit this to a thread pool
     public void save() throws IOException {
-        try {
-            TimeUnit.SECONDS.sleep(10);
-
-            List<LaporanPage> pages = new ArrayList<>();
-            try (PDDocument document = new PDDocument()) {
-                for (var bill : bills) {
-                    pages.add(buildPage(document, bill));
-                }
-
-                for (var page : pages) {
-                    document.addPage(page);
-                }
-                document.save(path);
+        List<LaporanPage> pages = new ArrayList<>();
+        try (PDDocument document = new PDDocument()) {
+            for (var bill : bills) {
+                pages.add(buildPage(document, bill));
             }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+
+            for (var page : pages) {
+                document.addPage(page);
+            }
+            document.save(path);
         }
     }
 

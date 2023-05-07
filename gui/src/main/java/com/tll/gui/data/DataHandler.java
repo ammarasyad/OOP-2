@@ -11,11 +11,17 @@ import com.tll.backend.datastore.loader.sql.SqlAdapter;
 import com.tll.backend.model.barang.Barang;
 import com.tll.backend.model.bill.FixedBill;
 import com.tll.backend.model.bill.TemporaryBill;
+import com.tll.backend.model.user.Customer;
+import com.tll.backend.model.user.Member;
 import com.tll.backend.repository.StorableObject;
 import com.tll.backend.repository.impl.InMemoryCrudRepository;
 import com.tll.backend.repository.impl.barang.BarangRepository;
 import com.tll.backend.repository.impl.bill.FixedBillRepository;
 import com.tll.backend.repository.impl.bill.TemporaryBillRepository;
+import com.tll.backend.repository.impl.user.CustomerRepository;
+import com.tll.backend.repository.impl.user.MemberRepository;
+import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -24,59 +30,62 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DataHandler {
+public class DataHandler implements AutoCloseable {
 
-    private static final String FILE_PATH = getFolderPath();
+    @Getter
+    @Setter
+    private String saveFolderPath = getFolderPath();
+    private static HikariConfig connection = null;
 
-    public static <V extends StorableObject<?>> void save(@NotNull InMemoryCrudRepository<?, V> repository, @NotNull String name, FileTypes fileType) throws IOException {
-        try (HikariConfig config = HikariConfig.INSTANCE) {
-            DataStore dataStore = getAppropriateDataAdapter(name, fileType, config);
-            List<V> objects = new ArrayList<>();
-            repository.findAll().forEach(objects::add);
-            dataStore.save(objects);
-        }
+    public <V extends StorableObject<?>> void save(@NotNull InMemoryCrudRepository<?, V> repository, @NotNull String fileName, FileTypes fileType) throws IOException {
+        DataStore dataStore = getAppropriateDataAdapter(fileName, fileType);
+        List<V> objects = new ArrayList<>();
+        repository.findAll().forEach(objects::add);
+        dataStore.save(objects);
     }
 
     @SuppressWarnings("unchecked")
-    public static <T extends InMemoryCrudRepository<ID, V>, ID extends Comparable<ID>, V extends StorableObject<ID>> T load(Class<T> repositoryClass, @NotNull String name, FileTypes fileType) throws IOException {
-        try (HikariConfig config = HikariConfig.INSTANCE) {
-            DataStore dataStore = getAppropriateDataAdapter(name, fileType, config);
+    public <T extends InMemoryCrudRepository<ID, V>, ID extends Comparable<ID>, V extends StorableObject<ID>> T load(Class<T> repositoryClass, @NotNull String fileName, FileTypes fileType) throws IOException {
+        DataStore dataStore = getAppropriateDataAdapter(fileName, fileType);
 
-            T repository;
-            try {
-                repository = repositoryClass.getConstructor().newInstance();
-            } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
-                throw new RuntimeException(e);
-            }
-
-            Class<?> clazz;
-            if (repositoryClass.equals(BarangRepository.class)) {
-                clazz = Barang.class;
-            } else if (repositoryClass.equals(FixedBillRepository.class)) {
-                clazz = FixedBill.class;
-            } else if (repositoryClass.equals(TemporaryBillRepository.class)) {
-                clazz = TemporaryBill.class;
-            } else {
-                throw new IllegalArgumentException("Invalid parameter");
-            }
-
-            List<V> objects = (List<V>) dataStore.load(clazz);
-            objects.forEach(repository::save);
-            return repository;
+        T repository;
+        try {
+            repository = repositoryClass.getConstructor().newInstance();
+        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException(e);
         }
+
+        Class<?> clazz;
+        if (repositoryClass.equals(BarangRepository.class)) {
+            clazz = Barang.class;
+        } else if (repositoryClass.equals(FixedBillRepository.class)) {
+            clazz = FixedBill.class;
+        } else if (repositoryClass.equals(TemporaryBillRepository.class)) {
+            clazz = TemporaryBill.class;
+        } else if (repositoryClass.equals(CustomerRepository.class)) {
+            clazz = Customer.class;
+        } else if (repositoryClass.equals(MemberRepository.class)) {
+            clazz = Member.class;
+        } else {
+            throw new IllegalArgumentException("Invalid parameter");
+        }
+
+        List<V> objects = (List<V>) dataStore.load(clazz);
+        objects.forEach(repository::save);
+        return repository;
     }
 
-    private static DataStore getAppropriateDataAdapter(@NotNull String name, FileTypes fileType, HikariConfig config) {
+    private DataStore getAppropriateDataAdapter(@NotNull String fileName, FileTypes fileType) {
         return switch (fileType) {
-            case JSON -> new JsonAdapter(FILE_PATH + name + ".json");
-            case XML -> new XmlAdapter(FILE_PATH + name + ".xml");
-            case OBJ -> new ObjAdapter(FILE_PATH + name + ".obj");
-            case SQL -> new SqlAdapter(config);
+            case JSON -> new JsonAdapter(saveFolderPath + fileName + ".json");
+            case XML -> new XmlAdapter(saveFolderPath + fileName + ".xml");
+            case OBJ -> new ObjAdapter(saveFolderPath + fileName + ".obj");
+            case SQL -> new SqlAdapter(connection = HikariConfig.INSTANCE);
             case SQL_ORM -> new HibernateAdapter(new HibernateDataStore());
         };
     }
 
-    private static String getFolderPath() {
+    private String getFolderPath() {
         String path = DataHandler.class.getProtectionDomain().getCodeSource().getLocation().getPath();
         String finalPath = path.substring(0, path.lastIndexOf("/")) + "/data/";
         File file = new File(finalPath);
@@ -87,6 +96,13 @@ public class DataHandler {
             throw new RuntimeException("Failed to create data folder");
         }
         return finalPath;
+    }
+
+    @Override
+    public void close() {
+        if (connection != null) {
+            connection.close();
+        }
     }
 
 

@@ -119,13 +119,12 @@ public class SqlAdapter implements DataStore {
                 """,
                 """
                         CREATE TABLE IF NOT EXISTS TemporaryCart (
-                            id INT NOT NULL AUTO_INCREMENT,
+                            id INT NOT NULL AUTO_INCREMENT UNIQUE,
                             id_barang INT NOT NULL,
                             jumlah INT NOT NULL,
                             id_bill INT NOT NULL,
                             PRIMARY KEY (id_barang, id_bill),
                             FOREIGN KEY (id_barang) REFERENCES Barang(id),
-                            
                             CONSTRAINT `fk_temporary_cart_bill`
                                 FOREIGN KEY (id_bill) REFERENCES TemporaryBill(id)
                                 ON DELETE CASCADE

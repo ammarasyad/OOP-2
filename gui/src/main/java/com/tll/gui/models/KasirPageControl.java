@@ -17,6 +17,7 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import org.javatuples.Pair;
 
+import java.math.BigDecimal;
 import java.util.concurrent.Flow;
 
 public class KasirPageControl {
@@ -128,7 +129,9 @@ public class KasirPageControl {
         for (Node node : kasirPageModel.getProductsList().getChildren()) {
             if(node instanceof DisplayWidget) {
                 DisplayWidget displayWidget = (DisplayWidget) node;
-                if (!displayWidget.getBarang().getNama().toLowerCase().startsWith(input.toLowerCase())) {
+                if (!(displayWidget.getBarang().getNama().toLowerCase().startsWith(input.toLowerCase())
+                        || displayWidget.getBarang().getHarga().toString().toLowerCase().startsWith(input.toLowerCase())
+                        || displayWidget.getKategori().toLowerCase().startsWith(input.toLowerCase()))) {
                     displayWidget.setVisible(false);
                     displayWidget.setManaged(false);
                 } else {

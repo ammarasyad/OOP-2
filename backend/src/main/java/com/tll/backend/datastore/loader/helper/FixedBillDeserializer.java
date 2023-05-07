@@ -50,19 +50,34 @@ public class FixedBillDeserializer extends StdDeserializer<FixedBill> {
             throw new RuntimeException("Invalid userId type");
         }
 
-        Iterator<JsonNode> cart = ((ArrayNode) treeNode.get("cart")).elements();
+        Iterator<JsonNode> cart;
         List<Pair<Barang, Integer>> pairs = new ArrayList<>();
         ObjectMapper mapper = new ObjectMapper();
-        while (cart.hasNext()) {
-            JsonNode node = cart.next();
+        if (treeNode.get("cart") instanceof ArrayNode arrayNode) {
+            cart = arrayNode.elements();
+            while (cart.hasNext()) {
+                JsonNode node = cart.next();
 
-            if (node instanceof ObjectNode objectNode) {
-                Barang barang = mapper.convertValue(objectNode.get("barang"), Barang.class);
-                Integer quantity = objectNode.get("jumlah").intValue();
-                pairs.add(Pair.with(barang, quantity));
-            } else {
-                throw new RuntimeException("Invalid cart type");
+                if (node instanceof ObjectNode objectNode) {
+                    Barang barang = mapper.convertValue(objectNode.get("barang"), Barang.class);
+                    Integer quantity = objectNode.get("jumlah").intValue();
+                    pairs.add(Pair.with(barang, quantity));
+                } else {
+                    throw new RuntimeException("Invalid cart type");
+                }
             }
+        } else if (treeNode.get("cart") instanceof ObjectNode objectNode) {
+            cart = objectNode.elements();
+            while (cart.hasNext()){
+                JsonNode node = cart.next();
+                Barang barang = mapper.convertValue(node, Barang.class);
+                node = cart.next();
+                Integer quantity = mapper.convertValue(node, Integer.class);
+
+                pairs.add(Pair.with(barang, quantity));
+            }
+        } else {
+            throw new RuntimeException("Invalid cart type");
         }
 
         return new FixedBill(id, userId, pairs);

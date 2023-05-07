@@ -24,7 +24,7 @@ public class KasirPageModel {
     public KasirPageModel(TemporaryBill temporaryBill, MemberRepository memberRepository){
         this.temporaryBill = temporaryBill;
         this.memberRepository = memberRepository;
-        members = new AutoCompleteComboBox<Member>(memberRepository.findAll());
+        members = new AutoCompleteComboBox<>(memberRepository.findAll());
         useMember = new CheckBox();
         productsList = new FlowPane();
         selectedItem = new VBox();

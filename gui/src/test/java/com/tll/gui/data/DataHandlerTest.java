@@ -28,12 +28,22 @@ public class DataHandlerTest {
         fixedBillRepository.save(new FixedBill(1, 2, List.of(Pair.with(barang, 2))));
         temporaryBillRepository.save(new TemporaryBill(1));
 
-        DataHandler.save(barangRepository, "test", DataHandler.FileTypes.JSON);
-        DataHandler.save(fixedBillRepository, "tetxml", DataHandler.FileTypes.XML);
-        DataHandler.save(temporaryBillRepository, "object", DataHandler.FileTypes.OBJ);
+        try (DataHandler dataHandler = new DataHandler()) {
+//            dataHandler.save(barangRepository, "test", DataHandler.FileTypes.JSON);
+//            dataHandler.save(fixedBillRepository, "tetxml", DataHandler.FileTypes.XML);
+//            dataHandler.save(temporaryBillRepository, "object", DataHandler.FileTypes.OBJ);
 
-        BarangRepository barangLoad = DataHandler.load(BarangRepository.class, "test", DataHandler.FileTypes.JSON);
+            BarangRepository barangLoad = dataHandler.load(BarangRepository.class, "test", DataHandler.FileTypes.JSON);
+            FixedBillRepository billLoad = dataHandler.load(FixedBillRepository.class, "tetxml", DataHandler.FileTypes.XML);
+            TemporaryBillRepository tempLoad = dataHandler.load(TemporaryBillRepository.class, "object", DataHandler.FileTypes.OBJ);
+        }
+
+//        DataHandler.save(barangRepository, "test", DataHandler.FileTypes.JSON);
+//        DataHandler.save(fixedBillRepository, "tetxml", DataHandler.FileTypes.XML);
+//        DataHandler.save(temporaryBillRepository, "object", DataHandler.FileTypes.OBJ);
+//
+//        BarangRepository barangLoad = DataHandler.load(BarangRepository.class, "test", DataHandler.FileTypes.JSON);
 //        FixedBillRepository billLoad = DataHandler.load(FixedBillRepository.class, "tetxml", DataHandler.FileTypes.XML);
-        TemporaryBillRepository tempLoad = DataHandler.load(TemporaryBillRepository.class, "object", DataHandler.FileTypes.OBJ);
+//        TemporaryBillRepository tempLoad = DataHandler.load(TemporaryBillRepository.class, "object", DataHandler.FileTypes.OBJ);
     }
 }

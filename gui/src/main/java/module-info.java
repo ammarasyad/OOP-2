@@ -1,5 +1,7 @@
 module com.tll.gui {
     requires javafx.controls;
+    requires java.sql;
+    requires org.slf4j;
 //    requires javafx.fxml;
     requires lombok;
     requires backend;

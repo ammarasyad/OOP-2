@@ -17,6 +17,8 @@ import com.tll.gui.factory.PageActionFactory;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -29,7 +31,9 @@ import javafx.stage.Stage;
 import javax.security.auth.PrivateCredentialPermission;
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class PageFactory {
@@ -41,16 +45,74 @@ public class PageFactory {
         mainPage.setPrefSize(600, 400);
         mainPage.setAlignment(Pos.TOP_CENTER);
 
+        VBox kelompok = new VBox();
+
         Label clockLabel = new Label();
         clockLabel.setFont(new Font(49.0));
 
+        Font font = new Font("Arial",20);
+
+        HBox ezra = new HBox();
+        Label nnezra = new Label("Ezra M C M H / 13521073");
+        nnezra.setFont(font);
+        ezra.getChildren().add(nnezra);
+
+        HBox chris = new HBox();
+        Label nnchris = new Label("Christian Albert Hasiholan / 13521078");
+        nnchris.setFont(font);
+        chris.getChildren().add(nnchris);
+
+        HBox tobi = new HBox();
+        Label nntobi = new Label("Tobias Natalio Sianipar / 13521090");
+        nntobi.setFont(font);
+        tobi.getChildren().add(nntobi);
+
+        HBox ammar = new HBox();
+        Label nnammar = new Label("Ammar Rasyad Chaeroel  / 13521136");
+        nnammar.setFont(font);
+        ammar.getChildren().add(nnammar);
+
+        HBox zidane = new HBox();
+        Label nnzidane = new Label("Zidane Firzatullah / 13521163");
+        nnzidane.setFont(font);
+        zidane.getChildren().add(nnzidane);
+
         Label bottomLabel = new Label();
+        LocalDate currentDate = LocalDate.now();
+        Label dateLabel = new Label(currentDate.toString());
+        dateLabel.setFont(font);
 
         clockLabel.textProperty().bindBidirectional(mainPageModel.getClockLabel().textProperty());
         bottomLabel.textProperty().bindBidirectional(mainPageModel.getBottomLabel().textProperty());
+        //        mainPageController.startClock();
 //        mainPageController.startClock();
 
-        mainPage.getChildren().addAll(clockLabel, bottomLabel);
+        kelompok.getChildren().addAll(ezra, chris, tobi, ammar, zidane);
+        ezra.setAlignment(Pos.BOTTOM_CENTER);
+        chris.setAlignment(Pos.BOTTOM_CENTER);
+        tobi.setAlignment(Pos.BOTTOM_CENTER);
+        ammar.setAlignment(Pos.BOTTOM_CENTER);
+        zidane.setAlignment(Pos.BOTTOM_CENTER);
+
+        String imagepath = System.getProperty("user.dir") + "/" + "gui/src/main/resources/Telolet.png";
+
+        ImageView imageView = new ImageView();
+        Image image = new Image(imagepath);
+        imageView.setImage(image);
+        imageView.setFitWidth(540);
+        imageView.setFitHeight(360);
+//        region.getChildren().add(imageView);
+        //kelompok.setSpacing(10);
+        //kelompok.setAlignment(Pos.BOTTOM_RIGHT );
+        //ezra.setMargin()
+        //VBox.setMargin(kelompok, new Insets(350,0,0,0));
+        kelompok.setAlignment(Pos.BOTTOM_CENTER);
+        VBox.setVgrow(kelompok, Priority.ALWAYS);
+        mainPage.getChildren().addAll(clockLabel, dateLabel, imageView, kelompok);
+
+        VBox.setVgrow(mainPage, Priority.ALWAYS);
+        //mainPage.setSpacing(5);
+
 
         return mainPage;
     }
@@ -242,16 +304,27 @@ public class PageFactory {
         });
 
         TextField path = new TextField();
+        path.setPromptText("Enter save folder");
+        TextField fileName = new TextField();
+        fileName.setPromptText("Enter file name");
         Button savePDFButton = new Button("Save All");
+        Button saveOnePDFButton = new Button("Save Details");
         savePDFButton.setOnAction(e -> {
             try {
-                historyPageControl.savePDF("a.pdf");
+                historyPageControl.savePDF(fileName.getText()+".pdf");
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
         });
-        HBox hbox1 = new HBox(getPathButton);
-        HBox hBox2 = new HBox(savePDFButton);
+        saveOnePDFButton.setOnAction(e -> {
+            try {
+                historyPageControl.savePDFcurrent(fileName.getText()+".pdf");
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+        HBox hbox1 = new HBox(path,getPathButton);
+        HBox hBox2 = new HBox(fileName,savePDFButton,saveOnePDFButton);
         HBox.setHgrow(hBox2, Priority.ALWAYS);
         HBox.setHgrow(hbox1, Priority.ALWAYS);
         bottomRightHbox.getChildren().addAll(hbox1, hBox2);
@@ -377,7 +450,7 @@ public class PageFactory {
         VBox kasirAdditionVBox = new VBox();
         VBox.setVgrow(kasirAdditionVBox, Priority.ALWAYS);
         kasirAdditionVBox.getChildren().addAll(additions);
-        
+
         bottomRightVbox.getChildren().addAll(kasirAdditionVBox, setuHbox);
         bottomRightVbox.setMinHeight(100);
         VBox.setVgrow(bottomRightVbox, Priority.ALWAYS);
@@ -406,8 +479,9 @@ public class PageFactory {
         return kasirPage;
     }
 
-    public static VBox getSetting() {
+    public static VBox getSetting(List<File> fileList, SettingPageModel settingPageModel) {
         VBox settingPage = new VBox();
+        SettingPageControl settingPageControl = new SettingPageControl(fileList, settingPageModel);
         settingPage.setSpacing(10);
 
         Label titleLabel = new Label("Setting");
@@ -426,42 +500,69 @@ public class PageFactory {
         databoxTitle.setFont(new Font(24));
         VBox.setMargin(databoxTitle, new Insets(0, 0, 0, 0));
 
+        HBox loadHbox = new HBox();
+        FileChooser loadFileChooser = new FileChooser();
+
+        Stage loadStage = new Stage();
+        loadStage.setTitle("Select File");
+
+        Button selectButton = new Button("Open File");
+        Label fileLabel = new Label("File :");
+        fileLabel.setFont(new Font(14));
+
+        selectButton.setOnAction(e -> {
+            File selectedFile = loadFileChooser.showOpenDialog(loadStage);
+            fileLabel.setText("File :" + selectedFile.getName());
+        });
+
+        loadHbox.setSpacing(40);
+        loadHbox.getChildren().addAll(selectButton, fileLabel);
+        loadHbox.setAlignment(Pos.CENTER_LEFT);
+
         HBox formatHbox = new HBox();
         Label formatLabel = new Label("Format File :");
         formatLabel.setFont(new Font(14));
 
         ComboBox formatFile = new ComboBox<>();
         formatFile.getItems().addAll("JSON", "XML");
+        formatFile.getSelectionModel().selectFirst();
         formatHbox.getChildren().addAll(formatLabel, formatFile);
         formatHbox.setSpacing(40);
         formatHbox.setAlignment(Pos.CENTER_LEFT);
 
-        HBox fileHbox = new HBox();
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("Text Files", "*.txt")
-                ,new FileChooser.ExtensionFilter("HTML Files", "*.htm")
-        );
+        HBox saveHbox = new HBox();
+        FileChooser saveFileChooser = new FileChooser();
+        if (formatFile.getSelectionModel().getSelectedItem() == "JSON") {
+            saveFileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON File", "*.json"));
+        }
+        else {
+            saveFileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("XML File", "*.xml"));
+        }
 
-        Stage stage = new Stage();
-        stage.setTitle("Select File");
+        Stage saveStage = new Stage();
+        saveStage.setTitle("Select File");
 
-        Button selectButton = new Button("Select File");
-        Label fileLabel = new Label("File :");
+        Button saveButton = new Button("Save File");
+        Label saveLabel = new Label("");
         fileLabel.setFont(new Font(14));
 
-        selectButton.setOnAction(e -> {
-            File selectedFile = fileChooser.showOpenDialog(stage);
-            fileLabel.setText("File :" + selectedFile.getName());
+        saveButton.setOnAction(e -> {
+            File selectedFile = saveFileChooser.showSaveDialog(saveStage);
+            if (selectedFile.exists()) {
+                saveLabel.setText("File saved");
+            }
+            else {
+                saveLabel.setText("Failed to save file. Try again");
+            }
         });
 
-        fileHbox.setSpacing(40);
-        fileHbox.getChildren().addAll(selectButton, fileLabel);
-        fileHbox.setAlignment(Pos.CENTER_LEFT);
+        saveHbox.setSpacing(40);
+        saveHbox.getChildren().addAll(saveButton, saveLabel);
+        saveHbox.setAlignment(Pos.CENTER_LEFT);
 
-        dataVbox.setSpacing(30);
+        dataVbox.setSpacing(20);
         dataVbox.setStyle("-fx-border-color: black;" + "-fx-border-style: hidden hidden solid hidden");
-        dataVbox.getChildren().addAll(databoxTitle, formatHbox, fileHbox);
+        dataVbox.getChildren().addAll(databoxTitle, loadHbox, formatHbox, saveHbox);
 
         VBox pluginVbox = new VBox();
         pluginVbox.setPrefSize(100, 200);
@@ -472,9 +573,29 @@ public class PageFactory {
         pluginboxTitle.setFont(new Font(24));
         VBox.setMargin(pluginboxTitle, new Insets(0, 0, 0, 0));
 
-        HBox mainPluginBox = new HBox();
+        FileChooser pluginChooser = new FileChooser();
 
-        pluginVbox.getChildren().setAll(pluginboxTitle, mainPluginBox);
+        Stage pluginStage = new Stage();
+        pluginStage.setTitle("Select File");
+
+        Button selectPluginButton = new Button("Select File");
+
+        selectPluginButton.setOnAction(e -> {
+            File selectedFile = pluginChooser.showOpenDialog(loadStage);
+            if (selectedFile != null) {
+                fileList.add(selectedFile);
+                settingPageControl.refreshFileList();
+            }
+        });
+
+        FlowPane pluginListBox = settingPageModel.getPluginList();
+        pluginListBox.setStyle("-fx-border-color: black;");
+        pluginListBox.setMinHeight(200);
+        pluginListBox.setPadding(new Insets(10));
+        pluginListBox.setHgap(100);
+        pluginListBox.setVgap(10);
+
+        pluginVbox.getChildren().setAll(pluginboxTitle, selectPluginButton, pluginListBox);
 
         mainVbox.getChildren().addAll(dataVbox, pluginVbox);
 

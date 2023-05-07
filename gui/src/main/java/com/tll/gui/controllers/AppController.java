@@ -14,6 +14,9 @@ import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import lombok.Getter;
 import com.tll.gui.models.UpdatePageControl;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 public class AppController {
@@ -36,6 +39,7 @@ public class AppController {
     private FixedBillRepository fixedBillRepository;
     private CustomerRepository customerRepository;
     private MemberRepository memberRepository;
+    private List<File> fileList;
 
     private static final String OPEN_PAGE = "Open Page";
     private static final String MAIN_PAGE = "Main";
@@ -55,6 +59,7 @@ public class AppController {
         this.fixedBillRepository = fixedBillRepository;
         this.customerRepository = customerRepository;
         this.memberRepository = memberRepository;
+        this.fileList = new ArrayList<>();
         mainPageModel = new MainPageModel();
         registerPageModel = new RegisterPageModel(customerRepository, memberRepository);
 
@@ -79,7 +84,18 @@ public class AppController {
             temporaryBillRepository.save(temporaryBill);
             addKasirPage(new KasirPageModel(temporaryBill, memberRepository));
         });
-        settingPage.setOnAction(event -> addSetting());
+        settingPage.setOnAction(event -> {
+            boolean existSetting = false;
+            for(Tab tab : tabPane.getTabs()){
+                System.out.println(((ClosableTab) tab).getName());
+                if(((ClosableTab) tab).getName() == SETTING_PAGE){
+                    existSetting = true;
+                }
+            }
+            if (!existSetting) {
+                addSetting(new SettingPageModel());
+            }
+        });
         InsertPage.setOnAction(event ->addInsertPage());
 
         loadKasirPages();
@@ -103,7 +119,7 @@ public class AppController {
 
     private void addUpdatePage() {
         updatePageModel = new UpdatePageModel(memberRepository);
-        ClosableTab tab = new ClosableTab(REGISTER_PAGE);
+        ClosableTab tab = new ClosableTab(UPDATE_PAGE);
         tab.setContent(PageFactory.getUpdatePage(updatePageModel));
         tabPane.getTabs().add(tab);
     }
@@ -121,13 +137,13 @@ public class AppController {
 //        KasirPageModel kasirPageModel = new KasirPageModel(tempBill);
         ClosableTab tab = new ClosableTab(KASIR_PAGE);
         tab.setContent(PageFactory.getKasirPage(temporaryBillRepository, barangRepository, fixedBillRepository, customerRepository,
-                                                memberRepository, kasirPageModel));
+                memberRepository, kasirPageModel));
         tabPane.getTabs().add(tab);
     }
 
-    private void addSetting() {
+    private void addSetting(SettingPageModel settingPageModel) {
         ClosableTab tab = new ClosableTab(SETTING_PAGE);
-        tab.setContent(PageFactory.getSetting());
+        tab.setContent(PageFactory.getSetting(fileList, settingPageModel));
         tabPane.getTabs().add(tab);
     }
 

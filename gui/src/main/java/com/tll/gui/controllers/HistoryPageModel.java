@@ -13,8 +13,8 @@ public class HistoryPageModel {
     private String savePath;
 
     public HistoryPageModel(){
-       transactionContainer = new VBox();
-       detailTextArea = new TextArea();
+        transactionContainer = new VBox();
+        detailTextArea = new TextArea();
 
     }
 }
