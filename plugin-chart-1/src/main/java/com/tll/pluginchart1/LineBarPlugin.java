@@ -6,6 +6,7 @@ import com.tll.gui.controllers.AppController;
 import com.tll.plugin.AutoWired;
 import com.tll.plugin.Plugin;
 import javafx.application.Platform;
+import javafx.geometry.Pos;
 import javafx.scene.chart.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.MenuItem;
@@ -83,6 +84,7 @@ public class LineBarPlugin extends Plugin {
 
     private void openLineChartPage() {
         VBox chartVBox = new VBox();
+        chartVBox.setAlignment(Pos.CENTER);
 
         NumberAxis xAxis = new NumberAxis();
         NumberAxis yAxis = new NumberAxis();
@@ -129,6 +131,7 @@ public class LineBarPlugin extends Plugin {
 
     private void openBarChartPage() {
         VBox chartVBox = new VBox();
+        chartVBox.setAlignment(Pos.CENTER);
 
         CategoryAxis xAxis = new CategoryAxis();
         NumberAxis yAxis = new NumberAxis();
@@ -153,14 +156,14 @@ public class LineBarPlugin extends Plugin {
             for (Barang barang : appController.getBarangRepository().findAll()) {
                 boolean found = false;
                 for (XYChart.Data<String, Number> data : series.getData()) {
-                    if (data.getXValue().equals(barang.getNama())) {
+                    if (data.getXValue().equals(barang.getId() + barang.getNama())) {
                         data.setYValue(barang.getStok());
                         found = true;
                         break;
                     }
                 }
                 if (!found) {
-                    series.getData().add(new XYChart.Data<>(barang.getNama(), barang.getStok()));
+                    series.getData().add(new XYChart.Data<>(barang.getId() + barang.getNama(), barang.getStok()));
                 }
             }
         }), 1, 1, TimeUnit.SECONDS);
