@@ -101,7 +101,7 @@ public class LineBarPlugin extends Plugin {
         XYChart.Series<Number, Number> series = new XYChart.Series<>();
 
         appController.getBarangRepository().findAll().forEach(barang -> series.getData().add(new XYChart.Data<>(barang.getStok(), barang.getHarga())));
-        appController.getCommonScheduledThreadPool().scheduleAtFixedRate(() -> Platform.runLater(() -> {
+        AppController.getCommonScheduledThreadPool().scheduleAtFixedRate(() -> Platform.runLater(() -> {
             for (Barang barang : appController.getBarangRepository().findAll()) {
                 boolean found = false;
                 for (XYChart.Data<Number, Number> data : series.getData()) {
@@ -149,7 +149,7 @@ public class LineBarPlugin extends Plugin {
 
         appController.getBarangRepository().findAll().forEach(barang -> series.getData().add(new XYChart.Data<>(barang.getNama(), barang.getStok())));
 
-        appController.getCommonScheduledThreadPool().scheduleAtFixedRate(() -> Platform.runLater(() -> {
+        AppController.getCommonScheduledThreadPool().scheduleAtFixedRate(() -> Platform.runLater(() -> {
             for (Barang barang : appController.getBarangRepository().findAll()) {
                 boolean found = false;
                 for (XYChart.Data<String, Number> data : series.getData()) {

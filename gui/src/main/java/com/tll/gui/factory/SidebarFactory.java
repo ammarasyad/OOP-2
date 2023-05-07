@@ -19,6 +19,12 @@ public class SidebarFactory {
     private static final int MAIN_SIDEBAR_WIDTH = 200;
     private static final int MAIN_SIDEBAR_HEIGHT = 200;
 
+    private static final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor(runnable -> {
+        Thread thread = new Thread(runnable);
+        thread.setDaemon(true);
+        return thread;
+    });
+
     public static VBox getMainSidebar() {
         // Membuat label untuk menampilkan waktu
         Label clockLabel = new Label();
@@ -28,7 +34,6 @@ public class SidebarFactory {
 
 
         // Create a thread pool with a single thread
-        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
         executor.scheduleAtFixedRate(() -> updateClock(clockLabel), 0, 1, TimeUnit.SECONDS);
 
         // Membuat layout VBox untuk sidepanel
