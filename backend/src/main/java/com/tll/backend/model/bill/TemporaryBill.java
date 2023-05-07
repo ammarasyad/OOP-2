@@ -10,6 +10,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.javatuples.Pair;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -22,8 +23,11 @@ import java.util.Objects;
 @JsonDeserialize(using = TemporaryBillDeserializer.class)
 public class TemporaryBill extends Bill {
 
+    private BigDecimal priceMultiplier;
+
     public TemporaryBill(Integer id) {
         super(id, new ArrayList<>());
+        priceMultiplier = new BigDecimal(0);
     }
 
     public void addToBill(Barang barang, int jumlah) {
@@ -53,5 +57,10 @@ public class TemporaryBill extends Bill {
 
     public void setTemporaryCart(List<Pair<Barang, Integer>> cart) {
         this.cart = cart;
+    }
+
+    @Override
+    public BigDecimal getTotalPrice() {
+        return super.getTotalPrice().multiply(priceMultiplier);
     }
 }
