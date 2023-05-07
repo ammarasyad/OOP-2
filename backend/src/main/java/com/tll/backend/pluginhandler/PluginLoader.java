@@ -36,6 +36,7 @@ public class PluginLoader {
                     return (Plugin) obj;
                 }
             }
+            cl.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
