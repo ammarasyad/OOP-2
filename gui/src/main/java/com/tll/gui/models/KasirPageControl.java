@@ -3,6 +3,7 @@ package com.tll.gui.models;
 import com.tll.backend.model.barang.Barang;
 import com.tll.backend.model.bill.FixedBill;
 import com.tll.backend.model.user.Customer;
+import com.tll.backend.model.user.Member;
 import com.tll.backend.repository.impl.barang.BarangRepository;
 import com.tll.backend.repository.impl.bill.FixedBillRepository;
 import com.tll.backend.repository.impl.bill.TemporaryBillRepository;
@@ -18,6 +19,7 @@ import javafx.scene.layout.VBox;
 import org.javatuples.Pair;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 import java.util.concurrent.Flow;
 
 public class KasirPageControl {
@@ -99,8 +101,16 @@ public class KasirPageControl {
         System.out.println(fixedBillRepository.getNextId());
         CustomerMemberHelper customerMemberHelper = new CustomerMemberHelper(customerRepository, memberRepository);
         if(kasirPageModel.getUseMember().isSelected()){
+            Optional<Member> optMember = memberRepository.findById(kasirPageModel.getMembers().getValue().getId());
+            if (optMember.isEmpty()) {
+                throw new RuntimeException("unexpected error happened!");
+            }
+            var member = optMember.get();
             FixedBill fixedBill = kasirPageModel.getTemporaryBill().convertToFixedBill(fixedBillRepository.getNextId(),
-                    kasirPageModel.getMembers().getValue().getId());
+                    member.getId());
+            if (member.getType().equals("Vip") && member.isActiveStatus()) {
+                fixedBill.AddVIPDiscount();
+            }
             memberRepository.memberPay(kasirPageModel.getMembers().getValue().getId(), fixedBill);
             fixedBillRepository.save(fixedBill);
             temporaryBillRepository.delete(kasirPageModel.getTemporaryBill());
@@ -110,7 +120,7 @@ public class KasirPageControl {
         } else {
             Customer customer = new Customer(customerMemberHelper.getLargestId()+1);
             customerRepository.save(customer);
-            FixedBill fixedBill = new FixedBill(fixedBillRepository.getNextId(),customer.getId(), kasirPageModel.getTemporaryBill().getCart());
+            FixedBill fixedBill = kasirPageModel.getTemporaryBill().convertToFixedBill(fixedBillRepository.getNextId(),customer.getId());
             temporaryBillRepository.delete(kasirPageModel.getTemporaryBill());
             fixedBillRepository.save(fixedBill);
             System.out.println(fixedBill.getUserId());
