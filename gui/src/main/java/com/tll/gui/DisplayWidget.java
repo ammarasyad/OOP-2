@@ -23,19 +23,18 @@ public class DisplayWidget extends Pane {
     private static final double IMAGE_SIZE = 50;
 
     private String name;
-    private String productId;
+    private String kategori;
     private String price;
+    private String productId;
     private Barang barang;
 
     public DisplayWidget(Barang barang) {
         setPrefSize(WIDTH, HEIGHT);
         this.barang = barang;
         this.name = barang.getNama();
-        this.productId = barang.getId().toString();
+        this.kategori = barang.getKategori().getNamaKategori();
         this.price = barang.getHarga().toString();
-        Label nameLabel = new Label("Name: " + name);
-        Label idLabel = new Label("ID: " + productId);
-        Label priceLabel = new Label("Price: " + price);
+        this.productId = barang.getId().toString();
 
         // Create and configure the rectangle shape
         Rectangle rectangle = new Rectangle(WIDTH, HEIGHT, Color.WHITE);
@@ -52,15 +51,15 @@ public class DisplayWidget extends Pane {
         imageView.setLayoutY((HEIGHT - IMAGE_SIZE) / 2);
 
         // Create and configure the labels
-        nameLabel = createLabel(name, 70);
+        Label nameLabel = createLabel(name, 70);
         nameLabel.setLayoutX(IMAGE_SIZE + 20);
         nameLabel.setLayoutY(20);
 
-        idLabel = createLabel("ID: " + productId, 60);
+        Label idLabel = createLabel("Kategori: " + kategori, 60);
         idLabel.setLayoutX(IMAGE_SIZE + 20);
         idLabel.setLayoutY(40);
 
-        priceLabel = createLabel("Price: $" + price, 60);
+        Label priceLabel = createLabel("Price: $" + price, 60);
         priceLabel.setLayoutX(IMAGE_SIZE + 20);
         priceLabel.setLayoutY(60);
 

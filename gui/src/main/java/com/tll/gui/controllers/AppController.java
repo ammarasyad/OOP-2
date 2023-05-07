@@ -9,20 +9,11 @@ import com.tll.backend.repository.impl.user.CustomerRepository;
 import com.tll.backend.repository.impl.user.MemberRepository;
 import com.tll.gui.ClosableTab;
 import com.tll.gui.factory.PageFactory;
-import javafx.beans.InvalidationListener;
-import javafx.beans.value.ChangeListener;
+import com.tll.gui.models.HistoryPageControl;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import lombok.Getter;
 import com.tll.gui.models.UpdatePageControl;
-import org.javatuples.Pair;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 public class AppController {
@@ -45,7 +36,6 @@ public class AppController {
     private FixedBillRepository fixedBillRepository;
     private CustomerRepository customerRepository;
     private MemberRepository memberRepository;
-    private List<File> fileList;
 
     private static final String OPEN_PAGE = "Open Page";
     private static final String MAIN_PAGE = "Main";
@@ -65,8 +55,6 @@ public class AppController {
         this.fixedBillRepository = fixedBillRepository;
         this.customerRepository = customerRepository;
         this.memberRepository = memberRepository;
-        this.fileList = new ArrayList<>();
-
         mainPageModel = new MainPageModel();
         registerPageModel = new RegisterPageModel(customerRepository, memberRepository);
 
@@ -87,23 +75,13 @@ public class AppController {
         updatePage.setOnAction(event -> addUpdatePage());
         historyPage.setOnAction(event -> addHistoryPage());
         kasirPage.setOnAction(event -> {
-            TemporaryBill temporaryBill = new TemporaryBill(0);
+            TemporaryBill temporaryBill = new TemporaryBill(temporaryBillRepository.getNextId());
             temporaryBillRepository.save(temporaryBill);
             addKasirPage(new KasirPageModel(temporaryBill, memberRepository));
         });
-        settingPage.setOnAction(event -> {
-            boolean existSetting = false;
-            for(Tab tab : tabPane.getTabs()){
-                System.out.println(((ClosableTab) tab).getName());
-                if(((ClosableTab) tab).getName() == SETTING_PAGE){
-                    existSetting = true;
-                }
-            }
-            if (!existSetting) {
-                addSetting(new SettingPageModel());
-            }
-        });
+        settingPage.setOnAction(event -> addSetting());
         InsertPage.setOnAction(event ->addInsertPage());
+
         loadKasirPages();
     }
     private void loadKasirPages(){
@@ -131,8 +109,9 @@ public class AppController {
     }
 
     private void addHistoryPage() {
+        HistoryPageModel historyPageModel = new HistoryPageModel();
         ClosableTab tab = new ClosableTab(HISTORY_PAGE);
-        tab.setContent(PageFactory.getHistoryPage());
+        tab.setContent(PageFactory.getHistoryPage(fixedBillRepository, historyPageModel));
         tabPane.getTabs().add(tab);
     }
 
@@ -146,9 +125,9 @@ public class AppController {
         tabPane.getTabs().add(tab);
     }
 
-    private void addSetting(SettingPageModel settingPageModel) {
+    private void addSetting() {
         ClosableTab tab = new ClosableTab(SETTING_PAGE);
-        tab.setContent(PageFactory.getSetting(fileList, settingPageModel));
+        tab.setContent(PageFactory.getSetting());
         tabPane.getTabs().add(tab);
     }
 

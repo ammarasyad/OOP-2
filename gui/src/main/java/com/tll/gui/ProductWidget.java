@@ -31,8 +31,11 @@ public class ProductWidget extends HBox {
         this.barang = displayWidget.getBarang();
         this.quantity = 1;
         Label nameLabel = new Label("Name: " + name);
+        nameLabel.setPadding(new Insets(5, 0, 0, 5));
         Label idLabel = new Label("ID: " + productId);
+        idLabel.setPadding(new Insets(5, 0, 0, 5));
         Label priceLabel = new Label("Price: " + price);
+        priceLabel.setPadding(new Insets(5, 0, 0, 5));
         Label quantityLabel = new Label("1");
         Button plusButton = new Button("+");
         Button minusButton = new Button("-");

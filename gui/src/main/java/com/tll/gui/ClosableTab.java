@@ -10,15 +10,11 @@ import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
 import javafx.scene.shape.Rectangle;
-import lombok.Getter;
 
 public class ClosableTab extends Tab {
     private Label closeLabel;
-    @Getter
-    private String name;
     public ClosableTab(String name){
         super();
-        this.name = name;
         closeLabel = new Label("\u2716");
         closeLabel.setVisible(false);
         HBox tabHeader = new HBox(new Label(name), closeLabel);

@@ -8,6 +8,7 @@ import com.tll.backend.repository.impl.bill.FixedBillRepository;
 import com.tll.backend.repository.impl.bill.TemporaryBillRepository;
 import com.tll.backend.repository.impl.user.CustomerRepository;
 import com.tll.backend.repository.impl.user.MemberRepository;
+import com.tll.backend.repository.impl.user.helper.CustomerMemberHelper;
 import com.tll.gui.DisplayWidget;
 import com.tll.gui.ProductWidget;
 import com.tll.gui.controllers.KasirPageModel;
@@ -39,18 +40,18 @@ public class KasirPageControl {
         this.memberRepository = memberRepository;
         this.kasirPageModel = kasirPageModel;
 
+        kasirPageModel.getBillStatus().setText("Bill ID: "+kasirPageModel.getTemporaryBill().getId());
+
         refreshProductList();
 
-        for(Pair<Barang, Integer> item : kasirPageModel.getTemporaryBill().getCart()){
-            addToSelected(item);
-        }
-
-
+        kasirPageModel.getMembers().getSelectionModel().select(0);
     }
 
-    private void refreshProductList(){
+    public void refreshProductList(){
         FlowPane productList = kasirPageModel.getProductsList();
         VBox selectedItem = kasirPageModel.getSelectedItem();
+        productList.getChildren().clear();
+        selectedItem.getChildren().clear();
         for(Barang barang : barangRepository.findAll()){
             DisplayWidget displayWidget = new DisplayWidget(barang);
             displayWidget.setOnMouseClicked(event -> {
@@ -59,6 +60,12 @@ public class KasirPageControl {
             });
 
             productList.getChildren().addAll(displayWidget);
+//            displayWidget.setManaged();
+//            displayWidget.setVisible();
+        }
+
+        for(Pair<Barang, Integer> item : kasirPageModel.getTemporaryBill().getCart()){
+            addToSelected(item);
         }
     }
 
@@ -87,11 +94,49 @@ public class KasirPageControl {
     }
 
     public void checkOut(){
-        Customer customer = new Customer(customerRepository.getLargestId()+1);
-        FixedBill fixedBill = new FixedBill(fixedBillRepository.getNextId(),customer.getId(), kasirPageModel.getTemporaryBill().getCart());
-        temporaryBillRepository.delete(kasirPageModel.getTemporaryBill());
-        fixedBillRepository.save(fixedBill);
+        saveTemporaryBill();
+        System.out.println(fixedBillRepository.getNextId());
+        CustomerMemberHelper customerMemberHelper = new CustomerMemberHelper(customerRepository, memberRepository);
+        if(kasirPageModel.getUseMember().isSelected()){
+            FixedBill fixedBill = kasirPageModel.getTemporaryBill().convertToFixedBill(fixedBillRepository.getNextId(),
+                    kasirPageModel.getMembers().getValue().getId());
+            memberRepository.memberPay(kasirPageModel.getMembers().getValue().getId(), fixedBill);
+            fixedBillRepository.save(fixedBill);
+            temporaryBillRepository.delete(kasirPageModel.getTemporaryBill());
+            System.out.println(fixedBill.getUserId());
+            System.out.println(fixedBillRepository.getNextId());
+
+        } else {
+            Customer customer = new Customer(customerMemberHelper.getLargestId()+1);
+            customerRepository.save(customer);
+            FixedBill fixedBill = new FixedBill(fixedBillRepository.getNextId(),customer.getId(), kasirPageModel.getTemporaryBill().getCart());
+            temporaryBillRepository.delete(kasirPageModel.getTemporaryBill());
+            fixedBillRepository.save(fixedBill);
+            System.out.println(fixedBill.getUserId());
+            System.out.println(fixedBillRepository.getNextId());
+        }
+
+        kasirPageModel.getBillStatus().setText("Checked Out.");
+
+
+
+
 //        memberRepository.memberPay()
+    }
+
+    public void searchByName(String input){
+        for (Node node : kasirPageModel.getProductsList().getChildren()) {
+            if(node instanceof DisplayWidget) {
+                DisplayWidget displayWidget = (DisplayWidget) node;
+                if (!displayWidget.getBarang().getNama().toLowerCase().startsWith(input.toLowerCase())) {
+                    displayWidget.setVisible(false);
+                    displayWidget.setManaged(false);
+                } else {
+                    displayWidget.setVisible(true);
+                    displayWidget.setManaged(true);
+                }
+            }
+        }
     }
 
 }

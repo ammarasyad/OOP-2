@@ -5,6 +5,7 @@ import com.tll.backend.repository.impl.barang.BarangRepository;
 import com.tll.backend.repository.impl.user.MemberRepository;
 import com.tll.gui.AutoCompleteComboBox;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import com.tll.backend.model.user.Member;
@@ -16,9 +17,9 @@ public class KasirPageModel {
     private MemberRepository memberRepository;
     private FlowPane productsList;
     private VBox selectedItem;
-    private Member currentMember;
     private AutoCompleteComboBox<Member> members;
     private CheckBox useMember;
+    private Label billStatus;
 
     public KasirPageModel(TemporaryBill temporaryBill, MemberRepository memberRepository){
         this.temporaryBill = temporaryBill;
@@ -27,5 +28,6 @@ public class KasirPageModel {
         useMember = new CheckBox();
         productsList = new FlowPane();
         selectedItem = new VBox();
+        billStatus = new Label();
     }
 }
