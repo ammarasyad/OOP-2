@@ -31,7 +31,7 @@ public enum HikariConfig implements AutoCloseable {
         Properties properties = new Properties();
         properties.setProperty("username", "oop");
         properties.setProperty("password", "oop");
-        properties.setProperty("jdbcUrl", "jdbcUrl=jdbc:mariadb://ec2-52-221-241-44.ap-southeast-1.compute.amazonaws.com:3306/oop");
+        properties.setProperty("jdbcUrl", "jdbc:mariadb://ec2-52-221-241-44.ap-southeast-1.compute.amazonaws.com:3306/oop");
 
         return properties;
     }
