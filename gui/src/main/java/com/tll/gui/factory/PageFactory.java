@@ -16,6 +16,7 @@ import com.tll.gui.controllers.RegisterPageModel;
 import com.tll.gui.controllers.UpdatePageModel;
 import com.tll.gui.models.*;
 import com.tll.gui.factory.PageActionFactory;
+import javafx.beans.InvalidationListener;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -26,10 +27,12 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import org.javatuples.Pair;
 
 import java.io.File;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class PageFactory {
@@ -296,7 +299,7 @@ public class PageFactory {
     }
 
     public static VBox getKasirPage(TemporaryBillRepository temporaryBillRepository, BarangRepository barangRepository, FixedBillRepository fixedBillRepository,
-                                    CustomerRepository customerRepository, MemberRepository memberRepository, KasirPageModel kasirPageModel, TextField... additions){
+                                    CustomerRepository customerRepository, MemberRepository memberRepository, KasirPageModel kasirPageModel){
         VBox kasirPage = new VBox();
         KasirPageControl kasirPageControl = new KasirPageControl(temporaryBillRepository, fixedBillRepository, barangRepository, customerRepository, memberRepository, kasirPageModel);
 
@@ -382,11 +385,19 @@ public class PageFactory {
         useMember.setPadding(new Insets(0, 10, 0, 10));
         setuHbox.getChildren().addAll(leftSetuHbox,new Label("Use Member"), useMember, members,billButton);
 
-        VBox kasirAdditionVBox = new VBox();
-        VBox.setVgrow(kasirAdditionVBox, Priority.ALWAYS);
-        kasirAdditionVBox.getChildren().addAll(additions);
+//        VBox kasirAdditionVBox = new VBox();
+//        VBox.setVgrow(kasirAdditionVBox, Priority.ALWAYS);
+//        kasirAdditionVBox.getChildren().addAll(Arrays.stream(additions).map(el -> {
+//            var temp = el.getValue0();
+//            var tf = new TextField();
+//            tf.setStyle(temp.getStyle());
+//            tf.setPromptText(temp.getPromptText());
+//            tf.setText(temp.getText());
+//            tf.textProperty().addListener(el.getValue1());
+//            return tf;
+//        }).toList());
         
-        bottomRightVbox.getChildren().addAll(kasirAdditionVBox, setuHbox);
+        bottomRightVbox.getChildren().addAll(setuHbox);
         bottomRightVbox.setMinHeight(100);
         VBox.setVgrow(bottomRightVbox, Priority.ALWAYS);
         billButton.setOnAction(event -> kasirPageControl.checkOut());

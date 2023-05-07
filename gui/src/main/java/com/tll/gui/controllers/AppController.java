@@ -9,10 +9,16 @@ import com.tll.backend.repository.impl.user.CustomerRepository;
 import com.tll.backend.repository.impl.user.MemberRepository;
 import com.tll.gui.ClosableTab;
 import com.tll.gui.factory.PageFactory;
+import javafx.beans.InvalidationListener;
+import javafx.beans.value.ChangeListener;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import lombok.Getter;
 import com.tll.gui.models.UpdatePageControl;
+import org.javatuples.Pair;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 public class AppController {
@@ -80,7 +86,6 @@ public class AppController {
         });
         settingPage.setOnAction(event -> addSetting());
         InsertPage.setOnAction(event ->addInsertPage());
-
         loadKasirPages();
     }
     private void loadKasirPages(){
