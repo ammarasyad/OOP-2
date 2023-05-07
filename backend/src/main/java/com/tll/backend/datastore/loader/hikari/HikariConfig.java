@@ -19,7 +19,7 @@ public enum HikariConfig implements AutoCloseable {
         }
     }
 
-    public HikariDataSource getDataSource() {
+    public synchronized HikariDataSource getDataSource() {
         return dataSource;
     }
 
