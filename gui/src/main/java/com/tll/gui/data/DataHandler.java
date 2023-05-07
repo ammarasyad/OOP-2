@@ -11,11 +11,15 @@ import com.tll.backend.datastore.loader.sql.SqlAdapter;
 import com.tll.backend.model.barang.Barang;
 import com.tll.backend.model.bill.FixedBill;
 import com.tll.backend.model.bill.TemporaryBill;
+import com.tll.backend.model.user.Customer;
+import com.tll.backend.model.user.Member;
 import com.tll.backend.repository.StorableObject;
 import com.tll.backend.repository.impl.InMemoryCrudRepository;
 import com.tll.backend.repository.impl.barang.BarangRepository;
 import com.tll.backend.repository.impl.bill.FixedBillRepository;
 import com.tll.backend.repository.impl.bill.TemporaryBillRepository;
+import com.tll.backend.repository.impl.user.CustomerRepository;
+import com.tll.backend.repository.impl.user.MemberRepository;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -56,6 +60,10 @@ public class DataHandler {
                 clazz = FixedBill.class;
             } else if (repositoryClass.equals(TemporaryBillRepository.class)) {
                 clazz = TemporaryBill.class;
+            } else if (repositoryClass.equals(CustomerRepository.class)) {
+                clazz = Customer.class;
+            } else if (repositoryClass.equals(MemberRepository.class)) {
+                clazz = Member.class;
             } else {
                 throw new IllegalArgumentException("Invalid parameter");
             }
