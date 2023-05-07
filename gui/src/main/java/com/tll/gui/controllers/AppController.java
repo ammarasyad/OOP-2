@@ -164,7 +164,7 @@ public class AppController {
         tabPane.getTabs().add(tab);
     }
 
-    public ScheduledExecutorService getCommonScheduledThreadPool() {
+    public static ScheduledExecutorService getCommonScheduledThreadPool() {
         return commonScheduledThreadPool;
     }
 

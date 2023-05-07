@@ -31,9 +31,7 @@ public class HistoryPageControl {
         for(FixedBill fixedBill : fixedBillRepository.findAll()){
             TransactionWidget transactionWidget = new TransactionWidget(fixedBill);
 
-            transactionWidget.setOnMouseClicked(event -> {
-                showDetails(transactionWidget);
-            });
+            transactionWidget.setOnMouseClicked(event -> showDetails(transactionWidget));
 
             historyPageModel.getTransactionContainer().getChildren().addAll(transactionWidget);
         }
