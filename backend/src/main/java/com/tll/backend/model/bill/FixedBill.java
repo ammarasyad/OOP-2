@@ -17,6 +17,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.javatuples.Pair;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,16 +29,27 @@ import java.util.stream.Collectors;
 @JsonDeserialize(using = FixedBillDeserializer.class)
 @NoArgsConstructor
 public class FixedBill extends Bill implements CloneableObject<FixedBill> {
+
+    private static final BigDecimal VipDiscount = new BigDecimal("0.9");
+
     @Getter
     @Setter(AccessLevel.PRIVATE)
     @Column(name = "id_user")
     private Integer userId;
+
 
     public FixedBill(Integer id, Integer userId, List<Pair<Barang, Integer>> listBarang) {
         super(id, listBarang.stream()
                 .map(el -> Pair.with(el.getValue0().clone(), el.getValue1()))
                 .collect(Collectors.toList()));
         this.userId = userId;
+    }
+
+    public void AddVIPDiscount() {
+        this.cart.forEach(el -> {
+            var barang = el.getValue0();
+            barang.setHarga(barang.getHarga().multiply(VipDiscount));
+        });
     }
 
     @Override

@@ -29,7 +29,7 @@ public class TemporaryBill extends Bill {
 
     public TemporaryBill(Integer id) {
         super(id, new ArrayList<>());
-        priceMultiplier = new BigDecimal(0);
+        priceMultiplier = new BigDecimal(1);
     }
 
     public void addToBill(Barang barang, int jumlah) {
@@ -51,7 +51,11 @@ public class TemporaryBill extends Bill {
 
     public FixedBill convertToFixedBill(int fixedBillId, int userId) {
         var tempCart = cart.stream()
-                .map(el -> Pair.with(el.getValue0().clone(), el.getValue1()))
+                .map(el -> {
+                    var barang = el.getValue0().clone();
+                    barang.setHarga(barang.getHarga().multiply(priceMultiplier));
+                    return Pair.with(barang, el.getValue1());
+                })
                 .toList();
 
         return new FixedBill(fixedBillId, userId, tempCart);

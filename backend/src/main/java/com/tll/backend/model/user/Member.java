@@ -60,9 +60,6 @@ public class Member implements Serializable, StorableObject<Integer> {
         this.bills.add(bill);
         if (isActiveStatus()) {
             long totalAmount = bill.getTotalPrice().longValue();
-            if (getType().equals("Vip")) {
-                totalAmount -= totalAmount*0.1;
-            }
 
             if (getPoint() > totalAmount) {
                 setPoint(getPoint() - totalAmount);
