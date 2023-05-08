@@ -10,17 +10,31 @@ import javafx.util.Duration;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class SidebarFactory {
 
     private static final int MAIN_SIDEBAR_WIDTH = 200;
     private static final int MAIN_SIDEBAR_HEIGHT = 200;
 
+    private static final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor(runnable -> {
+        Thread thread = new Thread(runnable);
+        thread.setDaemon(true);
+        return thread;
+    });
+
     public static VBox getMainSidebar() {
         // Membuat label untuk menampilkan waktu
         Label clockLabel = new Label();
         clockLabel.setStyle("-fx-text-fill: #ffffff;");
-        startClock(clockLabel);
+        clockLabel.setText("00:00:00");
+        clockLabel.setStyle("-fx-font-size: 24pt; -fx-font-weight: 100; -fx-text-fill: #ffffff; -fx-background-color: #0077B5 ");
+
+
+        // Create a thread pool with a single thread
+        executor.scheduleAtFixedRate(() -> updateClock(clockLabel), 0, 1, TimeUnit.SECONDS);
 
         // Membuat layout VBox untuk sidepanel
         VBox vbox = new VBox();
@@ -44,6 +58,17 @@ public class SidebarFactory {
         }));
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
+    }
+
+    private static void updateClock(Label timeLabel) {
+        // Get the current time
+        Date now = new Date();
+        // Format the time as a string
+        SimpleDateFormat formatter = new SimpleDateFormat("hh:mm:ss");
+        String timeStr = formatter.format(now);
+
+        // Update the label on the JavaFX Application Thread
+        javafx.application.Platform.runLater(() -> timeLabel.setText(timeStr));
     }
 
 }

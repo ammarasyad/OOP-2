@@ -1,0 +1,27 @@
+<?xml version = "1.0" encoding = "utf-8"?>
+<!DOCTYPE hibernate-configuration SYSTEM
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+
+        <property name = "hibernate.dialect">
+            org.hibernate.dialect.MariaDBDialect
+        </property>
+
+        <property name = "hibernate.connection.driver_class">
+            org.mariadb.jdbc.Driver
+        </property>
+
+        <property name = "hibernate.connection.url">
+            jdbc:mariadb://ec2-52-221-241-44.ap-southeast-1.compute.amazonaws.com:3306/oop
+        </property>
+
+        <property name = "hibernate.connection.username">
+            oop
+        </property>
+
+        <property name = "hibernate.connection.password">
+            oop
+        </property>
+    </session-factory>
+</hibernate-configuration>

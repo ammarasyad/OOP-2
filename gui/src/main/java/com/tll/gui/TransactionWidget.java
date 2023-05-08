@@ -1,25 +1,33 @@
 package com.tll.gui;
 
+import com.tll.backend.model.bill.FixedBill;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import lombok.Getter;
 
+@Getter
 public class TransactionWidget extends HBox {
-    private Label nameLabel;
+    private Label uidLabel;
     private Label idLabel;
-    private Label dateLabel;
+    private Label totalLabel;
+    private FixedBill fixedBill;
 
-    public TransactionWidget(String name, String id, String date) {
+    public TransactionWidget(FixedBill fixedBill) {
         super();
-        nameLabel = new Label("Name: " + name);
-        idLabel = new Label("ID: " + id);
-        dateLabel = new Label("Date: " + date);
+        this.fixedBill = fixedBill;
+        uidLabel = new Label("UID: " + fixedBill.getUserId());
+        uidLabel.setPadding(new Insets(5, 0, 0, 5));
+        idLabel = new Label("BILL ID: " + fixedBill.getId());
+        idLabel.setPadding(new Insets(5, 0, 0, 5));
+        totalLabel = new Label("TOTAL: " + fixedBill.getTotalPrice());
+        totalLabel.setPadding(new Insets(5, 0, 0, 5));
 
         // Customize labels if needed
 
         setPadding(new Insets(5));
-        getChildren().addAll(nameLabel, idLabel, dateLabel);
+        getChildren().addAll(uidLabel, idLabel, totalLabel);
         HBox.setHgrow(this, Priority.ALWAYS);
 
         setMaxWidth(1.7976931348623157E308);

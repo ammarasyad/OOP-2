@@ -1,6 +1,6 @@
 package com.tll.backend.pluginhandler;
 
-import com.tll.annotation.AutoWired;
+import com.tll.plugin.AutoWired;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -8,13 +8,20 @@ import java.lang.reflect.InvocationTargetException;
 
 public class PluginResolver {
 
-    public void injectDependency(Class<?> classType, Object object) {
+    public <T> void injectPluginDependency(T object) {
         PluginContext pluginContext = PluginContext.getInstance();
-        for(Field field: classType.cast(object).getClass().getDeclaredFields() ){
+        for(Field field: object.getClass().getDeclaredFields()){
             if (field.isAnnotationPresent(AutoWired.class)){
+                AutoWired wiredReq = field.getAnnotation(AutoWired.class);
                 field.setAccessible(true);
+
                 Class<?> fieldType = field.getClass();
-                Object value = pluginContext.getFromContext(fieldType);
+                String identifier = wiredReq.identifier();
+                if (wiredReq.identifier().isBlank()) {
+                    identifier = fieldType.getSimpleName();
+                }
+
+                var value = pluginContext.getFromContext(identifier, field.getType());
                 try {
                     if (value == null) {
                         value = fieldType.getDeclaredConstructor().newInstance();

@@ -11,7 +11,7 @@ public class PluginContext {
 
     private static PluginContext pluginContext;
 
-    private final HashMap<Class<?>, Object> objectContext;
+    private final HashMap<String, Object> objectContext;
 
     private PluginContext() {
         throw new UnsupportedOperationException();
@@ -24,19 +24,19 @@ public class PluginContext {
         return pluginContext;
     }
 
-    public void addToContext(Class<?> classType, Object object) {
-        objectContext.put(classType, object);
+    public void addToContext(String identifier, Object object) {
+        objectContext.put(identifier, object);
     }
 
-    public void removeContext(Class<?> classType) {
-        objectContext.remove(classType);
+    public void removeFromContext(String identifier) {
+        objectContext.remove(identifier);
     }
 
-    public Object getFromContext(Class<?> classType) {
-        return objectContext.get(classType);
+    public <T> T getFromContext(String identifier, Class<T> classType) {
+        return classType.cast(objectContext.get(identifier));
     }
 
-    public Map<Class<?>, Object> getContext() {
+    public Map<String, Object> getContext() {
         return objectContext;
     }
 
