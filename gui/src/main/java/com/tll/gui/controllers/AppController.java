@@ -7,6 +7,7 @@ import com.tll.backend.repository.impl.bill.TemporaryBillRepository;
 import com.tll.backend.repository.impl.user.CustomerRepository;
 import com.tll.backend.repository.impl.user.MemberRepository;
 import com.tll.gui.ClosableTab;
+import com.tll.gui.factory.NodeFactory;
 import com.tll.gui.factory.PageFactory;
 import javafx.scene.Node;
 import javafx.scene.control.Menu;
@@ -44,6 +45,7 @@ public class AppController {
     private final MemberRepository memberRepository;
     private final List<File> fileList;
     private final List<Node> pluginNodes;
+    private final List<NodeFactory> kasirAdditions;
 
     private static final String OPEN_PAGE = "Open Page";
     private static final String MAIN_PAGE = "Main";
@@ -71,6 +73,7 @@ public class AppController {
         this.memberRepository = memberRepository;
         this.fileList = new ArrayList<>();
         this.pluginNodes = new ArrayList<>();
+        this.kasirAdditions = new ArrayList<>();
         mainPageModel = new MainPageModel();
         registerPageModel = new RegisterPageModel(customerRepository, memberRepository);
 
@@ -148,7 +151,7 @@ public class AppController {
 //        KasirPageModel kasirPageModel = new KasirPageModel(tempBill);
         ClosableTab tab = new ClosableTab(KASIR_PAGE);
         tab.setContent(PageFactory.getKasirPage(temporaryBillRepository, barangRepository, fixedBillRepository, customerRepository,
-                memberRepository, kasirPageModel));
+                memberRepository, kasirPageModel, kasirAdditions));
         tabPane.getTabs().add(tab);
     }
 

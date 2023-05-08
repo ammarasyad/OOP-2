@@ -344,7 +344,7 @@ public class PageFactory {
     }
 
     public static VBox getKasirPage(TemporaryBillRepository temporaryBillRepository, BarangRepository barangRepository, FixedBillRepository fixedBillRepository,
-                                    CustomerRepository customerRepository, MemberRepository memberRepository, KasirPageModel kasirPageModel, TextField... additions){
+                                    CustomerRepository customerRepository, MemberRepository memberRepository, KasirPageModel kasirPageModel, List<NodeFactory> additions){
         VBox kasirPage = new VBox();
         KasirPageControl kasirPageControl = new KasirPageControl(temporaryBillRepository, fixedBillRepository, barangRepository, customerRepository, memberRepository, kasirPageModel);
 
@@ -444,7 +444,9 @@ public class PageFactory {
 
         VBox kasirAdditionVBox = new VBox();
         VBox.setVgrow(kasirAdditionVBox, Priority.ALWAYS);
-        kasirAdditionVBox.getChildren().addAll(additions);
+        additions.forEach(el -> {
+            kasirAdditionVBox.getChildren().add(el.getNode());
+        });
 
         bottomRightVbox.getChildren().addAll(kasirAdditionVBox, setuHbox);
         bottomRightVbox.setMinHeight(100);
