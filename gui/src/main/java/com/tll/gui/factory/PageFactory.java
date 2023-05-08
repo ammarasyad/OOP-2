@@ -2,6 +2,8 @@ package com.tll.gui.factory;
 
 import com.tll.backend.model.bill.TemporaryBill;
 import com.tll.backend.model.user.Member;
+import com.tll.backend.pluginhandler.PluginLoader;
+import com.tll.backend.pluginhandler.PluginResolver;
 import com.tll.backend.repository.impl.barang.BarangRepository;
 import com.tll.backend.repository.impl.bill.FixedBillRepository;
 import com.tll.backend.repository.impl.bill.TemporaryBillRepository;
@@ -27,6 +29,8 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -563,17 +567,26 @@ public class PageFactory {
         VBox.setMargin(pluginboxTitle, new Insets(0, 0, 0, 0));
 
         FileChooser pluginChooser = new FileChooser();
+        pluginChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JAR", "*.jar"));
 
         Stage pluginStage = new Stage();
         pluginStage.setTitle("Select File");
 
-        Button selectPluginButton = new Button("Select File");
+        Button selectPluginButton = new Button("Select Plugin");
+
+        PluginLoader pluginLoader = new PluginLoader();
+        PluginResolver pluginResolver = new PluginResolver();
 
         selectPluginButton.setOnAction(e -> {
             File selectedFile = pluginChooser.showOpenDialog(loadStage);
             if (selectedFile != null) {
-                fileList.add(selectedFile);
-                settingPageControl.refreshFileList();
+                Path path = Paths.get(selectedFile.getPath());
+                String fileName = path.getFileName().toString();
+                String parent = path.getParent().toString();
+
+                var plugin = pluginLoader.load(parent, fileName);
+                pluginResolver.injectPluginDependency(plugin);
+                plugin.load();
             }
         });
 

@@ -24,6 +24,12 @@ public class Customer implements Serializable, StorableObject<Integer> {
 
     @Id
     private final Integer id;
+
+    @Override
+    public String toString() {
+        return "Customer " + id;
+    }
+
     @OneToOne
     @JoinColumn(name = "id_bill")
     private FixedBill bill;

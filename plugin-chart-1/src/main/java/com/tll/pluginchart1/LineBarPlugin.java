@@ -6,10 +6,13 @@ import com.tll.gui.controllers.AppController;
 import com.tll.plugin.AutoWired;
 import com.tll.plugin.Plugin;
 import javafx.application.Platform;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.chart.*;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
@@ -43,30 +46,52 @@ public class LineBarPlugin extends Plugin {
         barMenuItem.setOnAction(el -> openBarChartPage());
         additionState = new AdditionState(true);
 
-        var button = new Button();
-        button.setText(additionState.isEnabled() ? "disable" : "enable" + " add");
-        button.setOnAction(el -> {
-            if (!additionState.isEnabled()) {
-                button.setText("enable add");
+        HBox mainBox = new HBox();
+
+        VBox pluginInfoBox = new VBox();
+
+        Label nameLabel = new Label("Line and Bar Chart");
+        Label statusLabel = new Label("Plugin Enable");
+
+        pluginInfoBox.getChildren().addAll(nameLabel, statusLabel);
+
+        Button unplugButton = new Button();
+        unplugButton.setText(additionState.isEnabled() ? "Disable" : "Enable");
+        unplugButton.setOnAction(el -> {
+            if (additionState.isEnabled()) {
+                unplugButton.setText("Enable");
+                statusLabel.setText("Plugin Disable");
                 additionState.setEnabled(false);
-                removeMenu();
-                return;
+                removeLineMenu();
+                removeBarMenu();
             }
-            button.setText("disable add");
-            additionState.setEnabled(true);
-            addMenu();
+            else {
+                unplugButton.setText("Disable");
+                statusLabel.setText("Plugin Enable");
+                additionState.setEnabled(true);
+                addMenu();
+            }
         });
+
+        mainBox.getChildren().addAll(pluginInfoBox, unplugButton);
+        mainBox.setSpacing(20);
+        mainBox.setPadding(new Insets(10));
+        mainBox.setStyle("-fx-border-color: black;");
+        mainBox.setAlignment(Pos.BASELINE_CENTER);
 
         if (additionState.isEnabled()) {
             addMenu();
         }
+
+        appController.getPluginNodes().add(mainBox);
     }
 
     private void addMenu() {
-        appController.getPages().getItems().addAll(lineMenuItem, barMenuItem);
+        appController.getPages().getItems().add(lineMenuItem);
+        appController.getPages().getItems().add(barMenuItem);
     }
 
-    private void removeMenu() {
+    private void removeLineMenu() {
         int i = 0;
         var items = appController.getPages().getItems();
         for (var item: items) {
@@ -74,6 +99,14 @@ public class LineBarPlugin extends Plugin {
                 items.remove(i);
                 return;
             }
+            ++i;
+        }
+    }
+
+    private void removeBarMenu() {
+        int i = 0;
+        var items = appController.getPages().getItems();
+        for (var item: items) {
             if (item.hashCode() == barMenuItem.hashCode()) {
                 items.remove(i);
                 return;
@@ -150,20 +183,20 @@ public class LineBarPlugin extends Plugin {
         XYChart.Series<String, Number> series = new XYChart.Series<>();
 
 
-        appController.getBarangRepository().findAll().forEach(barang -> series.getData().add(new XYChart.Data<>(barang.getNama(), barang.getStok())));
+        appController.getBarangRepository().findAll().forEach(barang -> series.getData().add(new XYChart.Data<>(barang.getNama() + "(id: " + barang.getId() + ")", barang.getStok())));
 
         AppController.getCommonScheduledThreadPool().scheduleAtFixedRate(() -> Platform.runLater(() -> {
             for (Barang barang : appController.getBarangRepository().findAll()) {
                 boolean found = false;
                 for (XYChart.Data<String, Number> data : series.getData()) {
-                    if (data.getXValue().equals(barang.getId() + barang.getNama())) {
+                    if (data.getXValue().equals(barang.getNama() + "(id: " + barang.getId() + ")")) {
                         data.setYValue(barang.getStok());
                         found = true;
                         break;
                     }
                 }
                 if (!found) {
-                    series.getData().add(new XYChart.Data<>(barang.getId() + barang.getNama(), barang.getStok()));
+                    series.getData().add(new XYChart.Data<>(barang.getNama() + "(id: " + barang.getId() + ")", barang.getStok()));
                 }
             }
         }), 1, 1, TimeUnit.SECONDS);

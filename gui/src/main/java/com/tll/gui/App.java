@@ -68,11 +68,7 @@ public class App extends Application {
         AppController ac = new AppController(barangRepository, temporaryBillRepository, fixedBillRepository, customerRepository, memberRepository);
         VBox vbox = new AppModel(ac);
         pluginContext.addToContext("AppController", ac);
-        PluginLoader pluginLoader = new PluginLoader();
-        var pl = pluginLoader.load("src/main/resources", "plugin-chart-1-1.0-SNAPSHOT.jar");
-        PluginResolver pluginResolver = new PluginResolver();
-        pluginResolver.injectPluginDependency(pl);
-        pl.load();
+
         Scene scene = new Scene(vbox, 1200, 640);
         stage.setTitle("Kasir-Kasiran Mantap!!!!!");
 

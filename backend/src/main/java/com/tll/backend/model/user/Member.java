@@ -37,7 +37,7 @@ public class Member implements Serializable, StorableObject<Integer> {
 
     @Override
     public String toString() {
-        return name + " id: " + id;
+        return name + " (id: " + id + ")";
     }
 
     public void updateMember(String name, String phone, String type) {
