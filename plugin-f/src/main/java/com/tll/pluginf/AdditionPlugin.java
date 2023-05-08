@@ -4,9 +4,12 @@ import com.tll.backend.datastore.loader.JsonAdapter;
 import com.tll.backend.model.bill.Bill;
 import com.tll.backend.model.bill.TemporaryBill;
 import com.tll.gui.controllers.AppController;
+import com.tll.gui.factory.NodeFactory;
 import com.tll.plugin.AutoWired;
 import com.tll.plugin.Plugin;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -32,9 +35,9 @@ public class AdditionPlugin extends Plugin {
         var fileExists = loadFileIfExists();
 
         if (!fileExists) {
-            additionState = new AdditionState(new BigDecimal(1));
+            additionState = new AdditionState(new BigDecimal(1), true);
         }
-
+        Bill.setPriceAddition(additionState.getPriceAddition());
         TextField idTextField = new TextField();
         idTextField.setPromptText("Masukkan id bill");
 
@@ -87,6 +90,9 @@ public class AdditionPlugin extends Plugin {
 
         HBox hBox = new HBox();
         hBox.getChildren().addAll(idTextField, discTextField);
+        NodeFactory nodeFactory = () -> {
+            return new Label("Tax & Service Charge: " + additionState.getPriceAddition());
+        };
 
         TextField tsField = new TextField();
         tsField.setPromptText("masukkan tax & service charge");
@@ -98,6 +104,17 @@ public class AdditionPlugin extends Plugin {
                 var addition = Integer.parseInt(tsField.getText());
                 if (addition >= 0) {
                     Bill.setPriceAddition(new BigDecimal(addition));
+                    for (int i = 0; i < appController.getKasirAdditions().size(); i++) {
+                        Node node = appController.getKasirAdditions().get(i).getNode();
+                        if (node instanceof Label && ((Label) node).getText().startsWith("Tax & Service Charge: ")) {
+                            appController.getKasirAdditions().remove(i);
+                            NodeFactory newNodeFactory = () -> {
+                                return new Label("Tax & Service Charge: " + additionState.getPriceAddition());
+                            };
+                            appController.getKasirAdditions().add(newNodeFactory);
+                            break;
+                        }
+                    }
                     tsField.setStyle("-fx-border-color: none");
                 } else {
                     tsField.setStyle("-fx-border-color: red");
@@ -112,9 +129,33 @@ public class AdditionPlugin extends Plugin {
         saveButton.setText("save");
         saveButton.setOnAction(el -> save());
 
-        VBox vbox = new VBox();
-        vbox.getChildren().addAll(hBox, tsField, saveButton);
+        var disableButton = new Button();
+        disableButton.setText(additionState.isEnabled() ? "disable addition" : "enable addition");
+        disableButton.setOnAction(el -> {
+            if (additionState.isEnabled()) {
+                disableButton.setText("enable addition");
+                for (int i = 0; i < appController.getKasirAdditions().size(); i++) {
+                    Node node = appController.getKasirAdditions().get(i).getNode();
+                    if (node instanceof Label && ((Label) node).getText().startsWith("Tax & Service Charge: ")) {
+                        appController.getKasirAdditions().remove(i);
+                        break;
+                    }
+                }
+                additionState.setEnabled(false);
+                return;
+            }
+            disableButton.setText("disable addition");
+            NodeFactory newNodeFactory = () -> {
+                return new Label("Tax & Service Charge: " + additionState.getPriceAddition());
+            };
+            appController.getKasirAdditions().add(newNodeFactory);
+            additionState.setEnabled(true);
+        });
 
+        VBox vbox = new VBox();
+        vbox.getChildren().addAll(hBox, tsField, saveButton, disableButton);
+
+        appController.getKasirAdditions().add(nodeFactory);
         appController.getPluginNodes().add(vbox);
     }
 
@@ -129,12 +170,13 @@ public class AdditionPlugin extends Plugin {
     private boolean loadFileIfExists() {
         try {
             var res = jsonAdapter.load(AdditionState.class);
-            if (res.size() < 1) {
+            if (res.size() != 1) {
                 return false;
             }
             this.additionState = res.get(0);
             return true;
         } catch (IOException e) {
+            e.printStackTrace();
             return false;
         }
     }
