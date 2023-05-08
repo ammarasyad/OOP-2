@@ -1,0 +1,13 @@
+[ {
+  "id" : 1,
+  "absoluteRate" : 1
+} ,
+  {
+    "id" : 2,
+    "absoluteRate" : 12
+  } ,
+  {
+    "id" : 3,
+    "absoluteRate" : 17
+  }
+]
