@@ -18,6 +18,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static com.tll.backend.datastore.TableDropper.dropTable;
+import static com.tll.backend.datastore.loader.sql.SqlAdapter.createTablesIfNotExist;
 
 public class HibernateDataStore {
 
@@ -26,6 +27,7 @@ public class HibernateDataStore {
     public HibernateDataStore() {
         try {
             dropTable(HikariConfig.INSTANCE);
+            createTablesIfNotExist(HikariConfig.INSTANCE);
         } catch (SQLException e) {
             e.printStackTrace();
         }

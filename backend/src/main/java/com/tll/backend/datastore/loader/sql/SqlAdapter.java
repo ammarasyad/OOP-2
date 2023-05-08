@@ -95,8 +95,7 @@ public class SqlAdapter implements DataStore {
                         "id_kategori INT NOT NULL," +
                         "url_gambar VARCHAR(255) NOT NULL," +
                         "dijual BOOLEAN NOT NULL," +
-                        "PRIMARY KEY (id)," +
-                        "FOREIGN KEY (id_kategori) REFERENCES KategoriBarang(id)" +
+                        "PRIMARY KEY (id)" +
                         ")",
 
                 // 3. FixedBill
@@ -109,7 +108,7 @@ public class SqlAdapter implements DataStore {
                 """,
                 """
                         CREATE TABLE IF NOT EXISTS Cart (
-                            id INT NOT NULL AUTO_INCREMENT,
+                            id INT NOT NULL AUTO_INCREMENT UNIQUE,
                             id_barang INT NOT NULL,
                             jumlah INT NOT NULL,
                             id_bill INT NOT NULL,
