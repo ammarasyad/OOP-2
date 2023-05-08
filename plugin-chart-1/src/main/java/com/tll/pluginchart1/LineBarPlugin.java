@@ -54,6 +54,7 @@ public class LineBarPlugin extends Plugin {
         Label statusLabel = new Label("Plugin Enable");
 
         pluginInfoBox.getChildren().addAll(nameLabel, statusLabel);
+        pluginInfoBox.setSpacing(10);
 
         Button unplugButton = new Button();
         unplugButton.setText(additionState.isEnabled() ? "Disable" : "Enable");

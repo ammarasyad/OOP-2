@@ -8,11 +8,14 @@ import com.tll.gui.controllers.AppController;
 import com.tll.plugin.AutoWired;
 import com.tll.plugin.Plugin;
 import javafx.application.Platform;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.Side;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import lombok.NoArgsConstructor;
 
@@ -38,24 +41,44 @@ public class PieChartPlugin extends Plugin {
         menuItem.setOnAction(el -> openPieChartPage());
         additionState = new AdditionState(true);
 
-        var button = new Button();
-        button.setText(additionState.isEnabled() ? "disable" : "enable" + " add");
-        button.setOnAction(el -> {
-            if (!additionState.isEnabled()) {
-                button.setText("enable add");
+        HBox mainBox = new HBox();
+
+        VBox pluginInfoBox = new VBox();
+
+        Label nameLabel = new Label("Pie Chart");
+        Label statusLabel = new Label("Plugin Enable");
+
+        pluginInfoBox.getChildren().addAll(nameLabel, statusLabel);
+        pluginInfoBox.setSpacing(10);
+
+        Button unplugButton = new Button();
+        unplugButton.setText(additionState.isEnabled() ? "Disable" : "Enable");
+        unplugButton.setOnAction(el -> {
+            if (additionState.isEnabled()) {
+                unplugButton.setText("Enable");
+                statusLabel.setText("Plugin Disable");
                 additionState.setEnabled(false);
-                Bill.setPriceAddition(new BigDecimal(0));
                 removeMenu();
-                return;
             }
-            button.setText("disable add");
-            additionState.setEnabled(true);
-            addMenu();
+            else {
+                unplugButton.setText("Disable");
+                statusLabel.setText("Plugin Enable");
+                additionState.setEnabled(true);
+                addMenu();
+            }
         });
+
+        mainBox.getChildren().addAll(pluginInfoBox, unplugButton);
+        mainBox.setSpacing(20);
+        mainBox.setPadding(new Insets(10));
+        mainBox.setStyle("-fx-border-color: black;");
+        mainBox.setAlignment(Pos.BASELINE_CENTER);
 
         if (additionState.isEnabled()) {
             addMenu();
         }
+
+        appController.getPluginNodes().add(mainBox);
     }
 
     private void addMenu() {
@@ -85,19 +108,19 @@ public class PieChartPlugin extends Plugin {
         chart.setLegendSide(Side.BOTTOM);
 
         //Add Data to PieChart
-        appController.getBarangRepository().findAll().forEach(el -> chart.getData().add(new PieChart.Data(el.getNama(), el.getStok())));
+        appController.getBarangRepository().findAll().forEach(el -> chart.getData().add(new PieChart.Data(el.getNama() + "(id: " + el.getId() + ")", el.getStok())));
         AppController.getCommonScheduledThreadPool().scheduleAtFixedRate(() -> Platform.runLater(() -> {
             for (Barang barang : appController.getBarangRepository().findAll()) {
                 boolean found = false;
                 for (PieChart.Data data : chart.getData()) {
-                    if (data.getName().equals(barang.getNama())) {
+                    if (data.getName().equals(barang.getNama() + "(id: " + barang.getId() + ")")) {
                         data.setPieValue(barang.getStok());
                         found = true;
                         break;
                     }
                 }
                 if (!found) {
-                    chart.getData().add(new PieChart.Data(barang.getNama(), barang.getStok()));
+                    chart.getData().add(new PieChart.Data(barang.getNama() + "(id: " + barang.getId() + ")", barang.getStok()));
                 }
             }
         }), 1, 1, TimeUnit.SECONDS);
