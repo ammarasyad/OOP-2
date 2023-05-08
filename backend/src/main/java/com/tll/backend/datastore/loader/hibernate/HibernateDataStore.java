@@ -1,5 +1,6 @@
 package com.tll.backend.datastore.loader.hibernate;
 
+import com.tll.backend.datastore.loader.hikari.HikariConfig;
 import com.tll.backend.model.barang.Barang;
 import com.tll.backend.model.bill.FixedBill;
 import com.tll.backend.model.bill.TemporaryBill;
@@ -7,19 +8,28 @@ import com.tll.backend.model.hibernatespecific.Cart;
 import com.tll.backend.model.hibernatespecific.TemporaryCart;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
-import lombok.RequiredArgsConstructor;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import org.javatuples.Pair;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@RequiredArgsConstructor
+import static com.tll.backend.datastore.TableDropper.dropTable;
+
 public class HibernateDataStore {
 
     private static final ExecutorService executor = Executors.newFixedThreadPool(10);
+
+    public HibernateDataStore() {
+        try {
+            dropTable(HikariConfig.INSTANCE);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
     public <T> void save(T object) {
         executor.submit(() -> {

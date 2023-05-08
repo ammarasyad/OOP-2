@@ -8,7 +8,6 @@ import com.tll.backend.model.bill.FixedBill;
 import com.tll.backend.model.bill.TemporaryBill;
 import com.tll.backend.model.user.Customer;
 import com.tll.backend.model.user.Member;
-import lombok.AllArgsConstructor;
 import org.javatuples.Pair;
 
 import java.io.IOException;
@@ -16,9 +15,19 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@AllArgsConstructor
+import static com.tll.backend.datastore.TableDropper.dropTable;
+
 public class SqlAdapter implements DataStore {
-    private HikariConfig connection;
+    private final HikariConfig connection;
+
+    public SqlAdapter(HikariConfig connection) {
+        this.connection = connection;
+        try {
+            dropTable(connection);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
     @Override
     public void save(List<?> objects) throws IOException {
@@ -67,7 +76,7 @@ public class SqlAdapter implements DataStore {
         }
     }
 
-    private void createTablesIfNotExist(HikariConfig connection) throws SQLException {
+    public static void createTablesIfNotExist(HikariConfig connection) throws SQLException {
         List<String> queries = List.of(
                 // 1. Kategori
                 "CREATE TABLE IF NOT EXISTS KategoriBarang (" +
