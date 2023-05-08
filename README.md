@@ -21,4 +21,4 @@ Created by:
 
 ## How to Run
 1. Download and Install Java 17 or newer
-2. Run the JAR file: `java -jar gui-1.0.jar <JSON|XML|OBJ|SQL|ORM>`
+2. Run the JAR file: `java -jar gui-1.0.jar <JSON|XML|OBJ|SQL|SQL_ORM>`
