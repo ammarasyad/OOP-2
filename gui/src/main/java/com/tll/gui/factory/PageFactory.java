@@ -11,6 +11,7 @@ import com.tll.backend.repository.impl.user.CustomerRepository;
 import com.tll.backend.repository.impl.user.MemberRepository;
 import com.tll.gui.AutoCompleteComboBox;
 import com.tll.gui.controllers.*;
+import com.tll.gui.data.DataHandler;
 import com.tll.gui.models.*;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -37,7 +38,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class PageFactory {
 
-    public static VBox getMainPage(MainPageModel mainPageModel){
+    public static VBox getMainPage(MainPageModel mainPageModel) {
         VBox mainPage = new VBox();
         MainPageControl mc = new MainPageControl(mainPageModel);
         mc.startClock();
@@ -49,7 +50,7 @@ public class PageFactory {
         Label clockLabel = new Label();
         clockLabel.setFont(new Font(49.0));
 
-        Font font = new Font("Arial",20);
+        Font font = new Font("Arial", 20);
 
         HBox ezra = new HBox();
         Label nnezra = new Label("Ezra M C M H / 13521073");
@@ -83,6 +84,8 @@ public class PageFactory {
 
         clockLabel.textProperty().bindBidirectional(mainPageModel.getClockLabel().textProperty());
         bottomLabel.textProperty().bindBidirectional(mainPageModel.getBottomLabel().textProperty());
+        //        mainPageController.startClock();
+//        mainPageController.startClock();
 
         kelompok.getChildren().addAll(ezra, chris, tobi, ammar, zidane);
         ezra.setAlignment(Pos.BOTTOM_CENTER);
@@ -91,24 +94,30 @@ public class PageFactory {
         ammar.setAlignment(Pos.BOTTOM_CENTER);
         zidane.setAlignment(Pos.BOTTOM_CENTER);
 
-        String imagepath = "file:" + System.getProperty("user.dir") + "/src/main/resources/Telolet.png";
+        String imagepath = System.getProperty("user.dir") + "/" + "gui/src/main/resources/Telolet.png";
 
         ImageView imageView = new ImageView();
         Image image = new Image(imagepath);
         imageView.setImage(image);
-        imageView.setFitWidth(459);
-        imageView.setFitHeight(306);
-
+        imageView.setFitWidth(540);
+        imageView.setFitHeight(360);
+//        region.getChildren().add(imageView);
+        //kelompok.setSpacing(10);
+        //kelompok.setAlignment(Pos.BOTTOM_RIGHT );
+        //ezra.setMargin()
+        //VBox.setMargin(kelompok, new Insets(350,0,0,0));
         kelompok.setAlignment(Pos.BOTTOM_CENTER);
         VBox.setVgrow(kelompok, Priority.ALWAYS);
         mainPage.getChildren().addAll(clockLabel, dateLabel, imageView, kelompok);
 
         VBox.setVgrow(mainPage, Priority.ALWAYS);
+        //mainPage.setSpacing(5);
+
 
         return mainPage;
     }
 
-    public static VBox getRegisterPage(RegisterPageModel registerPageModel){
+    public static VBox getRegisterPage(RegisterPageModel registerPageModel) {
         VBox registerPage = new VBox();
         RegisterPageControl registerPageControl = new RegisterPageControl(registerPageModel);
 
@@ -169,7 +178,7 @@ public class PageFactory {
         return registerPage;
     }
 
-    public static VBox getUpdatePage(UpdatePageModel updatePageModel){
+    public static VBox getUpdatePage(UpdatePageModel updatePageModel) {
         VBox updatePage = new VBox();
         UpdatePageControl updatePageControl = new UpdatePageControl(updatePageModel);
 
@@ -238,7 +247,7 @@ public class PageFactory {
         return updatePage;
     }
 
-    public static VBox getHistoryPage(FixedBillRepository fixedBillRepository, HistoryPageModel historyPageModel){
+    public static VBox getHistoryPage(FixedBillRepository fixedBillRepository, HistoryPageModel historyPageModel) {
         VBox historyPage = new VBox();
         HistoryPageControl historyPageControl = new HistoryPageControl(fixedBillRepository, historyPageModel);
         historyPage.setPadding(new Insets(10));
@@ -302,20 +311,20 @@ public class PageFactory {
         Button saveOnePDFButton = new Button("Save Details");
         savePDFButton.setOnAction(e -> {
             try {
-                historyPageControl.savePDF(fileName.getText()+".pdf");
+                historyPageControl.savePDF(fileName.getText() + ".pdf");
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
         });
         saveOnePDFButton.setOnAction(e -> {
             try {
-                historyPageControl.savePDFcurrent(fileName.getText()+".pdf");
+                historyPageControl.savePDFcurrent(fileName.getText() + ".pdf");
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
         });
-        HBox hbox1 = new HBox(path,getPathButton);
-        HBox hBox2 = new HBox(fileName,savePDFButton,saveOnePDFButton);
+        HBox hbox1 = new HBox(path, getPathButton);
+        HBox hBox2 = new HBox(fileName, savePDFButton, saveOnePDFButton);
         HBox.setHgrow(hBox2, Priority.ALWAYS);
         HBox.setHgrow(hbox1, Priority.ALWAYS);
         bottomRightHbox.getChildren().addAll(hbox1, hBox2);
@@ -340,7 +349,7 @@ public class PageFactory {
     }
 
     public static VBox getKasirPage(TemporaryBillRepository temporaryBillRepository, BarangRepository barangRepository, FixedBillRepository fixedBillRepository,
-                                    CustomerRepository customerRepository, MemberRepository memberRepository, KasirPageModel kasirPageModel, List<NodeFactory> additions){
+                                    CustomerRepository customerRepository, MemberRepository memberRepository, KasirPageModel kasirPageModel, List<NodeFactory> additions) {
         VBox kasirPage = new VBox();
         KasirPageControl kasirPageControl = new KasirPageControl(temporaryBillRepository, fixedBillRepository, barangRepository, customerRepository, memberRepository, kasirPageModel);
 
@@ -395,7 +404,7 @@ public class PageFactory {
         selectedPane.setFitToWidth(true);
         VBox.setVgrow(selectedPane, Priority.ALWAYS);
 
-        productListVBox.getChildren().addAll(searchBar,transHbox, selectedPane);
+        productListVBox.getChildren().addAll(searchBar, transHbox, selectedPane);
         VBox.setMargin(productListVBox, new Insets(10, 20, 10, 10));
 
         VBox detailVBox = new VBox();
@@ -436,7 +445,7 @@ public class PageFactory {
         CheckBox useMember = kasirPageModel.getUseMember();
         useMember.setStyle("-fx-font-size: 16px;");
         useMember.setPadding(new Insets(0, 10, 0, 10));
-        setuHbox.getChildren().addAll(leftSetuHbox,new Label("Use Member"), useMember, members,billButton);
+        setuHbox.getChildren().addAll(leftSetuHbox, new Label("Use Member"), useMember, members, billButton);
 
         VBox kasirAdditionVBox = new VBox();
         VBox.setVgrow(kasirAdditionVBox, Priority.ALWAYS);
@@ -449,7 +458,8 @@ public class PageFactory {
         VBox.setVgrow(bottomRightVbox, Priority.ALWAYS);
         billButton.setOnAction(event -> {
             kasirPageControl.checkOut();
-            billButton.setOnAction(event1 -> {});
+            billButton.setOnAction(event1 -> {
+            });
         });
         saveTempButton.setOnAction(event -> kasirPageControl.saveTemporaryBill());
         refreshButton.setOnAction(event -> kasirPageControl.refreshProductList());
@@ -472,9 +482,13 @@ public class PageFactory {
         return kasirPage;
     }
 
-    public static VBox getSetting(List<File> fileList, SettingPageModel settingPageModel, List<Node> pluginNodes) {
+    public static VBox getSetting(List<File> fileList, SettingPageModel settingPageModel, List<Node> pluginNodes,
+                                  BarangRepository barangRepository, TemporaryBillRepository temporaryBillRepository,
+                                  FixedBillRepository fixedBillRepository, CustomerRepository customerRepository,
+                                  MemberRepository memberRepository) {
         VBox settingPage = new VBox();
-        SettingPageControl settingPageControl = new SettingPageControl(fileList, settingPageModel);
+        SettingPageControl settingPageControl = new SettingPageControl(fileList, settingPageModel, memberRepository,
+                temporaryBillRepository, fixedBillRepository, customerRepository, barangRepository);
         settingPage.setSpacing(10);
 
         Label titleLabel = new Label("Setting");
@@ -489,6 +503,7 @@ public class PageFactory {
         dataVbox.setSpacing(10);
         dataVbox.setPadding(new Insets(10));
 
+
         Label databoxTitle = new Label("Data Store");
         databoxTitle.setFont(new Font(24));
         VBox.setMargin(databoxTitle, new Insets(0, 0, 0, 0));
@@ -496,61 +511,94 @@ public class PageFactory {
         HBox loadHbox = new HBox();
         FileChooser loadFileChooser = new FileChooser();
 
-        Stage loadStage = new Stage();
-        loadStage.setTitle("Select File");
+        Button getPathButton = new Button("Select Folder");
+        DirectoryChooser directoryChooser = new DirectoryChooser();
 
-        Button selectButton = new Button("Open File");
+        Stage fileStage = new Stage();
+        getPathButton.setOnAction(e -> {
+            File selectedFile = directoryChooser.showDialog(fileStage);
+            if (selectedFile != null) {
+                settingPageModel.setFolderPath(selectedFile.getAbsolutePath() + "/");
+            }
+        });
+
+        TextField path = new TextField();
+        path.setPromptText("Enter save folder");
+        TextField fileName = new TextField();
+        fileName.setPromptText("Enter file name");
+
+        Button loadButton = new Button("Load");
+        Button saveButton = new Button("Save");
         Label fileLabel = new Label("File :");
         fileLabel.setFont(new Font(14));
 
-        selectButton.setOnAction(e -> {
-            File selectedFile = loadFileChooser.showOpenDialog(loadStage);
-            fileLabel.setText("File :" + selectedFile.getName());
+        ComboBox<DataHandler.FileTypes> formatFileLoad = new ComboBox<>();
+        formatFileLoad.getItems().addAll(DataHandler.FileTypes.OBJ, DataHandler.FileTypes.XML,
+                DataHandler.FileTypes.JSON, DataHandler.FileTypes.SQL,
+                DataHandler.FileTypes.SQL_ORM);
+        formatFileLoad.getSelectionModel().selectFirst();
+
+        ComboBox repo = new ComboBox<>();
+        repo.getItems().addAll("Member Repo", "TempBill Repo", "FixBill Repo", "Barang Repo", "Customer Repo");
+        repo.getSelectionModel().selectFirst();
+
+        saveButton.setOnAction(e -> {
+            try (DataHandler handler = new DataHandler()) {
+                handler.setSaveFolderPath(settingPageModel.getFolderPath());
+                if (repo.getValue() == "Member Repo") {
+                    System.out.println("a");
+                    handler.save(settingPageControl.getMemberRepository(), fileName.getText(), formatFileLoad.getValue());
+                } else if (repo.getValue() == "TempBill Repo") {
+                    System.out.println("a");
+                    handler.save(settingPageControl.getTemporaryBillRepository(), fileName.getText(), formatFileLoad.getValue());
+                } else if (repo.getValue() == "FixBill Repo") {
+                    System.out.println("a");
+                    handler.save(settingPageControl.getFixedBillRepository(), fileName.getText(), formatFileLoad.getValue());
+                } else if (repo.getValue() == "Barang Repo") {
+                    System.out.println("a");
+                    handler.save(settingPageControl.getBarangRepository(), fileName.getText(), formatFileLoad.getValue());
+                } else if (repo.getValue() == "Customer Repo") {
+                    System.out.println("a");
+                    handler.save(settingPageControl.getCustomerRepository(), fileName.getText(), formatFileLoad.getValue());
+                }
+            } catch (IOException exc) {
+                System.out.println("gada");
+            }
         });
 
         loadHbox.setSpacing(40);
-        loadHbox.getChildren().addAll(selectButton, fileLabel);
+        loadHbox.getChildren().addAll(saveButton, fileLabel);
         loadHbox.setAlignment(Pos.CENTER_LEFT);
+        HBox.setHgrow(loadHbox, Priority.ALWAYS);
 
         HBox formatHbox = new HBox();
         Label formatLabel = new Label("Format File :");
         formatLabel.setFont(new Font(14));
+        HBox.setHgrow(formatHbox, Priority.ALWAYS);
 
-        ComboBox formatFile = new ComboBox<>();
-        formatFile.getItems().addAll("JSON", "XML");
-        formatFile.getSelectionModel().selectFirst();
-        formatHbox.getChildren().addAll(formatLabel, formatFile);
+        formatHbox.setSpacing(40);
+        formatHbox.setAlignment(Pos.CENTER_LEFT);
+        formatHbox.getChildren().addAll(formatLabel, repo, formatFileLoad);
         formatHbox.setSpacing(40);
         formatHbox.setAlignment(Pos.CENTER_LEFT);
 
         HBox saveHbox = new HBox();
         FileChooser saveFileChooser = new FileChooser();
-        if (formatFile.getSelectionModel().getSelectedItem() == "JSON") {
-            saveFileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON File", "*.json"));
-        }
-        else {
-            saveFileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("XML File", "*.xml"));
-        }
+//        if (formatFile.getSelectionModel().getSelectedItem() == "JSON") {
+//            saveFileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON File", "*.json"));
+//        }
+//        else {
+//            saveFileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("XML File", "*.xml"));
+//        }
 
         Stage saveStage = new Stage();
         saveStage.setTitle("Select File");
 
-        Button saveButton = new Button("Save File");
         Label saveLabel = new Label("");
         fileLabel.setFont(new Font(14));
 
-        saveButton.setOnAction(e -> {
-            File selectedFile = saveFileChooser.showSaveDialog(saveStage);
-            if (selectedFile.exists()) {
-                saveLabel.setText("File saved");
-            }
-            else {
-                saveLabel.setText("Failed to save file. Try again");
-            }
-        });
-
         saveHbox.setSpacing(40);
-        saveHbox.getChildren().addAll(saveButton, saveLabel);
+        saveHbox.getChildren().addAll(getPathButton, fileName, saveButton, saveLabel, loadButton);
         saveHbox.setAlignment(Pos.CENTER_LEFT);
 
         dataVbox.setSpacing(20);
@@ -567,7 +615,6 @@ public class PageFactory {
         VBox.setMargin(pluginboxTitle, new Insets(0, 0, 0, 0));
 
         FileChooser pluginChooser = new FileChooser();
-        pluginChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JAR", "*.jar"));
 
         Stage pluginStage = new Stage();
         pluginStage.setTitle("Select File");
@@ -578,13 +625,13 @@ public class PageFactory {
         PluginResolver pluginResolver = new PluginResolver();
 
         selectPluginButton.setOnAction(e -> {
-            File selectedFile = pluginChooser.showOpenDialog(loadStage);
+            File selectedFile = pluginChooser.showOpenDialog(pluginStage);
             if (selectedFile != null) {
-                Path path = Paths.get(selectedFile.getPath());
-                String fileName = path.getFileName().toString();
+                Path path1 = Paths.get(selectedFile.getPath());
+                String fileName1 = path1.getFileName().toString();
                 String parent = path.getParent().toString();
 
-                var plugin = pluginLoader.load(parent, fileName);
+                var plugin = pluginLoader.load(parent, fileName1);
                 pluginResolver.injectPluginDependency(plugin);
                 plugin.load();
             }
@@ -608,7 +655,8 @@ public class PageFactory {
 
         return settingPage;
     }
-    public static VBox getInsertBarangPage(BarangRepository barangRepository){
+
+    public static VBox getInsertBarangPage(BarangRepository barangRepository) {
         VBox InsertPage = new VBox();
         InsertPage.setPadding(new Insets(10));
         InsertPage.setSpacing(10);
@@ -681,7 +729,7 @@ public class PageFactory {
         fileHbox.getChildren().addAll(selectButton, fileLabel);
         fileHbox.setAlignment(Pos.CENTER_LEFT);
 
-        leftVbox.getChildren().addAll(stokLabel, stokTextField ,nameLabel, nameTextField, PriceLabel, PriceTextField,BuyPriceLabel,
+        leftVbox.getChildren().addAll(stokLabel, stokTextField, nameLabel, nameTextField, PriceLabel, PriceTextField, BuyPriceLabel,
                 BuyPriceTextField, KategoriLabel, KategoriTextField, OnSaleLabel, saleHbox, fileHbox);
         HBox.setMargin(leftVbox, new Insets(10, 10, 10, 20)); // set margin of left VBox in HBox
 
@@ -691,9 +739,9 @@ public class PageFactory {
 
 //        System.out.println(selectedFile.get().getName());
         Button TambahButton = new Button("Tambah Barang");
-        TambahButton.setOnAction(event -> PageActionFactory.doInsertBarang( stokTextField.getText(), nameTextField.getText(),
+        TambahButton.setOnAction(event -> PageActionFactory.doInsertBarang(stokTextField.getText(), nameTextField.getText(),
                 PriceTextField.getText(), BuyPriceTextField.getText(), KategoriTextField.getText(),
-                selectedFile.get().getName(),true ,barangRepository));
+                selectedFile.get().getName(), true, barangRepository));
 
         rightVbox.getChildren().add(TambahButton);
 
@@ -712,7 +760,7 @@ public class PageFactory {
 
     private static boolean checkEmpty(TextField... textFields) {
         var foundEmpty = false;
-        for (var textField: textFields) {
+        for (var textField : textFields) {
             if (textField.getText().isBlank()) {
                 textField.setStyle("-fx-border-color: red");
                 foundEmpty = true;
@@ -722,12 +770,12 @@ public class PageFactory {
     }
 
     private static void revertRedBorder(TextField... textFields) {
-        for (var textField: textFields) {
+        for (var textField : textFields) {
             textField.setStyle("-fx-border-color: none");
         }
     }
 
-    public static VBox getKasirPage(TemporaryBill temporaryBill){
+    public static VBox getKasirPage(TemporaryBill temporaryBill) {
         return getKasirPage(temporaryBill);
     }
 

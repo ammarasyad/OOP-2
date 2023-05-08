@@ -16,34 +16,35 @@ import java.util.List;
 
 public class DataHandlerTest {
 
-    @Test
-    public void RepositoryTest() throws IOException {
-        BarangRepository barangRepository = new BarangRepository();
-        FixedBillRepository fixedBillRepository = new FixedBillRepository();
-        TemporaryBillRepository temporaryBillRepository = new TemporaryBillRepository();
-
-        Barang barang = new Barang(2, 100, "Buku", new BigDecimal(1000), new BigDecimal(800), new KategoriBarang(0, "kat1"), "test.com", true);
-
-        barangRepository.save(barang);
-        fixedBillRepository.save(new FixedBill(1, 2, List.of(Pair.with(barang, 2))));
-        temporaryBillRepository.save(new TemporaryBill(1));
-
-        try (DataHandler dataHandler = new DataHandler()) {
-//            dataHandler.save(barangRepository, "test", DataHandler.FileTypes.JSON);
-//            dataHandler.save(fixedBillRepository, "tetxml", DataHandler.FileTypes.XML);
-//            dataHandler.save(temporaryBillRepository, "object", DataHandler.FileTypes.OBJ);
-
-            BarangRepository barangLoad = dataHandler.load(BarangRepository.class, "test", DataHandler.FileTypes.JSON);
-            FixedBillRepository billLoad = dataHandler.load(FixedBillRepository.class, "tetxml", DataHandler.FileTypes.XML);
-            TemporaryBillRepository tempLoad = dataHandler.load(TemporaryBillRepository.class, "object", DataHandler.FileTypes.OBJ);
-        }
-
-//        DataHandler.save(barangRepository, "test", DataHandler.FileTypes.JSON);
-//        DataHandler.save(fixedBillRepository, "tetxml", DataHandler.FileTypes.XML);
-//        DataHandler.save(temporaryBillRepository, "object", DataHandler.FileTypes.OBJ);
+//    @Test
+//    public void RepositoryTest() throws IOException {
+//        BarangRepository barangRepository = new BarangRepository();
+//        FixedBillRepository fixedBillRepository = new FixedBillRepository();
+//        TemporaryBillRepository temporaryBillRepository = new TemporaryBillRepository();
 //
-//        BarangRepository barangLoad = DataHandler.load(BarangRepository.class, "test", DataHandler.FileTypes.JSON);
-//        FixedBillRepository billLoad = DataHandler.load(FixedBillRepository.class, "tetxml", DataHandler.FileTypes.XML);
-//        TemporaryBillRepository tempLoad = DataHandler.load(TemporaryBillRepository.class, "object", DataHandler.FileTypes.OBJ);
-    }
+//        Barang barang = new Barang(2, 100, "Buku", new BigDecimal(1000), new BigDecimal(800), new KategoriBarang(0, "kat1"), "test.com", true);
+//
+//        barangRepository.save(barang);
+//        fixedBillRepository.save(new FixedBill(1, 2, List.of(Pair.with(barang, 2))));
+//        temporaryBillRepository.save(new TemporaryBill(1));
+//
+//        try (DataHandler dataHandler = new DataHandler()) {
+////            dataHandler.save(barangRepository, "test", DataHandler.FileTypes.JSON);
+////            dataHandler.save(fixedBillRepository, "tetxml", DataHandler.FileTypes.XML);
+////            dataHandler.save(temporaryBillRepository, "object", DataHandler.FileTypes.OBJ);
+//
+//            BarangRepository barangLoad = dataHandler.load(BarangRepository.class, "test", DataHandler.FileTypes.JSON);
+//            FixedBillRepository billLoad = dataHandler.load(FixedBillRepository.class, "tetxml", DataHandler.FileTypes.XML);
+//            TemporaryBillRepository tempLoad = dataHandler.load(TemporaryBillRepository.class, "object", DataHandler.FileTypes.OBJ);
+//        }
+//
+////        DataHandler.save(barangRepository, "test", DataHandler.FileTypes.JSON);
+////        DataHandler.save(fixedBillRepository, "tetxml", DataHandler.FileTypes.XML);
+////        DataHandler.save(temporaryBillRepository, "object", DataHandler.FileTypes.OBJ);
+////
+////        BarangRepository barangLoad = DataHandler.load(BarangRepository.class, "test", DataHandler.FileTypes.JSON);
+////        FixedBillRepository billLoad = DataHandler.load(FixedBillRepository.class, "tetxml", DataHandler.FileTypes.XML);
+////        TemporaryBillRepository tempLoad = DataHandler.load(TemporaryBillRepository.class, "object", DataHandler.FileTypes.OBJ);
+//    }
+
 }

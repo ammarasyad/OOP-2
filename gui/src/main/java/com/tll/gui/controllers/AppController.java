@@ -25,7 +25,9 @@ import java.util.concurrent.ScheduledExecutorService;
 @Getter
 public class AppController {
     //Pages menu
-    private final Menu pages;
+    private MenuItem refresh;
+    private Menu pages;
+    private Menu util;
     // items :
     private final MenuItem mainPage;
     private final MenuItem registerPage;
@@ -63,9 +65,7 @@ public class AppController {
         return thread;
     });
 
-    public AppController(BarangRepository barangRepository, TemporaryBillRepository temporaryBillRepository,
-                         FixedBillRepository fixedBillRepository,
-                         CustomerRepository customerRepository, MemberRepository memberRepository) {
+    public AppController(MemberRepository memberRepository, BarangRepository barangRepository, CustomerRepository customerRepository, FixedBillRepository fixedBillRepository, TemporaryBillRepository temporaryBillRepository) {
         this.barangRepository = barangRepository;
         this.temporaryBillRepository = temporaryBillRepository;
         this.fixedBillRepository = fixedBillRepository;
@@ -78,6 +78,9 @@ public class AppController {
         registerPageModel = new RegisterPageModel(customerRepository, memberRepository);
 
         pages = new Menu(OPEN_PAGE);
+        util = new Menu("↻");
+        refresh = new MenuItem("Refresh Pages");
+        util.getItems().add(refresh);
         mainPage = new MenuItem(MAIN_PAGE);
         registerPage = new MenuItem(REGISTER_PAGE);
         updatePage = new MenuItem(UPDATE_PAGE);
@@ -100,9 +103,9 @@ public class AppController {
         });
         settingPage.setOnAction(event -> {
             boolean existSetting = false;
-            for(Tab tab : tabPane.getTabs()){
+            for (Tab tab : tabPane.getTabs()) {
                 System.out.println(((ClosableTab) tab).getName());
-                if(((ClosableTab) tab).getName().equals(SETTING_PAGE)){
+                if (((ClosableTab) tab).getName().equals(SETTING_PAGE)) {
                     existSetting = true;
                 }
             }
@@ -110,20 +113,22 @@ public class AppController {
                 addSetting(new SettingPageModel());
             }
         });
-        InsertPage.setOnAction(event ->addInsertPage());
-
-        loadKasirPages();
+        InsertPage.setOnAction(event -> addInsertPage());
+        refresh.setOnAction(e -> loadKasirPages());
     }
-    private void loadKasirPages(){
-        for(TemporaryBill temporaryBill : temporaryBillRepository.findAll()){
+
+    private void loadKasirPages() {
+        for (TemporaryBill temporaryBill : temporaryBillRepository.findAll()) {
             addKasirPage(new KasirPageModel(temporaryBill, memberRepository));
         }
     }
+
     private void addMainPage() {
         ClosableTab tab = new ClosableTab(MAIN_PAGE);
         tab.setContent(PageFactory.getMainPage(mainPageModel));
         tabPane.getTabs().add(tab);
     }
+
     private void addRegisterPage() {
         registerPageModel = new RegisterPageModel(customerRepository, memberRepository);
         ClosableTab tab = new ClosableTab(REGISTER_PAGE);
@@ -157,11 +162,12 @@ public class AppController {
 
     private void addSetting(SettingPageModel settingPageModel) {
         ClosableTab tab = new ClosableTab(SETTING_PAGE);
-        tab.setContent(PageFactory.getSetting(fileList, settingPageModel, pluginNodes));
+        tab.setContent(PageFactory.getSetting(fileList, settingPageModel, pluginNodes, barangRepository,
+                temporaryBillRepository, fixedBillRepository, customerRepository, memberRepository));
         tabPane.getTabs().add(tab);
     }
 
-    private void addInsertPage(){
+    private void addInsertPage() {
         ClosableTab tab = new ClosableTab(INSERT_PAGE);
         tab.setContent(PageFactory.getInsertBarangPage(barangRepository));
         tabPane.getTabs().add(tab);
