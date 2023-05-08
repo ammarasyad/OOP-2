@@ -629,7 +629,7 @@ public class PageFactory {
             if (selectedFile != null) {
                 Path path1 = Paths.get(selectedFile.getPath());
                 String fileName1 = path1.getFileName().toString();
-                String parent = path.getParent().toString();
+                String parent = path1.getParent().toString();
 
                 var plugin = pluginLoader.load(parent, fileName1);
                 pluginResolver.injectPluginDependency(plugin);
