@@ -3,11 +3,11 @@ package com.tll.pluginchart2;
 import com.tll.backend.datastore.loader.JsonAdapter;
 import com.tll.backend.model.barang.Barang;
 import com.tll.backend.model.bill.Bill;
-import com.tll.backend.repository.impl.barang.BarangRepository;
 import com.tll.gui.ClosableTab;
 import com.tll.gui.controllers.AppController;
 import com.tll.plugin.AutoWired;
 import com.tll.plugin.Plugin;
+import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.geometry.Side;
 import javafx.scene.chart.PieChart;
@@ -17,6 +17,7 @@ import javafx.scene.layout.VBox;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.concurrent.TimeUnit;
 
 @NoArgsConstructor
 public class PieChartPlugin extends Plugin {
@@ -84,10 +85,22 @@ public class PieChartPlugin extends Plugin {
         chart.setLegendSide(Side.BOTTOM);
 
         //Add Data to PieChart
-        BarangRepository barangRepository = appController.getBarangRepository();
-        for (Barang barang : barangRepository.findAll()) {
-            chart.getData().add(new PieChart.Data(barang.getNama(), barang.getStok()));
-        }
+        appController.getBarangRepository().findAll().forEach(el -> chart.getData().add(new PieChart.Data(el.getNama(), el.getStok())));
+        AppController.getCommonScheduledThreadPool().scheduleAtFixedRate(() -> Platform.runLater(() -> {
+            for (Barang barang : appController.getBarangRepository().findAll()) {
+                boolean found = false;
+                for (PieChart.Data data : chart.getData()) {
+                    if (data.getName().equals(barang.getNama())) {
+                        data.setPieValue(barang.getStok());
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    chart.getData().add(new PieChart.Data(barang.getNama(), barang.getStok()));
+                }
+            }
+        }), 1, 1, TimeUnit.SECONDS);
 
         chartVBox.getChildren().add(chart);
 
