@@ -1,34 +1,29 @@
 package com.tll.plugint;
 
 import com.tll.backend.datastore.loader.JsonAdapter;
-import com.tll.backend.model.bill.Bill;
-import com.tll.gui.ClosableTab;
 import com.tll.gui.controllers.AppController;
 import com.tll.plugin.AutoWired;
 import com.tll.plugin.Plugin;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuItem;
 import javafx.scene.layout.VBox;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.HashMap;
+import java.util.List;
 
 public class RatePlugin extends Plugin {
 
-    private static final String LIST_FILE_PATH = "src/main/resources/list-rate-plugin.json";
-    private static final String FILE_PATH = "src/main/resources/mata-uang-state.json";
+    private static final String LIST_FILE_PATH = "list-rate-plugin.json";
+    private static final String FILE_PATH = "mata-uang-state.json";
     private static final JsonAdapter jsonListAdapter = new JsonAdapter(LIST_FILE_PATH);
     private static final JsonAdapter jsonAdapter = new JsonAdapter(FILE_PATH);
-    private static final String TAB_NAME = "Mata uang";
 
     @AutoWired(identifier = "AppController")
     private AppController appController;
 
-    private MenuItem menuItem;
     private HashMap<Integer, MataUang> mataUangHolder;
     private State state;
 
@@ -37,44 +32,8 @@ public class RatePlugin extends Plugin {
         if (!loadFile()) {
             return;
         }
-        menuItem = new MenuItem(TAB_NAME);
-        menuItem.setOnAction(el -> openRatePage());
-        var button = new Button();
-        button.setText(state.isEnabled() ? "disable " : "enable " + "rate");
-        button.setOnAction(el -> {
-            if (!state.isEnabled()) {
-                button.setText("enable rate");
-                state.setEnabled(false);
-                removeMenu();
-                return;
-            }
-            button.setText("disable rate");
-            state.setEnabled(true);
-            addMenu();
-        });
-        if (state.isEnabled()) {
-            addMenu();
-        }
-    }
 
-    private void addMenu() {
-        appController.getPages().getItems().add(menuItem);
-    }
-
-    private void removeMenu() {
-        int i = 0;
-        var items = appController.getPages().getItems();
-        for (var item: items) {
-            if (item.hashCode() == menuItem.hashCode()) {
-                items.remove(i);
-                return;
-            }
-            ++i;
-        }
-    }
-
-    private void openRatePage() {
-        VBox ratePage = new VBox();
+        VBox rateVBox = new VBox();
 
         ComboBox<Integer> idBox = new ComboBox<>();
         idBox.getItems().addAll(mataUangHolder.keySet());
@@ -99,14 +58,20 @@ public class RatePlugin extends Plugin {
                 });
             });
             state.setIdMataUang(idBox.getValue());
+            saveFile();
         });
 
-        ratePage.getChildren().addAll(idBox, button);
+        rateVBox.getChildren().addAll(idBox, button);
+        appController.getPluginNodes().add(rateVBox);
 
-        ClosableTab closableTab = new ClosableTab(TAB_NAME);
-        closableTab.setContent(ratePage);
+    }
 
-        appController.getTabPane().getTabs().add(closableTab);
+    private void saveFile() {
+        try {
+            jsonAdapter.save(List.of(state));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private boolean loadFile() {
