@@ -79,8 +79,6 @@ public class PageFactory {
 
         clockLabel.textProperty().bindBidirectional(mainPageModel.getClockLabel().textProperty());
         bottomLabel.textProperty().bindBidirectional(mainPageModel.getBottomLabel().textProperty());
-        //        mainPageController.startClock();
-//        mainPageController.startClock();
 
         kelompok.getChildren().addAll(ezra, chris, tobi, ammar, zidane);
         ezra.setAlignment(Pos.BOTTOM_CENTER);
@@ -89,25 +87,19 @@ public class PageFactory {
         ammar.setAlignment(Pos.BOTTOM_CENTER);
         zidane.setAlignment(Pos.BOTTOM_CENTER);
 
-        String imagepath = System.getProperty("user.dir") + "/" + "gui/src/main/resources/Telolet.png";
+        String imagepath = "file:" + System.getProperty("user.dir") + "/src/main/resources/Telolet.png";
 
         ImageView imageView = new ImageView();
         Image image = new Image(imagepath);
         imageView.setImage(image);
-        imageView.setFitWidth(540);
-        imageView.setFitHeight(360);
-//        region.getChildren().add(imageView);
-        //kelompok.setSpacing(10);
-        //kelompok.setAlignment(Pos.BOTTOM_RIGHT );
-        //ezra.setMargin()
-        //VBox.setMargin(kelompok, new Insets(350,0,0,0));
+        imageView.setFitWidth(459);
+        imageView.setFitHeight(306);
+
         kelompok.setAlignment(Pos.BOTTOM_CENTER);
         VBox.setVgrow(kelompok, Priority.ALWAYS);
         mainPage.getChildren().addAll(clockLabel, dateLabel, imageView, kelompok);
 
         VBox.setVgrow(mainPage, Priority.ALWAYS);
-        //mainPage.setSpacing(5);
-
 
         return mainPage;
     }
